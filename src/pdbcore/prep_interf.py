@@ -1,0 +1,353 @@
+# -*- coding: utf-8 -*-
+
+"""
+Copyright (C) 2021 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
+
+This file is part of the pdbcore project.
+
+The pdbcore project can not be copied, edited, and/or distributed without the express
+permission of Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>.
+"""
+
+from tqdm import tqdm
+import concurrent.futures
+import pymol2
+
+from util.lst import type_lst, lst_to_str, sort_lst, lst_unique, calc_jaccard_simi
+from util.data import merge_dicts
+from util.path import (
+    get_file_name,
+    delete_path,
+    append_path,
+    save_json,
+    get_interf_path,
+    get_dir_path,
+    interf_str,
+)
+from util.col import (
+    renum_path_col,
+    interf_path_col,
+    bound_interf_chainid_col,
+    interf_area_col,
+    cb_cont_col,
+    atomid_cont_col,
+    total_cb_cont_col,
+    total_atomid_cont_col,
+    iso_col,
+)
+
+byres_str = "byres"
+within_str = "within"
+of_str = "of"
+cb_str = "and name CB"
+
+
+def save_interf(
+    coord_path,
+    interf_dir=None,
+    sym_dist=5.0,
+    min_area=200,
+    max_cb_dist=12,
+    max_atomid_dist=5,
+    iso_cutoff=0.9,
+    chainid_lst=None,
+    coord_path_col=None,
+):
+
+    if coord_path_col is None:
+        coord_path_col = renum_path_col
+
+    file_name = get_file_name(coord_path)
+
+    if ".cif" in file_name:
+        file_format = "cif"
+        return_pdb = False
+    elif ".pdb" in file_name:
+        file_format = "pdb"
+        return_pdb = True
+
+    obj = file_name.replace(f".{file_format}", "")
+
+    if ".gz" in file_name:
+        obj = obj.replace(".gz", "")
+
+    with pymol2.PyMOL() as pymol:
+
+        cmd = pymol.cmd
+
+        cmd.load(coord_path, obj)
+
+        cmd.set("dot_solvent", 1)
+
+        if chainid_lst is None:
+            chainid_lst = cmd.get_chains(obj)
+        else:
+            cmd.remove(f"{obj} and not chain {lst_to_str(chainid_lst,join_txt='+')}")
+
+        cmd.split_chains(obj)
+
+        for chainid in chainid_lst:
+            chainid_obj = f"{obj}_{chainid}"
+
+            cmd.symexp(f"{chainid_obj}_", chainid_obj, chainid_obj, sym_dist)
+
+        sym_obj_lst = cmd.get_object_list("all")
+        sym_obj_lst.remove(obj)
+
+        interf_dict = {coord_path: dict()}
+
+        for chainid in chainid_lst:
+            chainid_obj = f"{obj}_{chainid}"
+
+            chainid_area = cmd.get_area(f"{chainid_obj} and polymer")
+
+            interf = 1
+
+            interf_dict[coord_path][chainid] = dict()
+
+            past_cb_lst = list()
+            past_atomid_lst = list()
+
+            for sym_obj in sym_obj_lst:
+                if chainid_obj != sym_obj:
+                    return_chainid = cmd.get_chains(sym_obj)[0]
+
+                    sym_chainid = f"{return_chainid}_{interf}"
+
+                    cmd.alter(sym_obj, f"chain='{sym_chainid}'")
+
+                    interf_obj = f"{chainid_obj}_{interf}"
+
+                    cmd.create(interf_obj, f"{chainid_obj} {sym_obj}")
+
+                    cmd.alter(sym_obj, f"chain='{return_chainid}'")
+
+                    sym_area = cmd.get_area(f"{sym_obj} and polymer")
+                    complex_area = cmd.get_area(f"{interf_obj} and polymer")
+
+                    interf_area = ((chainid_area + sym_area) - complex_area) / 2
+
+                    if interf_area >= min_area:
+
+                        chainid_1_sele = f"{interf_obj} and chain {chainid} and polymer"
+                        chainid_2_sele = (
+                            f"{interf_obj} and chain {sym_chainid} and polymer"
+                        )
+
+                        chainid_cb_iterate = lst_to_str(
+                            [
+                                byres_str,
+                                chainid_1_sele,
+                                cb_str,
+                                within_str,
+                                max_cb_dist,
+                                of_str,
+                                chainid_2_sele,
+                                cb_str,
+                            ],
+                            join_txt=" ",
+                        )
+                        chainid_atomid_iterate = lst_to_str(
+                            [
+                                byres_str,
+                                chainid_1_sele,
+                                within_str,
+                                max_atomid_dist,
+                                of_str,
+                                chainid_2_sele,
+                            ],
+                            join_txt=" ",
+                        )
+
+                        sym_cb_iterate = lst_to_str(
+                            [
+                                byres_str,
+                                chainid_2_sele,
+                                cb_str,
+                                within_str,
+                                max_cb_dist,
+                                of_str,
+                                chainid_1_sele,
+                                cb_str,
+                            ],
+                            join_txt=" ",
+                        )
+
+                        sym_atomid_iterate = lst_to_str(
+                            [
+                                byres_str,
+                                chainid_2_sele,
+                                within_str,
+                                max_atomid_dist,
+                                of_str,
+                                chainid_1_sele,
+                            ],
+                            join_txt=" ",
+                        )
+
+                        cont_dict = {
+                            "chainid_cb_lst": list(),
+                            "chainid_atomid_lst": list(),
+                            "sym_cb_lst": list(),
+                            "sym_atomid_lst": list(),
+                        }
+
+                        cmd.iterate(
+                            chainid_cb_iterate,
+                            "chainid_cb_lst.append(resi)",
+                            space=cont_dict,
+                        )
+                        cmd.iterate(
+                            chainid_atomid_iterate,
+                            "chainid_atomid_lst.append(resi)",
+                            space=cont_dict,
+                        )
+
+                        cmd.iterate(
+                            sym_cb_iterate,
+                            "sym_cb_lst.append(resi)",
+                            space=cont_dict,
+                        )
+                        cmd.iterate(
+                            sym_atomid_iterate,
+                            "sym_atomid_lst.append(resi)",
+                            space=cont_dict,
+                        )
+
+                        chainid_cb_lst = sort_lst(
+                            lst_unique(cont_dict["chainid_cb_lst"])
+                        )
+
+                        chainid_atomid_lst = sort_lst(
+                            lst_unique(cont_dict["chainid_atomid_lst"])
+                        )
+
+                        sym_cb_lst = sort_lst(lst_unique(cont_dict["sym_cb_lst"]))
+                        sym_atomid_lst = sort_lst(
+                            lst_unique(cont_dict["sym_atomid_lst"])
+                        )
+
+                        cb_lst = sort_lst(lst_unique(chainid_cb_lst + sym_cb_lst))
+                        atomid_lst = sort_lst(
+                            lst_unique(chainid_atomid_lst + sym_atomid_lst)
+                        )
+
+                        if not (cb_lst in past_cb_lst or atomid_lst in past_atomid_lst):
+
+                            past_cb_lst.append(cb_lst)
+                            past_atomid_lst.append(atomid_lst)
+
+                            total_cb_cont = len(chainid_cb_lst)
+                            total_atomid_cont = len(chainid_atomid_lst)
+
+                            if (
+                                total_cb_cont >= 10 and total_atomid_cont >= 1
+                            ) or total_atomid_cont >= 5:
+
+                                interf_path = get_interf_path(
+                                    obj,
+                                    chainid,
+                                    interf,
+                                    dir_path=interf_dir,
+                                    return_pdb=return_pdb,
+                                )
+                                cmd.save(interf_path, interf_obj)
+
+                                iso_status = False
+                                if (
+                                    calc_jaccard_simi(chainid_cb_lst, sym_cb_lst)
+                                    >= iso_cutoff
+                                    and calc_jaccard_simi(
+                                        chainid_atomid_lst, sym_atomid_lst
+                                    )
+                                    >= iso_cutoff
+                                ):
+                                    iso_status = True
+
+                                interf_dict[coord_path][chainid][interf] = dict()
+
+                                interf_dict[coord_path][chainid][interf][
+                                    interf_path_col
+                                ] = interf_path
+                                interf_dict[coord_path][chainid][interf][
+                                    bound_interf_chainid_col
+                                ] = sym_chainid
+                                interf_dict[coord_path][chainid][interf][
+                                    interf_area_col
+                                ] = interf_area
+                                interf_dict[coord_path][chainid][interf][
+                                    cb_cont_col
+                                ] = lst_to_str(chainid_cb_lst)
+                                interf_dict[coord_path][chainid][interf][
+                                    atomid_cont_col
+                                ] = lst_to_str(chainid_atomid_lst)
+                                interf_dict[coord_path][chainid][interf][
+                                    total_cb_cont_col
+                                ] = total_cb_cont
+                                interf_dict[coord_path][chainid][interf][
+                                    total_atomid_cont_col
+                                ] = total_atomid_cont
+                                interf_dict[coord_path][chainid][interf][
+                                    iso_col
+                                ] = iso_status
+
+                                interf += 1
+
+    return interf_dict
+
+
+def prep_interf(
+    coord_paths,
+    interf_dir=None,
+    interf_json_path=None,
+    sym_dist=5.0,
+    min_area=200,
+    max_cb_dist=12,
+    max_atomid_dist=5,
+    chainid_dict=None,
+    coord_path_col=None,
+    num_cpu=1,
+):
+
+    interf_path = get_dir_path(dir_str=interf_str, dir_path=interf_dir)
+
+    delete_path(interf_path)
+    append_path(interf_path)
+
+    coord_path_lst = type_lst(coord_paths)
+
+    interf_dict = dict()
+
+    with concurrent.futures.ProcessPoolExecutor(max_workers=num_cpu) as executor:
+        job_lst = [
+            executor.submit(
+                save_interf,
+                coord_path,
+                interf_dir=interf_dir,
+                sym_dist=sym_dist,
+                min_area=min_area,
+                max_cb_dist=max_cb_dist,
+                max_atomid_dist=max_atomid_dist,
+                chainid_lst=chainid_dict[coord_path],
+                coord_path_col=coord_path_col,
+            )
+            for coord_path in coord_path_lst
+        ]
+
+        for job in tqdm(
+            concurrent.futures.as_completed(job_lst),
+            desc="Preparing interfaces",
+            total=len(job_lst),
+            miniters=1,
+            position=0,
+            leave=True,
+        ):
+
+            interf_dict = merge_dicts([interf_dict, job.result()])
+
+    print("Prepared interfaces!")
+
+    if interf_json_path is not None:
+        save_json(interf_json_path, interf_dict)
+    else:
+        return interf_dict
