@@ -3,9 +3,9 @@
 """
 Copyright (C) 2021 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
 
-This file is part of the rascore project.
+This file is part of the pdbcore project.
 
-The rascore project can not be copied, edited, and/or distributed without the express
+The pdbcore project can not be copied, edited, and/or distributed without the express
 permission of Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>.
 """
 
@@ -39,8 +39,7 @@ from util.col import (
     chem_lig_col,
 )
 
-cartoon_color = "gray80"
-ribbon_color = "gray60"
+polymer_color = "gray80"
 
 bio_color = "gray90"
 ion_color = "chartreuse"
@@ -58,8 +57,7 @@ def init_pymol(pymol_file, color_dict=None):
     pymol_file.write("bg_color white\n")
     pymol_file.write("set antialias, 2\n")
     pymol_file.write("set orthoscopic, off\n")
-    pymol_file.write("set ray_shadows, on\n")
-    pymol_file.write("set ray_trace_fog, on\n")
+    pymol_file.write("set depth_cue, 0\n")
     pymol_file.write("set sphere_scale, 0.4\n")
     pymol_file.write("set stick_radius, 0.2\n")
     pymol_file.write("set hash_max, 300\n")
@@ -84,14 +82,14 @@ def load_obj(pymol_file, path, obj, chainids=None):
 
 def init_obj(pymol_file, obj=None, ribbon=True, color_chainbow=False):
 
+    color = polymer_color
+
     if ribbon:
         show = "ribbon"
         hide = "cartoon"
-        color = ribbon_color
     else:
         show = "cartoon"
         hide = "ribbon"
-        color = cartoon_color
 
     pymol_file.write("hide wire, solvent\n")
 
@@ -225,6 +223,7 @@ def write_pymol_script(
     style_ribbon=True,
     thick_bb=True,
     color_atomic=True,
+    show_resids=None,
     cartoon_transp=0,
     show_bio=None,
     show_ion=None,
@@ -407,6 +406,12 @@ def write_pymol_script(
 
     init_obj(pymol_file, ribbon=style_ribbon, color_chainbow=color_chainbow)
 
+    if show_resids:
+        hide_style = "cartoon"
+        if style_ribbon:
+            hide_style = "ribbon"
+        pymol_file.write(f"hide {hide_style}, not resi {show_resids}\n")
+
     if stick_resids is not None:
         for stick_resid in stick_resid_lst:
             stick_sele = f"{stick_resid}_stick"
@@ -520,9 +525,13 @@ def write_pymol_script(
 
     if show_prot is not None and show_prot != False:
         if prot_chainid_col != bound_interf_chainid_col:
-            pymol_file.write(f"hide sticks, *_{prot_chainid_col}\n")
-            pymol_file.write(f"color {prot_color_str}, *_{prot_chainid_col}\n")
+            prot_style = "cartoon"
+            if style_ribbon:
+                prot_style = "ribbon"
             pymol_file.write(f"group {prot_chainid_col}, *_{prot_chainid_col}\n")
+            pymol_file.write(f"show {prot_style}, {prot_chainid_col}\n")
+            pymol_file.write(f"hide sticks, {prot_chainid_col}\n")
+            pymol_file.write(f"color {prot_color_str}, {prot_chainid_col}\n")
 
     if len(df) > 1:
         if sup_all:
