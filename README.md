@@ -1,5 +1,4 @@
-# rascore
- A tool for analyzing the conformations of RAS structures
+# rascore: A tool for analyzing the conformations of RAS structures
 
 ## Summary
 
