@@ -910,7 +910,7 @@ def find_hb_status(
     if modelid_2 is None:
         modelid_2 = 0
 
-    hb_status = no_hb_name
+    hb_status = nohb_name
     hb_angle_1 = 999.00
     hb_angle_2 = 999.00
     wmhb_angle = 999.00
@@ -1248,7 +1248,7 @@ def calc_atom_dist(
 
     if check_hb:
 
-        hb_status = no_hb_name
+        hb_status = nohb_name
         hb_angle_1 = 999.00
         hb_angle_2 = 999.00
         wmhb_angle = 999.00

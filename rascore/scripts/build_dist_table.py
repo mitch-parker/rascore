@@ -223,7 +223,7 @@ def get_index_dist(
             wmhb_angle = result[6]
             outlier_status = result[7]
 
-            if hb_status == wat_hb_name:
+            if hb_status == wmhb_name:
                 if shared_resids is not None:
                     shared_resid = val_lst[4][x]
 
@@ -281,10 +281,10 @@ def get_index_dist(
                         return_vect=True,
                     )
 
-                    if (shared_result_1[3] == no_hb_name) or (
-                        shared_result_2[3] == no_hb_name
+                    if (shared_result_1[3] == nohb_name) or (
+                        shared_result_2[3] == nohb_name
                     ):
-                        hb_status = no_hb_name
+                        hb_status = nohb_name
                         outlier_status = True
 
         index_df.at[

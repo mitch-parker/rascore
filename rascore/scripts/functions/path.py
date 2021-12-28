@@ -18,6 +18,7 @@ import numpy as np
 
 from .table import get_col_order, order_cols, order_rows
 
+data_str = "data"
 core_str = "core"
 rcsb_str = "rcsb"
 renum_str = "renum"
@@ -28,8 +29,6 @@ edia_str = "edia"
 interf_str = "interface"
 lig_str = "ligand"
 eds_str = "eds"
-map_str = "2mFo-DFc"
-diff_str = "mFo-DFc"
 sup_str = "super"
 
 
@@ -281,15 +280,15 @@ def get_lig_path(lig, dir_path=None):
 def get_eds_map_path(pdb_code, dir_path=None):
 
     return get_file_path(
-        f"{pdb_code}_{map_str}.ccp", dir_str=map_str, dir_path=dir_path, pre_str=False
+        f"{pdb_code}_{eds_str}.ccp", dir_str=eds_str, dir_path=dir_path, pre_str=False
     )
 
 
 def get_eds_diff_path(pdb_code, dir_path=None):
 
     return get_file_path(
-        f"{pdb_code}_{diff_str}.ccp4",
-        dir_str=diff_str,
+        f"{pdb_code}_{eds_str}.ccp4",
+        dir_str=eds_str,
         dir_path=dir_path,
         pre_str=False,
     )

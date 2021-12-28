@@ -14,7 +14,7 @@ kras_name = "KRAS"
 nras_name = "NRAS"
 
 swiss_id_lst = ["RASK_HUMAN", "RASN_HUMAN", "RASH_HUMAN"]
-uniprot_id_lst = ["P01116", "P01116-2", "P01112", "P01111"]
+uniprot_acc_lst = ["P01116", "P01116-2", "P01112", "P01111"]
 
 gene_class_lst = [hras_name, kras_name, nras_name]
 

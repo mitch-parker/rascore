@@ -9,4 +9,6 @@ The rascore project cannot be copied, edited, and/or distributed without the exp
 permission of Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>.
 """
 
-mut_class_lst = ["WT", "G12D", "G12V", "G12C", "G12A", "G13D", "Q61H", "Other"]
+other_mut_name = "Other"
+
+mut_class_lst = ["WT", "G12D", "G12V", "G12C", "G12A", "G13D", "Q61H", other_mut_name]

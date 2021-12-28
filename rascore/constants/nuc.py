@@ -15,6 +15,12 @@ nf_name = "0P"
 gdp_name = "2P"
 gtp_name = "3P"
 
+rep_dict = {
+    "4q21A": gdp_name,
+    "1bkdR": nf_name,
+    "5p21A": gtp_name,
+}
+
 nf_color = blue_hex
 gdp_color = orange_hex
 gtp_color = green_hex
@@ -22,14 +28,6 @@ gtp_color = green_hex
 nuc_color_dict = {nf_name: nf_color, gdp_name: gdp_color, gtp_name: gtp_color}
 
 nuc_class_dict = {
-    "GNP": gtp_name,
     "GDP": gdp_name,
-    "GTP": gtp_name,
-    "GSP": gtp_name,
-    "GCP": gtp_name,
-    "DBG": gtp_name,
-    "AGN": gtp_name,
-    "9GM": gtp_name,
-    "CAG": gtp_name,
     "None": nf_name,
 }
