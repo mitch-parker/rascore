@@ -5,7 +5,7 @@ Copyright (C) 2021 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
 
 This file is part of the rascore project.
 
-The rascore project cannot be copied, edited, and/or distributed without the express
+The rascore project can not be copied, edited, and/or distributed without the express
 permission of Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>.
 """
 
@@ -17,6 +17,7 @@ renum_assembly_path_col = "renum_assembly_path"
 sifts_path_col = "sifts_path"
 edia_path_col = "edia_path"
 interf_path_col = "interf_path"
+pocket_path_col = "pocket_path"
 
 modelid_col = "modelid"
 chainid_col = "chainid"
@@ -59,12 +60,18 @@ interf_cont_col = "interface_contacts"
 cb_dist_col = "cb_distance"
 iso_col = "isologous"
 
+pocket_col = "pocket"
+pocket_volume_col = "pocket_volume"
+pocket_score_col = "pocket_score"
+pocket_cont_col = "pocket_contacts"
+
 bio_lig_col = "biological_ligand"
 ion_lig_col = "ion_ligand"
 pharm_lig_col = "pharmacological_ligand"
 chem_lig_col = "chemical_ligand"
 mod_lig_col = "modification_ligand"
 mem_lig_col = "membrane_ligand"
+pocket_lig_col = "pocket_ligand"
 
 gene_class_col = "gene_class"
 nuc_class_col = "nucleotide_class"
@@ -72,6 +79,7 @@ mut_class_col = "mut_class"
 pharm_class_col = "pharm_class"
 prot_class_col = "protein_class"
 interf_class_col = "interf_class"
+pocket_class_col = "pocket_class"
 
 date_col = "date"
 pmid_col = "pmid"
@@ -239,6 +247,7 @@ order_col_lst = [
     nn_dist_col,
     constr_dist_col,
     interf_col,
+    pocket_col,
     prot_col,
     swiss_id_col,
     uniprot_id_col,
@@ -251,6 +260,7 @@ order_col_lst = [
     pharm_class_col,
     prot_class_col,
     interf_class_col,
+    pocket_class_col,
     loop_name_col,
     silh_col,
     simi_col,
@@ -291,6 +301,9 @@ order_col_lst = [
     interf_cont_col,
     cb_dist_col,
     iso_col,
+    pocket_volume_col,
+    pocket_score_col,
+    pocket_cont_col,
     phi_col,
     psi_col,
     omega_col,
@@ -337,6 +350,7 @@ order_col_lst = [
     chem_lig_col,
     mod_lig_col,
     mem_lig_col,
+    pocket_lig_col,
     method_col,
     resolution_col,
     r_factor_col,
@@ -364,6 +378,7 @@ order_col_lst = [
     sifts_path_col,
     edia_path_col,
     interf_path_col,
+    pocket_path_col,
 ]
 
 

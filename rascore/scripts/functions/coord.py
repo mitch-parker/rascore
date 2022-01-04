@@ -5,7 +5,7 @@ Copyright (C) 2021 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
 
 This file is part of the rascore project.
 
-The rascore project cannot be copied, edited, and/or distributed without the express
+The rascore project can not be copied, edited, and/or distributed without the express
 permission of Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>.
 """
 
@@ -114,8 +114,8 @@ h_sc_hb_atomid_dict = {
 }
 
 hb_name = "H-Bond"
-wmhb_name = f"Water-Mediated {hb_name}"
-nohb_name = f"No {hb_name}"
+wmhb_name = "WMH-Bond"
+no_hb_name = "No Bond"
 
 disorder_dict = {2: True, 1: True, 0: False}
 
@@ -910,7 +910,7 @@ def find_hb_status(
     if modelid_2 is None:
         modelid_2 = 0
 
-    hb_status = nohb_name
+    hb_status = no_hb_name
     hb_angle_1 = 999.00
     hb_angle_2 = 999.00
     wmhb_angle = 999.00
@@ -1248,7 +1248,7 @@ def calc_atom_dist(
 
     if check_hb:
 
-        hb_status = nohb_name
+        hb_status = no_hb_name
         hb_angle_1 = 999.00
         hb_angle_2 = 999.00
         wmhb_angle = 999.00

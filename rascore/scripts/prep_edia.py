@@ -5,7 +5,7 @@ Copyright (C) 2021 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
 
 This file is part of the rascore project.
 
-The rascore project cannot be copied, edited, and/or distributed without the express
+The rascore project can not be copied, edited, and/or distributed without the express
 permission of Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>.
 """
 
@@ -139,24 +139,44 @@ def prep_edia(
 
     edia_dict = dict()
 
-    with concurrent.futures.ProcessPoolExecutor(max_workers=num_cpu) as executor:
-        job_lst = [
-            executor.submit(
-                get_pdb_edia_dict, pdb_code, edia_dir=edia_dir, sifts_dict=sifts_dict
-            )
-            for pdb_code in pdb_code_lst
-        ]
-
-        for job in tqdm(
-            concurrent.futures.as_completed(job_lst),
+    if num_cpu == 1:
+        for pdb_code in tqdm(
+            pdb_code_lst,
             desc="Prepared EDIA scores",
-            total=len(job_lst),
-            miniters=1,
             position=0,
             leave=True,
         ):
 
-            edia_dict = merge_dicts([edia_dict, job.result()])
+            edia_dict = merge_dicts(
+                [
+                    edia_dict,
+                    get_pdb_edia_dict(
+                        pdb_code, edia_dir=edia_dir, sifts_dict=sifts_dict
+                    ),
+                ]
+            )
+    else:
+        with concurrent.futures.ProcessPoolExecutor(max_workers=num_cpu) as executor:
+            job_lst = [
+                executor.submit(
+                    get_pdb_edia_dict,
+                    pdb_code,
+                    edia_dir=edia_dir,
+                    sifts_dict=sifts_dict,
+                )
+                for pdb_code in pdb_code_lst
+            ]
+
+            for job in tqdm(
+                concurrent.futures.as_completed(job_lst),
+                desc="Prepared EDIA scores",
+                total=len(job_lst),
+                miniters=1,
+                position=0,
+                leave=True,
+            ):
+
+                edia_dict = merge_dicts([edia_dict, job.result()])
 
     print("Prepared EDIA scores!")
 

@@ -25,7 +25,7 @@ def build_rascore(pdbaa_fasta_path=None, data_path=None, num_cpu=1):
     entry_table_path = get_file_path(entry_table_file, dir_path=data_path)
 
     search_pdbaa(
-        pdbaa_fasta_path=f"{get_dir_name(__file__)}/scripts/PDBrenum/PDBrenum.py",
+        pdbaa_fasta_path=pdbaa_fasta_path,
         search_lst=swiss_id_lst,
         entry_table_path=entry_table_path,
         min_length=25,
@@ -37,7 +37,7 @@ def build_rascore(pdbaa_fasta_path=None, data_path=None, num_cpu=1):
     sifts_json_path = get_file_path(sifts_json_file, dir_path=data_path)
     prep_coord(
         pdb_id_lst=pdb_id_lst,
-        renum_script_path=renum_script_path,
+        renum_script_path=f"{get_dir_name(__file__)}/scripts/PDBrenum/PDBrenum.py",
         coord_table_path=entry_table_path,
         sifts_json_path=sifts_json_path,
         data=df,

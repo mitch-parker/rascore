@@ -16,22 +16,9 @@ import itertools
 from functions import *
 
 
-def calc_interf_dist(i, j, i_df, j_df):
-
-    i_cont_lst = str_to_lst(i_df.at[i, interf_cont_col])
-    j_cont_lst = str_to_lst(j_df.at[j, interf_cont_col])
-
-    i_dist_lst = str_to_lst(i_df.at[i, cb_dist_col], return_float=True)
-    j_dist_lst = str_to_lst(j_df.at[j, cb_dist_col], return_float=True)
-
-    dist = calc_q_score(i_cont_lst, j_cont_lst, i_dist_lst, j_dist_lst)
-
-    result = (i, j, dist)
-
-    return result
-
-
-def build_interf_matrix(included_df, interf_matrix_path, removed_df=None):
+def build_pocket_matrix(
+    included_df, pocket_matrix_path, removed_df=None, use_simpson=False
+):
 
     included_df = order_rows(included_df)
 
@@ -55,20 +42,31 @@ def build_interf_matrix(included_df, interf_matrix_path, removed_df=None):
     matrix = np.zeros((len(i_index_lst), len(j_index_lst)))
 
     for i_index, j_index in tqdm(
-        index_pairs, desc="Building interface matrix", position=0, leave=True
+        index_pairs, desc="Building pocket matrix", position=0, leave=True
     ):
 
-        result = calc_interf_dist(i_index, j_index, i_df, j_df)
+        i_cont_lst = str_to_lst(i_df.at[i_index, pocket_cont_col])
+        j_cont_lst = str_to_lst(j_df.at[j_index, pocket_cont_col])
 
-        i_index = result[0]
-        j_index = result[1]
-        dist = result[2]
+        if use_simpson:
+            dist = calc_simpson(
+                i_cont_lst,
+                j_cont_lst,
+                return_dist=True,
+            )
+
+        else:
+            dist = calc_jaccard(
+                i_cont_lst,
+                j_cont_lst,
+                return_dist=True,
+            )
 
         matrix[i_index, j_index] = dist
 
         if removed_df is None:
             matrix[j_index, i_index] = dist
 
-    save_matrix(interf_matrix_path, matrix)
+    save_matrix(pocket_matrix_path, matrix)
 
-    print("Built interface matrix!")
+    print("Built pocket matrix!")

@@ -8,34 +8,51 @@ This file is part of the rascore project.
 The rascore project can not be copied, edited, and/or distributed without the express
 permission of Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>.
 """
-
 import numpy as np
 from tqdm import tqdm
+import scipy
 import itertools
 
 from functions import *
 
 
-def calc_interf_dist(i, j, i_df, j_df):
+def calc_dist_dist(i_index, j_index, i_df, j_df):
 
-    i_cont_lst = str_to_lst(i_df.at[i, interf_cont_col])
-    j_cont_lst = str_to_lst(j_df.at[j, interf_cont_col])
+    i_vect_1_col_lst = get_col_col_lst(i_df, vect_1_col)
+    j_vect_1_col_lst = get_col_col_lst(j_df, vect_1_col)
 
-    i_dist_lst = str_to_lst(i_df.at[i, cb_dist_col], return_float=True)
-    j_dist_lst = str_to_lst(j_df.at[j, cb_dist_col], return_float=True)
+    i_vect_2_col_lst = get_col_col_lst(i_df, vect_2_col)
+    j_vect_2_col_lst = get_col_col_lst(j_df, vect_2_col)
 
-    dist = calc_q_score(i_cont_lst, j_cont_lst, i_dist_lst, j_dist_lst)
+    vect_1_col_lst = lst_inter(i_vect_1_col_lst, j_vect_1_col_lst)
+    vect_2_col_lst = lst_inter(i_vect_2_col_lst, j_vect_2_col_lst)
 
-    result = (i, j, dist)
+    vect_col_lst = vect_1_col_lst + vect_2_col_lst
 
-    return result
+    vect_i_lst = tuple()
+    vect_j_lst = tuple()
+
+    for col in vect_col_lst:
+        vect_i_lst += (str_to_lst(i_df.at[i_index, col]),)
+        vect_j_lst += (str_to_lst(j_df.at[j_index, col]),)
+
+    dist = scipy.spatial.distance.euclidean(vect_i_lst, vect_j_lst)
+
+    return (i_index, j_index, dist)
 
 
-def build_interf_matrix(included_df, interf_matrix_path, removed_df=None):
+def build_dist_matrix(
+    included_df,
+    dist_matrix_path,
+    removed_df=None,
+    coord_path_col=None,
+):
+
+    if coord_path_col is None:
+        coord_path_col = core_path_col
 
     included_df = order_rows(included_df)
 
-    included_df = order_rows(included_df)
     j_df = included_df.copy(deep=True)
 
     if removed_df is None:
@@ -55,10 +72,14 @@ def build_interf_matrix(included_df, interf_matrix_path, removed_df=None):
     matrix = np.zeros((len(i_index_lst), len(j_index_lst)))
 
     for i_index, j_index in tqdm(
-        index_pairs, desc="Building interface matrix", position=0, leave=True
+        index_pairs, desc="Building distance matrix", position=0, leave=True
     ):
-
-        result = calc_interf_dist(i_index, j_index, i_df, j_df)
+        result = calc_dist_dist(
+            i_index,
+            j_index,
+            i_df,
+            j_df,
+        )
 
         i_index = result[0]
         j_index = result[1]
@@ -69,6 +90,4 @@ def build_interf_matrix(included_df, interf_matrix_path, removed_df=None):
         if removed_df is None:
             matrix[j_index, i_index] = dist
 
-    save_matrix(interf_matrix_path, matrix)
-
-    print("Built interface matrix!")
+    save_matrix(dist_matrix_path, matrix)

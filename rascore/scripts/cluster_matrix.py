@@ -5,7 +5,7 @@ Copyright (C) 2021 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
 
 This file is part of the rascore project.
 
-The rascore project cannot be copied, edited, and/or distributed without the express
+The rascore project can not be copied, edited, and/or distributed without the express
 permission of Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>.
 """
 
@@ -56,18 +56,9 @@ def build_pass_lst(label_lst, matrix, max_dist, min_silh):
     return pass_lst
 
 
-def calc_overlap(lst_1, lst_2):
-
-    intersect = len([x for x in lst_1 if x in lst_2])
-
-    min_size = np.min(np.array([len(lst_1), len(lst_2)]))
-
-    return intersect / min_size
-
-
 def check_connect(compare_lst, i_index, j_index, min_simi):
 
-    overlap = calc_overlap(compare_lst[i_index][1], compare_lst[j_index][1])
+    overlap = calc_simpson(compare_lst[i_index][1], compare_lst[j_index][1])
 
     if overlap >= min_simi:
         status = 1

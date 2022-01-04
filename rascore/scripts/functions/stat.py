@@ -5,7 +5,7 @@ Copyright (C) 2021 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
 
 This file is part of the rascore project.
 
-The rascore project cannot be copied, edited, and/or distributed without the express
+The rascore project can not be copied, edited, and/or distributed without the express
 permission of Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>.
 """
 
@@ -15,9 +15,9 @@ import numpy as np
 import statsmodels.api as sm
 from statsmodels.sandbox.stats.multicomp import multipletests
 
-from util.lst import type_lst
-from util.data import lst_col, mask_equal, mask_unequal
-from util.col import (
+from .lst import type_lst
+from .table import lst_col, mask_equal, mask_unequal
+from .col import (
     total_col,
     index_col,
     p_col,

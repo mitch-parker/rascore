@@ -5,9 +5,11 @@ Copyright (C) 2021 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
 
 This file is part of the rascore project.
 
-The rascore project cannot be copied, edited, and/or distributed without the express
+The rascore project can not be copied, edited, and/or distributed without the express
 permission of Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>.
 """
+
+import numpy as np
 
 
 def format_lst(val_lst, return_str=False, return_int=False, return_float=False):
@@ -179,12 +181,31 @@ def lst_diff(
     return val_lst
 
 
-def calc_jaccard_simi(lst_1, lst_2):
+def calc_jaccard(lst_1, lst_2, return_dist=False):
 
     inter = len(lst_inter(lst_1, lst_2))
     union = (len(lst_1) + len(lst_2)) - inter
 
-    return float(inter) / union
+    jaccard = float(inter) / union
+
+    if return_dist:
+        jaccard = 1 - jaccard
+
+    return jaccard
+
+
+def calc_simpson(lst_1, lst_2, return_dist=False):
+
+    intersect = len([x for x in lst_1 if x in lst_2])
+
+    min_size = np.min(np.array([len(lst_1), len(lst_2)]))
+
+    simpson = intersect / min_size
+
+    if return_dist:
+        simpson = 1 - simpson
+
+    return simpson
 
 
 def lst_nums(start, end, return_str=False, return_int=False, return_float=False):

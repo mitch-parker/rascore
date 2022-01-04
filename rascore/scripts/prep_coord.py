@@ -5,7 +5,7 @@ Copyright (C) 2021 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
 
 This file is part of the rascore project.
 
-The rascore project cannot be copied, edited, and/or distributed without the express
+The rascore project can not be copied, edited, and/or distributed without the express
 permission of Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>.
 """
 
@@ -546,36 +546,64 @@ def run_pdb_chain(
 
     df = pd.DataFrame()
 
-    with concurrent.futures.ProcessPoolExecutor(max_workers=num_cpu) as executor:
-        job_lst = [
-            executor.submit(
-                isolate_chains,
-                pdb_code,
-                pdb_dict,
-                core_dir=core_dir,
-                rcsb_dir=rcsb_dir,
-                sifts_dir=sifts_dir,
-                renum_dir=renum_dir,
-                max_cb_dist=max_cb_dist,
-                max_atomid_dist=max_atomid_dist,
-                add_h=add_h,
-                add_h_his=add_h_his,
-                bound_chainid_dict=bound_chainid_dict,
-                all_models=all_models,
-            )
-            for pdb_code in list(pdb_dict.keys())
-        ]
-
-        for job in tqdm(
-            concurrent.futures.as_completed(job_lst),
+    if num_cpu == 1:
+        for pdb_code in tqdm(
+            list(pdb_dict.keys()),
             desc="Isolating PDB chains",
-            total=len(job_lst),
-            miniters=1,
             position=0,
             leave=True,
         ):
+            df = pd.concat(
+                [
+                    df,
+                    isolate_chains(
+                        pdb_code,
+                        pdb_dict,
+                        core_dir=core_dir,
+                        rcsb_dir=rcsb_dir,
+                        sifts_dir=sifts_dir,
+                        renum_dir=renum_dir,
+                        max_cb_dist=max_cb_dist,
+                        max_atomid_dist=max_atomid_dist,
+                        add_h=add_h,
+                        add_h_his=add_h_his,
+                        bound_chainid_dict=bound_chainid_dict,
+                        all_models=all_models,
+                    ),
+                ],
+                sort=False,
+            )
+    else:
+        with concurrent.futures.ProcessPoolExecutor(max_workers=num_cpu) as executor:
+            job_lst = [
+                executor.submit(
+                    isolate_chains,
+                    pdb_code,
+                    pdb_dict,
+                    core_dir=core_dir,
+                    rcsb_dir=rcsb_dir,
+                    sifts_dir=sifts_dir,
+                    renum_dir=renum_dir,
+                    max_cb_dist=max_cb_dist,
+                    max_atomid_dist=max_atomid_dist,
+                    add_h=add_h,
+                    add_h_his=add_h_his,
+                    bound_chainid_dict=bound_chainid_dict,
+                    all_models=all_models,
+                )
+                for pdb_code in list(pdb_dict.keys())
+            ]
 
-            df = pd.concat([df, job.result()], sort=False)
+            for job in tqdm(
+                concurrent.futures.as_completed(job_lst),
+                desc="Isolating PDB chains",
+                total=len(job_lst),
+                miniters=1,
+                position=0,
+                leave=True,
+            ):
+
+                df = pd.concat([df, job.result()], sort=False)
 
     df = df.reset_index(drop=True)
 
@@ -600,25 +628,25 @@ def prep_coord(
     data=None,
     num_cpu=1,
 ):
-    # pdb_code_lst = build_pdb_code_lst(pdb_id_lst)
+    pdb_code_lst = build_pdb_code_lst(pdb_id_lst)
 
-    # run_pdb_renum(
-    #     pdb_code_lst,
-    #     renum_script_path,
-    #     rcsb_dir=rcsb_dir,
-    #     sifts_dir=sifts_dir,
-    #     renum_dir=renum_dir,
-    #     num_cpu=num_cpu,
-    # )
+    run_pdb_renum(
+        pdb_code_lst,
+        renum_script_path,
+        rcsb_dir=rcsb_dir,
+        sifts_dir=sifts_dir,
+        renum_dir=renum_dir,
+        num_cpu=num_cpu,
+    )
 
-    # delete_path("log_corrected.txt")
-    # delete_path("log_translator.txt")
+    delete_path("log_corrected.txt")
+    delete_path("log_translator.txt")
 
-    # sifts_path_lst = [
-    #     get_sifts_path(pdb_code, dir_path=sifts_dir) for pdb_code in pdb_code_lst
-    # ]
+    sifts_path_lst = [
+        get_sifts_path(pdb_code, dir_path=sifts_dir) for pdb_code in pdb_code_lst
+    ]
 
-    # build_sifts_map(sifts_path_lst, sifts_json_path, num_cpu=num_cpu)
+    build_sifts_map(sifts_path_lst, sifts_json_path, num_cpu=num_cpu)
 
     df = run_pdb_chain(
         pdb_id_lst,

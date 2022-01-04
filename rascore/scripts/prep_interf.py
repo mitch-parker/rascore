@@ -5,7 +5,7 @@ Copyright (C) 2021 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
 
 This file is part of the rascore project.
 
-The rascore project cannot be copied, edited, and/or distributed without the express
+The rascore project can not be copied, edited, and/or distributed without the express
 permission of Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>.
 """
 
@@ -30,11 +30,7 @@ def save_interf(
     max_atomid_dist=5,
     iso_cutoff=0.9,
     chainid_lst=None,
-    coord_path_col=None,
 ):
-
-    if coord_path_col is None:
-        coord_path_col = renum_path_col
 
     file_name = get_file_name(coord_path)
 
@@ -234,11 +230,9 @@ def save_interf(
 
                                 iso_status = False
                                 if (
-                                    calc_jaccard_simi(chainid_cb_lst, sym_cb_lst)
+                                    calc_jaccard(chainid_cb_lst, sym_cb_lst)
                                     >= iso_cutoff
-                                    and calc_jaccard_simi(
-                                        chainid_atomid_lst, sym_atomid_lst
-                                    )
+                                    and calc_jaccard(chainid_atomid_lst, sym_atomid_lst)
                                     >= iso_cutoff
                                 ):
                                     iso_status = True
@@ -284,7 +278,6 @@ def prep_interf(
     max_cb_dist=12,
     max_atomid_dist=5,
     chainid_dict=None,
-    coord_path_col=None,
     num_cpu=1,
 ):
 
@@ -297,32 +290,53 @@ def prep_interf(
 
     interf_dict = dict()
 
-    with concurrent.futures.ProcessPoolExecutor(max_workers=num_cpu) as executor:
-        job_lst = [
-            executor.submit(
-                save_interf,
-                coord_path,
-                interf_dir=interf_dir,
-                sym_dist=sym_dist,
-                min_area=min_area,
-                max_cb_dist=max_cb_dist,
-                max_atomid_dist=max_atomid_dist,
-                chainid_lst=chainid_dict[coord_path],
-                coord_path_col=coord_path_col,
-            )
-            for coord_path in coord_path_lst
-        ]
-
-        for job in tqdm(
-            concurrent.futures.as_completed(job_lst),
+    if num_cpu == 1:
+        for coord_path in tqdm(
+            coord_path_lst,
             desc="Preparing interfaces",
-            total=len(job_lst),
-            miniters=1,
             position=0,
             leave=True,
         ):
+            interf_dict = merge_dicts(
+                [
+                    interf_dict,
+                    save_interf(
+                        coord_path,
+                        interf_dir=interf_dir,
+                        sym_dist=sym_dist,
+                        min_area=min_area,
+                        max_cb_dist=max_cb_dist,
+                        max_atomid_dist=max_atomid_dist,
+                        chainid_lst=chainid_dict[coord_path],
+                    ),
+                ]
+            )
+    else:
+        with concurrent.futures.ProcessPoolExecutor(max_workers=num_cpu) as executor:
+            job_lst = [
+                executor.submit(
+                    save_interf,
+                    coord_path,
+                    interf_dir=interf_dir,
+                    sym_dist=sym_dist,
+                    min_area=min_area,
+                    max_cb_dist=max_cb_dist,
+                    max_atomid_dist=max_atomid_dist,
+                    chainid_lst=chainid_dict[coord_path],
+                )
+                for coord_path in coord_path_lst
+            ]
 
-            interf_dict = merge_dicts([interf_dict, job.result()])
+            for job in tqdm(
+                concurrent.futures.as_completed(job_lst),
+                desc="Preparing interfaces",
+                total=len(job_lst),
+                miniters=1,
+                position=0,
+                leave=True,
+            ):
+
+                interf_dict = merge_dicts([interf_dict, job.result()])
 
     print("Prepared interfaces!")
 

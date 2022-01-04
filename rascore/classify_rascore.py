@@ -16,4 +16,4 @@ from constants import *
 def classify_rascore(coord_path_lst, data_path=None):
 
     if data_path is None:
-        data_path = get_dir_path(dir_str="data", dir_path=get_dir_name(__file__))
+        data_path = get_dir_path(dir_str=data_str, dir_path=get_dir_name(__file__))

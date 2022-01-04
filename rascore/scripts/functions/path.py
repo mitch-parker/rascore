@@ -5,7 +5,7 @@ Copyright (C) 2021 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
 
 This file is part of the rascore project.
 
-The rascore project cannot be copied, edited, and/or distributed without the express
+The rascore project can not be copied, edited, and/or distributed without the express
 permission of Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>.
 """
 
@@ -27,8 +27,11 @@ renum_assembly_str = "renum_assembly"
 sifts_str = "sifts"
 edia_str = "edia"
 interf_str = "interface"
+pocket_str = "pocket"
 lig_str = "ligand"
 eds_str = "eds"
+map_str = "2mFo-DFc"
+diff_str = "mFo-DFc"
 sup_str = "super"
 
 
@@ -280,15 +283,15 @@ def get_lig_path(lig, dir_path=None):
 def get_eds_map_path(pdb_code, dir_path=None):
 
     return get_file_path(
-        f"{pdb_code}_{eds_str}.ccp", dir_str=eds_str, dir_path=dir_path, pre_str=False
+        f"{pdb_code}_{map_str}.ccp", dir_str=map_str, dir_path=dir_path, pre_str=False
     )
 
 
 def get_eds_diff_path(pdb_code, dir_path=None):
 
     return get_file_path(
-        f"{pdb_code}_{eds_str}.ccp4",
-        dir_str=eds_str,
+        f"{pdb_code}_{diff_str}.ccp4",
+        dir_str=diff_str,
         dir_path=dir_path,
         pre_str=False,
     )
@@ -304,4 +307,14 @@ def get_interf_path(pdb_code, chainid, interf, dir_path=None, return_pdb=False):
             pre_str=False,
         ),
         return_pdb=return_pdb,
+    )
+
+
+def get_pocket_path(pdb_id, pocket, dir_path=None):
+
+    return get_file_path(
+        f"{pdb_id}_{pocket}_{pocket_str}.cif",
+        dir_str=pocket_str,
+        dir_path=dir_path,
+        pre_str=False,
     )

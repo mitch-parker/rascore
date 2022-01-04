@@ -5,14 +5,13 @@ Copyright (C) 2021 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
 
 This file is part of the rascore project.
 
-The rascore project cannot be copied, edited, and/or distributed without the express
+The rascore project can not be copied, edited, and/or distributed without the express
 permission of Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>.
 """
 
 import math
 from collections import defaultdict
 from Bio.PDB import calc_dihedral
-
 
 from .table import extract_int, fix_val
 from .lst import lst_nums

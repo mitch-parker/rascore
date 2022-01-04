@@ -17,9 +17,11 @@ from coord import *
 from dih import *
 from download import *
 from file import *
+from interf import *
 from lig import *
 from lst import *
 from path import *
+from pdbaa import *
 from plot import *
 from seq import *
 from stat import *

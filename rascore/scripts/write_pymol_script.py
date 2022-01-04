@@ -18,10 +18,13 @@ ion_color = "chartreuse"
 pharm_color = "salmon"
 chem_color = "cyan"
 prot_color = "slate"
+pocket_color = "white"
 hb_color = "tv_yellow"
 wmhb_color = "tv_blue"
 
 symbol_lst = [" ", "/", "_"]
+
+pymol_lig_col_lst = lig_col_lst + [pocket_lig_col]
 
 
 def init_pymol(pymol_file, color_dict=None):
@@ -202,6 +205,7 @@ def write_pymol_script(
     show_pharm=None,
     show_chem=None,
     show_prot=None,
+    show_pocket=None,
     color_palette=None,
     color_group=True,
     color_chainbow=False,
@@ -299,6 +303,7 @@ def write_pymol_script(
     pharm_color_str = set_color(pymol_file, show_pharm, pharm_color, "pharm_color")
     chem_color_str = set_color(pymol_file, show_chem, chem_color, "chem_color")
     prot_color_str = set_color(pymol_file, show_prot, prot_color, "prot_color")
+    pocket_color_str = set_color(pymol_file, show_pocket, pocket_color, "pocket_color")
 
     if type(show_hb) == list:
         hb_color_lst = list()
@@ -312,7 +317,7 @@ def write_pymol_script(
 
     lig_dict = dict()
 
-    for lig_col in lig_col_lst:
+    for lig_col in pymol_lig_col_lst:
         lig_dict[lig_col] = list()
 
     for index in index_lst:
@@ -324,7 +329,7 @@ def write_pymol_script(
         if add_h:
             coord_path = modify_coord_path(coord_path, return_pdb=True, add_h=True)
 
-        for lig_col in lig_col_lst:
+        for lig_col in pymol_lig_col_lst:
             if lig_col in df_col_lst:
                 ligs = df.at[index, lig_col]
                 if ligs != "None":
@@ -341,6 +346,8 @@ def write_pymol_script(
                 obj_lst.append(modelid)
             if interf_col in df_col_lst:
                 obj_lst.append(df.at[index, interf_col])
+            if pocket_col in df_col_lst:
+                obj_lst.append(df.at[index, pocket_col])
         else:
             obj_lst.append(get_file_name(coord_path))
 
@@ -495,6 +502,15 @@ def write_pymol_script(
         spheres=False,
     )
 
+    show_lig(
+        pymol_file,
+        pocket_lig_col,
+        lig_dict,
+        show_pocket,
+        pocket_color_str,
+        spheres=True,
+    )
+
     if show_prot is not None and show_prot != False:
         if prot_chainid_col != bound_interf_chainid_col:
             prot_style = "cartoon"
@@ -576,6 +592,8 @@ def write_pymol_script(
                     obj_lst.append(modelid)
                 if interf_col in df_col_lst:
                     obj_lst.append(df.at[index, interf_col])
+                if pocket_col in df_col_lst:
+                    obj_lst.append(df.at[index, pocket_col])
             else:
                 obj_lst.append(get_file_name(coord_path))
 
@@ -791,6 +809,9 @@ def write_pymol_script(
                 pymol_file.write(f"orient {eds_sele}\n")
 
                 pymol_file.write(f"set mesh_width, {mesh_width}\n")
+
+    if not add_h:
+        pymol_file.write("remove hydrogens\n")
 
     pymol_file.write(f"set cartoon_transparency, {cartoon_transp}\n")
 

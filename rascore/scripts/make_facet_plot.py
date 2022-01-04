@@ -5,7 +5,7 @@ Copyright (C) 2021 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
 
 This file is part of the rascore project.
 
-The rascore project cannot be copied, edited, and/or distributed without the express
+The rascore project can not be copied, edited, and/or distributed without the express
 permission of Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>.
 """
 
@@ -424,6 +424,7 @@ def make_facet_plot(
                         color="white",
                         legend=False,
                         linewidth=line_width,
+                        showfliers=False,
                     )
                     ax = sns.stripplot(
                         data=df,
@@ -435,7 +436,11 @@ def make_facet_plot(
                         palette=hue_color_dict,
                         s=marker_size,
                         alpha=0.75,
+                        split=True,
                     )
+                    if ax.get_legend() is not None:
+                        ax.get_legend().remove()
+
                     if stat_pairs is not None:
                         x_dict = dict()
                         for val in x_lst:

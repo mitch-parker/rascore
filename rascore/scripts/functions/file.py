@@ -5,7 +5,7 @@ Copyright (C) 2021 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
 
 This file is part of the rascore project.
 
-The rascore project cannot be copied, edited, and/or distributed without the express
+The rascore project can not be copied, edited, and/or distributed without the express
 permission of Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>.
 """
 
@@ -25,12 +25,13 @@ edia_json_file = "edia.json"
 map_json_file = "map.json"
 dih_json_file = "dihedral.json"
 interf_json_file = "interface.json"
+pocket_json_file = "pocket.json"
 
 dih_table_file = "dihedral.txt"
 edia_table_file = "edia.txt"
 dist_table_file = "distance.txt"
-hse_table_file = "hse.txt"
 interf_table_file = "interface.txt"
+pocket_table_file = "pocket.txt"
 
 included_table_file = "included.txt"
 removed_table_file = "removed.txt"
@@ -54,6 +55,7 @@ dist_fit_matrix_file = "dist_fit.csv"
 dist_pred_matrix_file = "pred_fit.csv"
 
 interf_matrix_file = "interface.csv"
+pocket_matrix_file = "pocket.csv"
 
 cluster_table_file = "cluster.txt"
 result_table_file = "result.txt"
@@ -69,4 +71,4 @@ venn_img_file = "venn.pdf"
 
 pymol_pml_file = "pymol.pml"
 
-sig_table_file = "significance.txt"
+stat_table_file = "statistic.txt"

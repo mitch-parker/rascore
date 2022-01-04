@@ -5,7 +5,7 @@ Copyright (C) 2021 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
 
 This file is part of the rascore project.
 
-The rascore project cannot be copied, edited, and/or distributed without the express
+The rascore project can not be copied, edited, and/or distributed without the express
 permission of Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>.
 """
 
@@ -24,6 +24,9 @@ def get_index_interf(
     cont_dist=5,
     iso_interf=False,
     het_interf=False,
+    search_interf_cont_lst=None,
+    search_cb_dist_lst=None,
+    search_max_dist=0.7,
     coord_path_col=None,
 ):
 
@@ -77,7 +80,7 @@ def get_index_interf(
                     if extract_int(resid) in interf_resid_lst:
                         add_interf = True
 
-                if resid is not None:
+                if resid is not None and add_interf:
 
                     if has_resid(
                         structure, chainid, resid_to_tuple(resid), modelid=modelid
@@ -131,6 +134,18 @@ def get_index_interf(
                                         interf_cont_lst.append(interf_cont)
                                         cb_dist_lst.append(cb_dist)
 
+            if search_interf_cont_lst is not None and search_cb_dist_lst is not None:
+                if (
+                    calc_q_score(
+                        i_cont_lst=search_interf_cont_lst,
+                        j_cont_lst=interf_cont_lst,
+                        i_dist_lst=search_cb_dist_lst,
+                        j_dist_lst=cb_dist_lst,
+                    )
+                    > search_max_dist
+                ):
+                    add_interf = False
+
         if add_interf:
             temp_df = index_df.copy(deep=True)
 
@@ -155,12 +170,39 @@ def build_interf_table(
     cont_dist=5,
     iso_interf=False,
     het_interf=False,
+    search_coord_path=None,
+    search_interf=None,
+    search_max_dist=0.7,
     coord_path_col=None,
 ):
+
+    if coord_path_col is None:
+        coord_path_col = renum_path_col
 
     interf_df = pd.DataFrame()
 
     interf_resid_lst = res_to_lst(interf_resids)
+
+    search_interf_cont_lst = None
+    search_cb_dist_lst = None
+
+    if search_coord_path is not None and search_interf is not None:
+        search_df = mask_equal(df, coord_path_col, search_coord_path)
+
+        search_df = get_index_interf(
+            search_df,
+            0,
+            interf_dict,
+            cont_dist=cont_dist,
+            coord_path_col=coord_path_col,
+        )
+
+        search_df = mask_equal(search_df, interf_col, search_interf)
+
+        search_interf_cont_lst = str_to_lst(
+            search_df.at[0, interf_cont_col], return_str=True
+        )
+        search_cb_dist_lst = str_to_lst(search_df.at[0, cb_dist_col], return_float=True)
 
     for index in tqdm(
         list(df.index.values), desc="Building interface table", position=0, leave=True
@@ -178,6 +220,9 @@ def build_interf_table(
                     interf_resid_lst=interf_resid_lst,
                     iso_interf=iso_interf,
                     het_interf=het_interf,
+                    search_interf_cont_lst=search_interf_cont_lst,
+                    search_cb_dist_lst=search_cb_dist_lst,
+                    search_max_dist=search_max_dist,
                     coord_path_col=coord_path_col,
                 ),
             ],
