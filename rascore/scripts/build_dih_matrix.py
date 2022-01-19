@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright (C) 2021 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
+Copyright (C) 2022 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
 
 This file is part of the rascore project.
 
-The rascore project can not be copied, edited, and/or distributed without the express
+The rascore project cannot be copied, edited, and/or distributed without the express
 permission of Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>.
 """
 
@@ -14,7 +14,7 @@ from tqdm import tqdm
 import itertools
 import math
 
-from functions import *
+from ..functions import *
 
 
 def calc_flip_dist(norm_dist, resid_dict, index_dict, norm_dict, flip_dict, mean=False):
@@ -173,9 +173,9 @@ def calc_dih_dist(i, j, i_df, j_df, flip_diff=180):
 def build_dih_matrix(
     included_df,
     max_norm_path,
-    mean_norm_path,
-    max_flip_path,
-    mean_flip_path,
+    mean_norm_path=None,
+    max_flip_path=None,
+    mean_flip_path=None,
     removed_df=None,
     flip_diff=180,
 ):
@@ -234,8 +234,14 @@ def build_dih_matrix(
                 matrix[j_index, i_index] = dist
 
     save_matrix(max_norm_path, max_norm_matrix)
-    save_matrix(mean_norm_path, mean_norm_matrix)
-    save_matrix(max_flip_path, max_flip_matrix)
-    save_matrix(mean_flip_path, mean_flip_matrix)
+
+    if mean_norm_path is not None:
+        save_matrix(mean_norm_path, mean_norm_matrix)
+
+    if max_flip_path is not None:
+        save_matrix(max_flip_path, max_flip_matrix)
+
+    if mean_flip_path is not None:
+        save_matrix(mean_flip_path, mean_flip_matrix)
 
     print("Built dihedral matrix!")

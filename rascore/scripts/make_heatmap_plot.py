@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright (C) 2021 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
+Copyright (C) 2022 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
 
 This file is part of the rascore project.
 
-The rascore project can not be copied, edited, and/or distributed without the express
+The rascore project cannot be copied, edited, and/or distributed without the express
 permission of Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>.
 """
 
@@ -17,7 +17,7 @@ import matplotlib.patches as mpatches
 from matplotlib.patches import Rectangle
 import seaborn as sns
 
-from functions import *
+from ..functions import *
 
 
 def make_heatmap_plot(
@@ -36,7 +36,7 @@ def make_heatmap_plot(
     count_cf=False,
     plot_width=4,
     plot_height=4,
-    font_size=10,
+    font_size=7,
     line_width=0.5,
     tick_len=2,
     cmap_palette="viridis",

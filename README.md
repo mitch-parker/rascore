@@ -2,7 +2,7 @@
 
 ## Summary
 
-rascore is a Python package for classifying RAS (KRAS, NRAS, and HRAS) structures by their switch 1 (SW1; residues 25-40) and switch 2 (SW2: residues 56-76) loop conformations and annotating their molecular contents (e.g., mutation status, bound proteins and inhibitors). Details of our RAS conformational classification are provided on BioArxiv in the manuscript: "An expanded classification of active, inactive and druggable RAS conformations." We hope that researchers will use rascore to gain novel insights into RAS biology and drug discovery. 
+rascore is a Python package for conformationally classifying RAS structures (KRAS, NRAS, and HRAS) by their switch 1 and switch 2 loop conformations. Details of our RAS conformational classification are provided on BioArxiv in the manuscript: "An expanded classification of active, inactive and druggable RAS conformations." We hope that researchers will use rascore to gain novel insights into RAS biology and drug discovery. 
 
 ## Installation
 
@@ -27,10 +27,11 @@ Quickstart commands with an installation of Anaconda (https://www.anaconda.com/p
 - conda install -c conda-forge tqdm
 - conda install -c conda-forge statannot 
 - conda install -c conda-forge matplotlib-venn
+- conda install -c conda-forge fpocket
 
 ## Usage
 
-Users may provide stuctures in mmCIF or PDB format, or rascore can be used to download available RAS structures from the Protein Data Bank (PDB). Importantly, any user inputted structure must be numbered according to UniProt scheme. Below, we provide commands for running the scripts in rascore:
+Users may provide RAS stuctures in mmCIF or PDB format for conformational classification, or rascore can be used to download all available KRAS, NRAS, and HRAS structures from the Protein Data Bank (PDB) to conformationally classify. Importantly, any user inputted structure(s) must be numbered according to UniProt scheme. Below, we provide commands for running the scripts in rascore:
 
 # Authors
 
@@ -45,7 +46,7 @@ Users may provide stuctures in mmCIF or PDB format, or rascore can be used to do
 - GitHub: https://github.com/DunbrackLab
 
 ## License
-Copyright (C) 2021 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
+Copyright (C) 2022 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
 
 This file is part of the rascore project.
 

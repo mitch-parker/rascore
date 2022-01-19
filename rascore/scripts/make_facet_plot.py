@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright (C) 2021 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
+Copyright (C) 2022 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
 
 This file is part of the rascore project.
 
-The rascore project can not be copied, edited, and/or distributed without the express
+The rascore project cannot be copied, edited, and/or distributed without the express
 permission of Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>.
 """
 
@@ -19,7 +19,7 @@ import warnings
 
 warnings.filterwarnings("ignore", module="seaborn")
 
-from functions import *
+from ..functions import *
 
 grid_hex = change_hex_alpha(gray_hex, 0.25)
 
@@ -69,11 +69,12 @@ def make_facet_plot(
     col_col=None,
     rename_col=None,
     col_order=None,
+    col_count=False,
     col_wrap=None,
     col_palette=None,
     plot_width=4,
     plot_height=None,
-    font_size=10,
+    font_size=7,
     marker_size=1,
     line_width=0.5,
     tick_len=2,
@@ -92,6 +93,10 @@ def make_facet_plot(
     y_ticks=None,
     x_round=0,
     y_round=0,
+    x_rotation=0,
+    y_rotation=0,
+    x_ha="center",
+    y_ha="right",
     x_str=None,
     y_str=None,
     x_pad=None,
@@ -108,6 +113,10 @@ def make_facet_plot(
     plot_reg=False,
     plot_kde=False,
     plot_kind=None,
+    log_reg=False,
+    reg_estimator=None,
+    reg_bins=None,
+    trun_reg=False,
     kde_common_norm=True,
     kde_common_grid=False,
     kde_bw=1.0,
@@ -119,6 +128,7 @@ def make_facet_plot(
     stat_loc="inside",
     stat_format="star",
     tick_mult=0.75,
+    all_ticks=False,
 ):
     df = plot_df.copy(deep=True)
 
@@ -216,6 +226,10 @@ def make_facet_plot(
         color_palette=col_palette,
         rename_vals=rename_col,
         order_lst=col_order,
+        label_count=col_count,
+        count_chain=count_chain,
+        count_pdb=count_pdb,
+        count_cf=count_cf,
     )
     total_col = len(col_lst)
 
@@ -272,6 +286,8 @@ def make_facet_plot(
     sns.set_style("ticks")
     sns.set_palette(list(hue_color_dict.values()))
 
+    bbox_extra_artists = tuple()
+
     if row_col is None:
         if col_wrap is None:
             col_wrap = total_col
@@ -318,6 +334,7 @@ def make_facet_plot(
             )
 
         else:
+
             if plot_line:
                 g.map(sns.lineplot, x_col, y_col)
             if plot_reg:
@@ -325,8 +342,16 @@ def make_facet_plot(
                     sns.regplot,
                     x_col,
                     y_col,
-                    scatter_kws={"s": marker_size, "linewidth": 0, "alpha": 0.75},
+                    scatter_kws={
+                        "s": marker_size,
+                        "linewidth": 0,
+                        "alpha": 0.75,
+                    },
                     line_kws={"linewidth": line_width},
+                    logx=log_reg,
+                    x_estimator=reg_estimator,
+                    x_bins=reg_bins,
+                    truncate=trun_reg,
                 )
             if plot_kde:
                 g.map(
@@ -370,12 +395,13 @@ def make_facet_plot(
                 kind=plot_kind,
                 palette=hue_color_dict,
                 legend=False,
-                sharex=True,
+                sharex=False,
                 sharey=True,
                 margin_titles=True,
                 s=marker_size,
                 linewidth=0,
                 alpha=0.75,
+                dodge=True,
             )
         else:
             if (
@@ -405,7 +431,7 @@ def make_facet_plot(
                     kind=plot_kind,
                     palette=hue_color_dict,
                     legend=False,
-                    sharex=True,
+                    sharex=False,
                     sharey=True,
                     linewidth=cat_width,
                     margin_titles=True,
@@ -426,6 +452,7 @@ def make_facet_plot(
                         linewidth=line_width,
                         showfliers=False,
                     )
+
                     ax = sns.stripplot(
                         data=df,
                         x=x_col,
@@ -498,6 +525,20 @@ def make_facet_plot(
                 xticks=x_ticks,
                 yticks=y_ticks,
             )
+    else:
+        if y_ticks is not None and y_lim is not None:
+            g.set(
+                ylim=y_lim,
+                yticks=y_ticks,
+            )
+        elif y_ticks is not None:
+            g.set(
+                yticks=y_ticks,
+            )
+        elif y_lim is not None:
+            g.set(
+                ylim=y_lim,
+            )
 
     g.fig.subplots_adjust(wspace=0, hspace=0)
 
@@ -507,7 +548,7 @@ def make_facet_plot(
     x_label = plt.xlabel(x_str, fontsize=font_size, labelpad=x_pad)
     y_label = plt.ylabel(y_str, fontsize=font_size, labelpad=y_pad)
 
-    bbox_extra_artists = (x_label, y_label)
+    bbox_extra_artists += (x_label, y_label)
 
     if show_legend or type(show_legend) == dict:
 
@@ -515,7 +556,7 @@ def make_facet_plot(
             legend_cols = get_ncols(hue_lst)
 
         if legend_marker_size is None:
-            legend_marker_size = marker_size * 5
+            legend_marker_size = marker_size * 3
 
         if type(show_legend) == dict:
             handles = [
@@ -605,19 +646,20 @@ def make_facet_plot(
             for v in v_line_lst:
                 ax.axvline(x=v, linewidth=line_width, color=v_color)
 
-        if type(ax_name) == str:
-            if " (N=" in ax_name:
-                ax_name = ax_name.split(" (N=")[0]
-        elif type(ax_name) == tuple:
-            ax_name = list(ax_name)
-            for n, name in enumerate(ax_name):
-                ax_name[n] = name.split(" (N=")[0]
-            ax_name = tuple(ax_name)
+        clean_name = ax_name
+        if type(clean_name) == str:
+            if " (N=" in clean_name:
+                clean_name = clean_name.split(" (N=")[0]
+        elif type(clean_name) == tuple:
+            clean_name = list(clean_name)
+            for n, name in enumerate(clean_name):
+                clean_name[n] = name.split(" (N=")[0]
+            clean_name = tuple(clean_name)
 
         ax_grid_hex = grid_hex
         if darken_lst is not None:
             for d, darken in enumerate(darken_lst):
-                if ax_name in darken:
+                if clean_name in darken:
                     ax.set_facecolor(darken_color_lst[d])
                     ax_grid_hex = "white"
 
@@ -661,7 +703,7 @@ def make_facet_plot(
                 highlight_color = gray_hex
                 if highlight_lst is not None:
                     for h, highlight in enumerate(highlight_lst):
-                        if ax_name in highlight:
+                        if clean_name in highlight:
                             highlight_color = highlight_color_lst[h]
 
                 divider = make_axes_locatable(ax)
@@ -742,12 +784,14 @@ def make_facet_plot(
                 left_label = False
                 left = False
         elif i % total_col == 0:
-            if tick_index % 2 != 0:
+            if tick_index % 2 != 0 or all_ticks:
                 add_ticks = True
             tick_index += 1
-            bottom_label = False
+            if not all_ticks:
+                bottom_label = False
+                bottom = False
         elif (total_axes - i) < total_col + 1:
-            if i % 2 != 0:
+            if i % 2 != 0 or all_ticks:
                 add_ticks = True
             left_label = False
             left = False
@@ -759,31 +803,40 @@ def make_facet_plot(
 
         if add_ticks:
 
+            tick_format = "{:,."
+
             if plot_kind is None:
-
-                tick_format = "{:,."
-
                 x_tick_format = tick_format + str(x_round)
-                y_tick_format = tick_format + str(y_round)
 
                 x_tick_format += "f}"
-                y_tick_format += "f}"
 
                 x_tick_lst = ax.get_xticks()
                 ax.xaxis.set_major_locator(mticker.FixedLocator(x_tick_lst))
                 ax.set_xticklabels(
                     [x_tick_format.format(x) for x in x_tick_lst],
                     fontsize=font_size * tick_mult,
-                )
-
-                y_tick_lst = ax.get_yticks()
-                ax.yaxis.set_major_locator(mticker.FixedLocator(y_tick_lst))
-                ax.set_yticklabels(
-                    [y_tick_format.format(y) for y in y_tick_lst],
-                    fontsize=font_size * tick_mult,
+                    rotation=x_rotation,
+                    ha=x_ha,
                 )
             else:
-                ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha="right")
+                ax.set_xticklabels(
+                    ax.get_xticklabels(),
+                    fontsize=font_size * tick_mult,
+                    rotation=45,
+                    ha="right",
+                )
+
+            y_tick_format = tick_format + str(y_round)
+            y_tick_format += "f}"
+
+            y_tick_lst = ax.get_yticks()
+            ax.yaxis.set_major_locator(mticker.FixedLocator(y_tick_lst))
+            ax.set_yticklabels(
+                [y_tick_format.format(y) for y in y_tick_lst],
+                fontsize=font_size * tick_mult,
+                rotation=y_rotation,
+                ha=y_ha,
+            )
 
         elif not add_ticks:
             bottom_label = False

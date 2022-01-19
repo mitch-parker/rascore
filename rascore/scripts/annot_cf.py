@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright (C) 2021 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
+Copyright (C) 2022 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
 
 This file is part of the rascore project.
 
@@ -14,7 +14,7 @@ import numpy as np
 from tqdm import tqdm
 import concurrent.futures
 
-from functions import *
+from ..functions import *
 
 len_col_lst = [len_a_col, len_b_col, len_c_col]
 ang_col_lst = [ang_a_col, ang_b_col, ang_g_col]

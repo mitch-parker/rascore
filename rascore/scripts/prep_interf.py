@@ -1,24 +1,28 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright (C) 2021 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
+Copyright (C) 2022 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
 
 This file is part of the rascore project.
 
-The rascore project can not be copied, edited, and/or distributed without the express
+The rascore project cannot be copied, edited, and/or distributed without the express
 permission of Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>.
 """
 
+from matplotlib import use
 from tqdm import tqdm
 import concurrent.futures
 import pymol2
 
-from functions import *
+from ..functions import *
 
 byres_str = "byres"
 within_str = "within"
 of_str = "of"
 cb_str = "and name CB"
+
+max_cb_dist = 12.0
+max_atomid_dist = 5.0
 
 
 def save_interf(
@@ -26,9 +30,8 @@ def save_interf(
     interf_dir=None,
     sym_dist=5.0,
     min_area=200,
-    max_cb_dist=12,
-    max_atomid_dist=5,
-    iso_cutoff=0.9,
+    iso_min_simi=0.7,
+    use_simpson=True,
     chainid_lst=None,
 ):
 
@@ -229,11 +232,19 @@ def save_interf(
                                 cmd.save(interf_path, interf_obj)
 
                                 iso_status = False
+                                if use_simpson:
+                                    cb_simi = calc_simpson(chainid_cb_lst, sym_cb_lst)
+                                    atomid_simi = calc_simpson(
+                                        chainid_atomid_lst, sym_atomid_lst
+                                    )
+                                else:
+                                    cb_simi = calc_jaccard(chainid_cb_lst, sym_cb_lst)
+                                    atomid_simi = calc_jaccard(
+                                        chainid_atomid_lst, sym_atomid_lst
+                                    )
                                 if (
-                                    calc_jaccard(chainid_cb_lst, sym_cb_lst)
-                                    >= iso_cutoff
-                                    and calc_jaccard(chainid_atomid_lst, sym_atomid_lst)
-                                    >= iso_cutoff
+                                    cb_simi >= iso_min_simi
+                                    and atomid_simi >= iso_min_simi
                                 ):
                                     iso_status = True
 
@@ -275,8 +286,8 @@ def prep_interf(
     interf_json_path=None,
     sym_dist=5.0,
     min_area=200,
-    max_cb_dist=12,
-    max_atomid_dist=5,
+    iso_min_simi=0.7,
+    use_simpson=True,
     chainid_dict=None,
     num_cpu=1,
 ):
@@ -305,8 +316,6 @@ def prep_interf(
                         interf_dir=interf_dir,
                         sym_dist=sym_dist,
                         min_area=min_area,
-                        max_cb_dist=max_cb_dist,
-                        max_atomid_dist=max_atomid_dist,
                         chainid_lst=chainid_dict[coord_path],
                     ),
                 ]
@@ -320,8 +329,8 @@ def prep_interf(
                     interf_dir=interf_dir,
                     sym_dist=sym_dist,
                     min_area=min_area,
-                    max_cb_dist=max_cb_dist,
-                    max_atomid_dist=max_atomid_dist,
+                    iso_min_simi=iso_min_simi,
+                    use_simpson=use_simpson,
                     chainid_lst=chainid_dict[coord_path],
                 )
                 for coord_path in coord_path_lst

@@ -1,18 +1,19 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright (C) 2021 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
+Copyright (C) 2022 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
 
 This file is part of the rascore project.
 
-The rascore project can not be copied, edited, and/or distributed without the express
+The rascore project cannot be copied, edited, and/or distributed without the express
 permission of Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>.
 """
 
 import pandas as pd
+import numpy as np
 from tqdm import tqdm
 
-from functions import *
+from ..functions import *
 
 
 def get_index_pocket(
@@ -30,6 +31,12 @@ def get_index_pocket(
     if coord_path_col is None:
         coord_path_col = core_path_col
 
+    if search_cont_lst is not None:
+        if not any(isinstance(x, list) for x in search_cont_lst):
+            search_cont_lst = [search_cont_lst]
+            for i, search_cont in enumerate(search_cont_lst):
+                search_cont_lst[i] = [str(x) for x in search_cont]
+
     index_df = get_df_at_index(df, index)
 
     coord_path = index_df.at[index, coord_path_col]
@@ -37,49 +44,57 @@ def get_index_pocket(
 
     pocket_df = pd.DataFrame()
 
-    for pocket in list(pocket_dict[coord_path].keys()):
+    if coord_path in list(pocket_dict.keys()):
+        for pocket in list(pocket_dict[coord_path].keys()):
 
-        add_pocket = True
+            add_pocket = True
 
-        if min_volume is not None:
-            if float(pocket_dict[coord_path][pocket][pocket_volume_col]) < min_volume:
-                add_pocket = False
+            if min_volume is not None:
+                if (
+                    float(pocket_dict[coord_path][pocket][pocket_volume_col])
+                    < min_volume
+                ):
+                    add_pocket = False
 
-        if min_score is not None:
-            if float(pocket_dict[coord_path][pocket][pocket_score_col]) < min_score:
-                add_pocket = False
+            if min_score is not None:
+                if float(pocket_dict[coord_path][pocket][pocket_score_col]) < min_score:
+                    add_pocket = False
 
-        if search_cont_lst is not None:
-            pocket_cont_lst = str_to_lst(
-                pocket_dict[coord_path][pocket][pocket_cont_col]
-            )
-            if use_simpson:
-                pocket_dist = calc_simpson(
-                    pocket_cont_lst,
-                    search_cont_lst,
-                    return_dist=True,
+            if search_cont_lst is not None:
+
+                pocket_cont = str_to_lst(
+                    pocket_dict[coord_path][pocket][pocket_cont_col]
                 )
 
-            else:
-                pocket_dist = calc_jaccard(
-                    pocket_cont_lst,
-                    search_cont_lst,
-                    return_dist=True,
-                )
+                pocket_dist_lst = list()
+                for search_cont in search_cont_lst:
+                    if use_simpson:
+                        pocket_dist = calc_simpson(
+                            pocket_cont,
+                            search_cont,
+                            return_dist=True,
+                        )
 
-            if pocket_dist > search_max_dist:
-                add_pocket = False
+                    else:
+                        pocket_dist = calc_jaccard(
+                            pocket_cont,
+                            search_cont,
+                            return_dist=True,
+                        )
+                    pocket_dist_lst.append(pocket_dist)
 
-        if add_pocket:
-            temp_df = index_df.copy(deep=True)
+                if np.mean(pocket_dist) > search_max_dist:
+                    add_pocket = False
 
-            for col in list(pocket_dict[coord_path][pocket].keys()):
-                temp_df.at[index, col] = pocket_dict[coord_path][pocket][col]
+            if add_pocket:
+                temp_df = index_df.copy(deep=True)
 
-            temp_df.at[index, pocket_col] = pocket
-            temp_df.at[index, pocket_lig_col] = "STP"
+                for col in list(pocket_dict[coord_path][pocket].keys()):
+                    temp_df.at[index, col] = pocket_dict[coord_path][pocket][col]
 
-            pocket_df = pd.concat([pocket_df, temp_df], sort=False)
+                temp_df.at[index, pocket_col] = pocket
+
+                pocket_df = pd.concat([pocket_df, temp_df], sort=False)
 
     return pocket_df
 
@@ -124,6 +139,8 @@ def build_pocket_table(
         )
 
     pocket_df = pocket_df.reset_index(drop=True)
+
+    pocket_df[pocket_id_col] = pocket_df[pdb_id_col] + pocket_df[pocket_col]
 
     if pocket_table_path is not None:
         save_table(pocket_table_path, pocket_df)

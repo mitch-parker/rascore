@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright (C) 2021 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
+Copyright (C) 2022 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
 
 This file is part of the rascore project.
 
-The rascore project can not be copied, edited, and/or distributed without the express
+The rascore project cannot be copied, edited, and/or distributed without the express
 permission of Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>.
 """
 
 import pandas as pd
 from tqdm import tqdm
 
-from functions import *
+from ..functions import *
 
 
 def get_index_edia(
@@ -20,7 +20,7 @@ def get_index_edia(
     index,
     edia_dict,
     resid_lst,
-    max_ca_dist=2,
+    max_ca_dist=4,
     ext_mult=1,
     coord_path_col=None,
 ):

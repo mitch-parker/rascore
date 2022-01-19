@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright (C) 2021 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
+Copyright (C) 2022 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
 
 This file is part of the rascore project.
 
-The rascore project can not be copied, edited, and/or distributed without the express
+The rascore project cannot be copied, edited, and/or distributed without the express
 permission of Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>.
 """
 
 from tqdm import tqdm
 import concurrent.futures
 
-from functions import *
+from ..functions import *
 
 
 def build_dih_dict(coord_path):
@@ -90,7 +90,7 @@ def prep_dih(coord_paths, dih_json_path=None, num_cpu=1):
 
     coord_path_lst = type_lst(coord_paths)
 
-    final_dih_dict = dict()
+    dih_dict = dict()
 
     if num_cpu == 1:
         for coord_path in tqdm(
@@ -99,7 +99,7 @@ def prep_dih(coord_paths, dih_json_path=None, num_cpu=1):
             position=0,
             leave=True,
         ):
-            final_dih_dict = merge_dicts([final_dih_dict, build_dih_dict(coord_path)])
+            dih_dict = merge_dicts([dih_dict, build_dih_dict(coord_path)])
 
     else:
         with concurrent.futures.ProcessPoolExecutor(max_workers=num_cpu) as executor:
@@ -116,11 +116,11 @@ def prep_dih(coord_paths, dih_json_path=None, num_cpu=1):
                 position=0,
                 leave=True,
             ):
-                final_dih_dict = merge_dicts([final_dih_dict, job.result()])
+                dih_dict = merge_dicts([dih_dict, job.result()])
 
     print("Prepared dihedrals!")
 
     if dih_json_path is not None:
-        save_json(dih_json_path, final_dih_dict)
+        save_json(dih_json_path, dih_dict)
     else:
-        return final_dih_dict
+        return dih_dict

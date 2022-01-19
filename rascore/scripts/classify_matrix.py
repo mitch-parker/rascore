@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright (C) 2021 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
+Copyright (C) 2022 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
 
 This file is part of the rascore project.
 
-The rascore project can not be copied, edited, and/or distributed without the express
+The rascore project cannot be copied, edited, and/or distributed without the express
 permission of Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>.
 """
 
 import pandas as pd
 from tqdm import tqdm
 
-from functions import *
+from ..functions import *
 
 
 def classify_matrix(
@@ -29,6 +29,8 @@ def classify_matrix(
     max_constr_dist=None,
     constr_method="mean",
     only_save_pred=False,
+    reorder_class=True,
+    unclass_name="Noise",
 ):
 
     if max_nn_dist is None:
@@ -117,10 +119,10 @@ def classify_matrix(
                 else:
                     classified_dict[cluster] = total_classified_constr_col
 
-            if add_cluster and cluster != "Noise":
+            if add_cluster and cluster != unclass_name:
                 pred_lst.append(cluster)
 
-        pred_cluster = "Noise"
+        pred_cluster = unclass_name
 
         if len(pred_lst) == 1:
             pred_cluster = pred_lst[0]
@@ -145,7 +147,8 @@ def classify_matrix(
     if not only_save_pred:
         removed_df = pd.concat([cluster_df, removed_df], sort=False)
         removed_df = removed_df.reset_index(drop=True)
-        removed_df = order_clusters(removed_df)
+        if reorder_class:
+            removed_df = order_clusters(removed_df)
 
     save_table(result_table_path, removed_df)
 

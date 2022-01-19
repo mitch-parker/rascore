@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright (C) 2021 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
+Copyright (C) 2022 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
 
 This file is part of the rascore project.
 
-The rascore project can not be copied, edited, and/or distributed without the express
+The rascore project cannot be copied, edited, and/or distributed without the express
 permission of Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>.
 """
 
@@ -16,7 +16,7 @@ import json
 from tqdm import tqdm
 import concurrent.futures
 
-from functions import *
+from ..functions import *
 
 
 def download_edia_scores(path, pdb_code):
@@ -130,7 +130,11 @@ def get_pdb_edia_dict(pdb_code, edia_dir=None, sifts_dict=None):
 
 
 def prep_edia(
-    pdb_codes, edia_dir=None, edia_json_path=None, sifts_dict=None, num_cpu=1
+    pdb_codes,
+    edia_dir=None,
+    edia_json_path=None,
+    sifts_dict=None,
+    num_cpu=1,
 ):
 
     append_path(get_dir_path(dir_str=edia_str, dir_path=edia_dir))
@@ -142,7 +146,7 @@ def prep_edia(
     if num_cpu == 1:
         for pdb_code in tqdm(
             pdb_code_lst,
-            desc="Prepared EDIA scores",
+            desc="Preparing EDIA scores",
             position=0,
             leave=True,
         ):

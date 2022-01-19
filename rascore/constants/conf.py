@@ -1,18 +1,17 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright (C) 2021 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
+Copyright (C) 2022 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
 
 This file is part of the rascore project.
 
 The rascore project cannot be copied, edited, and/or distributed without the express
 permission of Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>.
 """
-
-from scripts.functions import *
-from nuc import *
-from pharm import *
-from prot import *
+from ..functions import *
+from .nuc import *
+from .pharm import *
+from .prot import *
 
 sw1_name = "SW1"
 sw2_name = "SW2"
@@ -40,8 +39,8 @@ wat_hb_name = "WaterHB"
 dir_hb_name = "DirectHB"
 no_hb_name = "NoHB"
 
-active_name = "Active"
-inactive_name = "Inactive"
+r_name = "R"
+t_name = "T"
 
 noise_name = "Noise"
 
@@ -58,7 +57,7 @@ noise_color = gray_hex
 sw1_gtp_dict = {
     wmhb_name: sw1_gtp_wat_name,
     hb_name: sw1_gtp_dir_name,
-    nohb_name: sw1_gtp_no_name,
+    no_hb_name: sw1_gtp_no_name,
 }
 
 sw1_gtp_color_dict = {
@@ -75,12 +74,12 @@ sw2_gdp_sp2_a_name = f"{sw2_gdp_name}-{sp2_name}-A"
 sw2_gdp_sp2_b_name = f"{sw2_gdp_name}-{sp2_name}-B"
 sw2_gdp_binder_name = f"{sw2_gdp_name}-{binder_name}"
 
-sw2_gtp_active_name = f"{sw2_gtp_name}-{active_name}"
+sw2_gtp_r_name = f"{sw2_gtp_name}-{r_name}"
 sw2_gtp_sp12_a_name = f"{sw2_gtp_name}-{sp12_name}-A"
 sw2_gtp_sp12_b_name = f"{sw2_gtp_name}-{sp12_name}-B"
-sw2_gtp_inactive_name = f"{sw2_gtp_name}-{inactive_name}"
+sw2_gtp_t_name = f"{sw2_gtp_name}-{t_name}"
 
-conf_rama_dict = {
+conf_name_dict = {
     sw1_name: {
         nf_name: {"BBAABBBBBAABBLAA": sw1_nf_name},
         gdp_name: {
@@ -107,17 +106,17 @@ conf_rama_dict = {
             "BBBBLAABBBAAAAAAAAABAm": sw2_gdp_binder_name,
         },
         gtp_name: {
-            "BBBBABAAAAAAAAAAAAABAp": sw2_gtp_active_name,
-            "BBBBABAABAAAAAAAAAABAp": sw2_gtp_active_name,
+            "BBBBABAAAAAAAAAAAAABAp": sw2_gtp_r_name,
+            "BBBBABAABAAAAAAAAAABAp": sw2_gtp_r_name,
             "BBBBABBABAAAAAAAAAABAp": sw2_gtp_sp12_a_name,
             "BBBBAABBBBAAAAAAAAABAp": sw2_gtp_sp12_b_name,
             "BBBBABBBBBAAAAAAAAABAp": sw2_gtp_sp12_b_name,
             "BBBBABBABBAAAAAAAAABAp": sw2_gtp_sp12_b_name,
             "BBBBABBBBBAAAAAABAABAp": sw2_gtp_sp12_b_name,
-            "BBBBABAAAAAAAAAAAAABAm": sw2_gtp_inactive_name,
-            "BBBBABAAAAABAAAAAAABAm": sw2_gtp_inactive_name,
-            "BBBBABAAAABAAAAAAAABAm": sw2_gtp_inactive_name,
-            "BBBBABAAAABLAAAAAAABAm": sw2_gtp_inactive_name,
+            "BBBBABAAAAAAAAAAAAABAm": sw2_gtp_t_name,
+            "BBBBABAAAAABAAAAAAABAm": sw2_gtp_t_name,
+            "BBBBABAAAABAAAAAAAABAm": sw2_gtp_t_name,
+            "BBBBABAAAABLAAAAAAABAm": sw2_gtp_t_name,
         },
     },
 }
@@ -125,24 +124,24 @@ conf_rama_dict = {
 
 conf_color_dict = {
     sw1_name: {
-        sw1_nf_name: blue_hex,
-        sw1_gdp_name: orange_hex,
+        sw1_nf_name: nf_color,
+        sw1_gdp_name: gdp_color,
         sw1_gtp_wat_name: sw1_gtp_wat_color,
         sw1_gtp_dir_name: sw1_gtp_dir_color,
         sw1_gtp_no_name: sw1_gtp_no_color,
-        noise_name: gray_hex,
+        noise_name: noise_color,
     },
     sw2_name: {
-        sw2_nf_gef_name: blue_hex,
-        sw2_gdp_sp12_name: orange_hex,
-        sw2_gdp_sp2_a_name: olive_hex,
-        sw2_gdp_sp2_b_name: red_hex,
-        sw2_gdp_binder_name: purple_hex,
-        sw2_gtp_active_name: green_hex,
-        sw2_gtp_sp12_a_name: cyan_hex,
-        sw2_gtp_inactive_name: pink_hex,
-        sw2_gtp_sp12_b_name: brown_hex,
-        noise_name: gray_hex,
+        sw2_nf_gef_name: light_blue_hex,
+        sw2_gdp_sp12_name: light_orange_hex,
+        sw2_gdp_sp2_a_name: light_olive_hex,
+        sw2_gdp_sp2_b_name: light_red_hex,
+        sw2_gdp_binder_name: light_purple_hex,
+        sw2_gtp_r_name: light_green_hex,
+        sw2_gtp_sp12_a_name: light_cyan_hex,
+        sw2_gtp_r_name: light_pink_hex,
+        sw2_gtp_sp12_b_name: light_brown_hex,
+        noise_name: light_gray_hex,
     },
 }
 
@@ -160,9 +159,9 @@ conf_nuc_color_dict = {
         sw2_gdp_sp2_a_name: gdp_color,
         sw2_gdp_sp2_b_name: gdp_color,
         sw2_gdp_binder_name: gdp_color,
-        sw2_gtp_active_name: gtp_color,
+        sw2_gtp_r_name: gtp_color,
         sw2_gtp_sp12_a_name: gtp_color,
-        sw2_gtp_inactive_name: gtp_color,
+        sw2_gtp_t_name: gtp_color,
         sw2_gtp_sp12_b_name: gtp_color,
         noise_name: noise_color,
     },

@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright (C) 2021 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
+Copyright (C) 2022 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
 
 This file is part of the rascore project.
 
-The rascore project can not be copied, edited, and/or distributed without the express
+The rascore project cannot be copied, edited, and/or distributed without the express
 permission of Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>.
 """
 
-from functions import *
+from ..functions import *
 
 polymer_color = "gray80"
 
@@ -18,7 +18,7 @@ ion_color = "chartreuse"
 pharm_color = "salmon"
 chem_color = "cyan"
 prot_color = "slate"
-pocket_color = "white"
+pocket_color = "grey50"
 hb_color = "tv_yellow"
 wmhb_color = "tv_blue"
 
@@ -113,18 +113,24 @@ def show_lig(
     lig_dict,
     show_lig,
     lig_color,
+    group=None,
     spheres=False,
 ):
 
     if show_lig is not None and show_lig != False:
 
-        lig_str = lst_to_str(lig_dict[lig_col], join_txt="+")
+        if group is None:
+            lig_str = lst_to_str(lig_dict[lig_col], join_txt="+")
+        else:
+            lig_str = lst_to_str(lig_dict[group][lig_col], join_txt="+")
 
         if lig_str is not None:
-
-            lig_sele = f"{lig_col}_lig"
-
-            pymol_file.write(f"select {lig_sele}, resn {lig_str}\n")
+            if group is None:
+                lig_sele = lig_col
+                pymol_file.write(f"select {lig_sele}, resn {lig_str}\n")
+            else:
+                lig_sele = f"{group}_{lig_col}"
+                pymol_file.write(f"select {lig_sele}, *_{group} and resn {lig_str}\n")
 
             pymol_file.write(f"color {lig_color}, {lig_sele}\n")
 
@@ -276,6 +282,9 @@ def write_pymol_script(
         for group in group_lst:
             group_dict[group] = list()
 
+    if color_chainbow:
+        color_group = False
+
     if (group_col is None or color_group is False) and loop_resids is not None:
         label_lst = loop_resid_lst.copy()
     else:
@@ -317,8 +326,14 @@ def write_pymol_script(
 
     lig_dict = dict()
 
-    for lig_col in pymol_lig_col_lst:
-        lig_dict[lig_col] = list()
+    if group_col is None:
+        for lig_col in pymol_lig_col_lst:
+            lig_dict[lig_col] = list()
+    else:
+        for group in group_lst:
+            lig_dict[group] = dict()
+            for lig_col in pymol_lig_col_lst:
+                lig_dict[group][lig_col] = list()
 
     for index in index_lst:
 
@@ -328,15 +343,6 @@ def write_pymol_script(
 
         if add_h:
             coord_path = modify_coord_path(coord_path, return_pdb=True, add_h=True)
-
-        for lig_col in pymol_lig_col_lst:
-            if lig_col in df_col_lst:
-                ligs = df.at[index, lig_col]
-                if ligs != "None":
-                    for lig in str_to_lst(ligs):
-                        if lig != "GLY":
-                            if lig not in lig_dict[lig_col]:
-                                lig_dict[lig_col].append(lig)
 
         obj_lst = list()
 
@@ -360,6 +366,19 @@ def write_pymol_script(
 
         if group_col is not None:
             group_dict[str(group)].append([obj, coord_path, chainid])
+
+        for lig_col in pymol_lig_col_lst:
+            if lig_col in df_col_lst:
+                ligs = df.at[index, lig_col]
+                if ligs != "None":
+                    for lig in str_to_lst(ligs):
+                        if lig != "GLY":
+                            if group_col is None:
+                                if lig not in lig_dict[lig_col]:
+                                    lig_dict[lig_col].append(lig)
+                            else:
+                                if lig not in lig_dict[group][lig_col]:
+                                    lig_dict[group][lig_col].append(lig)
 
         chainid_lst = type_lst(chainid)
         if show_prot is not None and show_prot != False:
@@ -466,50 +485,105 @@ def write_pymol_script(
 
                 pymol_file.write(f"group {loop_sele}, *_{loop_sele}\n")
 
-    show_lig(
-        pymol_file,
-        bio_lig_col,
-        lig_dict,
-        show_bio,
-        bio_color_str,
-        spheres=False,
-    )
+    if group_col is None:
+        show_lig(
+            pymol_file,
+            bio_lig_col,
+            lig_dict,
+            show_bio,
+            bio_color_str,
+            spheres=False,
+        )
+        show_lig(
+            pymol_file,
+            ion_lig_col,
+            lig_dict,
+            show_ion,
+            ion_color_str,
+            spheres=True,
+        )
+        show_lig(
+            pymol_file,
+            pharm_lig_col,
+            lig_dict,
+            show_pharm,
+            pharm_color_str,
+            spheres=False,
+        )
+        show_lig(
+            pymol_file,
+            chem_lig_col,
+            lig_dict,
+            show_chem,
+            chem_color_str,
+            spheres=False,
+        )
+        show_lig(
+            pymol_file,
+            pocket_lig_col,
+            lig_dict,
+            show_pocket,
+            pocket_color_str,
+            spheres=True,
+        )
+    else:
+        for group in group_lst:
+            show_lig(
+                pymol_file,
+                bio_lig_col,
+                lig_dict,
+                show_bio,
+                bio_color_str,
+                spheres=False,
+                group=group,
+            )
+            show_lig(
+                pymol_file,
+                ion_lig_col,
+                lig_dict,
+                show_ion,
+                ion_color_str,
+                spheres=True,
+                group=group,
+            )
+            show_lig(
+                pymol_file,
+                pharm_lig_col,
+                lig_dict,
+                show_pharm,
+                pharm_color_str,
+                spheres=False,
+                group=group,
+            )
+            show_lig(
+                pymol_file,
+                chem_lig_col,
+                lig_dict,
+                show_chem,
+                chem_color_str,
+                spheres=False,
+                group=group,
+            )
+            show_lig(
+                pymol_file,
+                pocket_lig_col,
+                lig_dict,
+                show_pocket,
+                pocket_color_str,
+                spheres=True,
+                group=group,
+            )
 
-    show_lig(
-        pymol_file,
-        ion_lig_col,
-        lig_dict,
-        show_ion,
-        ion_color_str,
-        spheres=True,
-    )
-
-    show_lig(
-        pymol_file,
-        pharm_lig_col,
-        lig_dict,
-        show_pharm,
-        pharm_color_str,
-        spheres=False,
-    )
-
-    show_lig(
-        pymol_file,
-        chem_lig_col,
-        lig_dict,
-        show_chem,
-        chem_color_str,
-        spheres=False,
-    )
-
-    show_lig(
-        pymol_file,
-        pocket_lig_col,
-        lig_dict,
-        show_pocket,
-        pocket_color_str,
-        spheres=True,
-    )
+        if show_bio is not None and show_bio != False:
+            pymol_file.write(f"group {bio_lig_col}, *_{bio_lig_col}\n")
+        if show_ion is not None and show_ion != False:
+            pymol_file.write(f"group {ion_lig_col}, *_{ion_lig_col}\n")
+        if show_pharm is not None and show_pharm != False:
+            pymol_file.write(f"group {pharm_lig_col}, *_{pharm_lig_col}\n")
+        if show_chem is not None and show_chem != False:
+            pymol_file.write(f"group {chem_lig_col}, *_{chem_lig_col}\n")
+        if show_pocket is not None and show_pocket != False:
+            pymol_file.write(f"group {pocket_lig_col}, *_{pocket_lig_col}\n")
 
     if show_prot is not None and show_prot != False:
         if prot_chainid_col != bound_interf_chainid_col:

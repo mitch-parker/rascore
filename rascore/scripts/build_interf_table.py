@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright (C) 2021 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
+Copyright (C) 2022 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
 
 This file is part of the rascore project.
 
-The rascore project can not be copied, edited, and/or distributed without the express
+The rascore project cannot be copied, edited, and/or distributed without the express
 permission of Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>.
 """
 
 import pandas as pd
 from tqdm import tqdm
 
-from functions import *
+from ..functions import *
 
 
 def get_index_interf(
@@ -171,6 +171,7 @@ def build_interf_table(
     iso_interf=False,
     het_interf=False,
     search_coord_path=None,
+    search_chainid=None,
     search_interf=None,
     search_max_dist=0.7,
     coord_path_col=None,
@@ -186,8 +187,13 @@ def build_interf_table(
     search_interf_cont_lst = None
     search_cb_dist_lst = None
 
-    if search_coord_path is not None and search_interf is not None:
+    if (
+        search_coord_path is not None
+        and search_chainid is not None
+        and search_interf is not None
+    ):
         search_df = mask_equal(df, coord_path_col, search_coord_path)
+        search_df = mask_equal(search_df, chainid_col, search_chainid)
 
         search_df = get_index_interf(
             search_df,
@@ -196,6 +202,11 @@ def build_interf_table(
             cont_dist=cont_dist,
             coord_path_col=coord_path_col,
         )
+
+        if len(mask_equal(search_df, interf_col, str(search_interf))) > 0:
+            search_interf = str(search_interf)
+        elif len(mask_equal(search_df, interf_col, int(search_interf))) > 0:
+            search_interf = int(search_interf)
 
         search_df = mask_equal(search_df, interf_col, search_interf)
 
@@ -230,6 +241,8 @@ def build_interf_table(
         )
 
     interf_df = interf_df.reset_index(drop=True)
+
+    interf_df[interf_id_col] = interf_df[pdb_id_col] + interf_df[interf_col]
 
     if interf_table_path is not None:
         save_table(interf_table_path, interf_df)

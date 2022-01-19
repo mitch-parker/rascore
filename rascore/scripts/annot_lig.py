@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright (C) 2021 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
+Copyright (C) 2022 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
 
 This file is part of the rascore project.
 
-The rascore project can not be copied, edited, and/or distributed without the express
+The rascore project cannot be copied, edited, and/or distributed without the express
 permission of Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>.
 """
 
@@ -13,7 +13,7 @@ import pandas as pd
 from tqdm import tqdm
 import concurrent.futures
 
-from functions import *
+from ..functions import *
 
 
 def build_lig_df(
@@ -25,7 +25,7 @@ def build_lig_df(
     other_match="Unclassified",
     none_site="None",
     none_match="None",
-    max_site_dist=5,
+    max_site_dist=4,
     coord_path_col=None,
 ):
 
@@ -44,89 +44,92 @@ def build_lig_df(
 
         lig_lst_dict[lig_col] = list()
 
-    chain = load_coord(coord_path)[fix_val(modelid, return_int=True)][chainid]
-    neighbors = get_neighbors(chain)
+    structure = load_coord(coord_path)
+    neighbors = get_neighbors(structure[fix_val(modelid, return_int=True)][chainid])
 
     bio_cont_lst = list()
     pharm_cont_lst = list()
     site_lst = list()
     match_lst = list()
 
-    for residue in get_residues(chain):
+    for residue in get_residues(structure):
         if is_het(residue):
-            resname = get_resname(residue)
-            lig_class = False
-            is_bio = False
-            is_pharm = False
-            for lig_col in lig_col_lst:
-                if resname in lig_class_dict[lig_col]:
-                    lig_class = True
-                    if resname not in lig_lst_dict[lig_col]:
-                        lig_lst_dict[lig_col].append(resname)
-                        if lig_col == bio_lig_col:
-                            is_bio = True
-                        if lig_col == pharm_lig_col:
-                            is_pharm = True
+            cont_lst = lst_unique(
+                [
+                    get_resnum(x)
+                    for x in get_residue_cont(
+                        neighbors,
+                        residue,
+                        max_dist=max_site_dist,
+                        level="R",
+                    )
+                    if (get_resnum(x) < 50000)
+                    and (get_reschainid(x) == chainid)
+                    and (is_aa(x))
+                ]
+            )
+            if len(cont_lst) > 0:
+                resname = get_resname(residue)
+                lig_class = False
+                is_bio = False
+                is_pharm = False
+                for lig_col in lig_col_lst:
+                    if resname in lig_class_dict[lig_col]:
+                        lig_class = True
+                        if resname not in lig_lst_dict[lig_col]:
+                            lig_lst_dict[lig_col].append(resname)
+                            if lig_col == bio_lig_col:
+                                is_bio = True
+                            if lig_col == pharm_lig_col:
+                                is_pharm = True
 
-            if not lig_class:
-                if resname not in lig_lst_dict[pharm_lig_col]:
-                    lig_lst_dict[pharm_lig_col].append(resname)
-                    is_pharm = True
+                if not lig_class:
+                    if resname not in lig_lst_dict[pharm_lig_col]:
+                        lig_lst_dict[pharm_lig_col].append(resname)
+                        is_pharm = True
 
-            if is_bio or is_pharm:
-                cont_lst = lst_unique(
-                    [
-                        get_resnum(x)
-                        for x in get_residue_cont(
-                            neighbors,
-                            residue,
-                            max_dist=max_site_dist,
-                            level="R",
-                        )
-                        if (get_resnum(x) < 50000)
-                        and (get_reschainid(x) == chainid)
-                        and (is_aa(x))
-                    ]
-                )
+                if is_bio:
+                    bio_cont_lst += cont_lst
 
-            if is_bio:
-                bio_cont_lst += cont_lst
+                if is_pharm:
+                    pharm_cont_lst += cont_lst
 
-            if is_pharm:
-                pharm_cont_lst += cont_lst
+                    if site_dict is not None:
 
-                if site_dict is not None:
-
-                    max_cont = 0
-                    site_status = other_site
-                    for site_name, site_cont_lst in site_dict.items():
-                        site_cont = len(
-                            [x for x in site_cont_lst if x in pharm_cont_lst]
-                        )
-                        if site_cont > max_cont:
-                            site_status = site_name
-                            max_cont = site_cont
-                    site_lst.append(site_status)
-
-                if match_dict is not None:
-                    if site_status in list(match_dict.keys()):
-                        match_status = other_match
-                        match_name_lst = list()
-                        match_simi_lst = list()
-                        for match_name, query_lst in match_dict[site_status].items():
-                            is_match = is_lig_match(
-                                resname,
-                                query_lst,
+                        max_cont = 0
+                        site_status = other_site
+                        for site_name, site_cont_lst in site_dict.items():
+                            site_cont = len(
+                                [x for x in site_cont_lst if x in pharm_cont_lst]
                             )
-                            if is_match:
-                                for query in query_lst:
-                                    match_name_lst.append(match_name)
-                                    match_simi_lst.append(get_lig_simi(resname, query))
-                        if len(match_name_lst) > 0:
-                            match_status = match_name_lst[
-                                match_simi_lst.index(max(match_simi_lst))
-                            ]
-                        match_lst.append(match_status)
+                            if site_cont > max_cont:
+                                site_status = site_name
+                                max_cont = site_cont
+                        site_lst.append(site_status)
+
+                    if match_dict is not None:
+                        if site_status in list(match_dict.keys()):
+                            match_status = other_match
+                            match_name_lst = list()
+                            match_simi_lst = list()
+                            for match_name, query_lst in match_dict[
+                                site_status
+                            ].items():
+                                is_match = is_lig_match(
+                                    resname,
+                                    query_lst,
+                                )
+                                if is_match:
+                                    for query in query_lst:
+                                        match_name_lst.append(match_name)
+                                        match_simi_lst.append(
+                                            get_lig_simi(resname, query)
+                                        )
+                            if len(match_name_lst) > 0:
+                                match_status = match_name_lst[
+                                    match_simi_lst.index(max(match_simi_lst))
+                                ]
+                            match_lst.append(match_status)
 
     for lig_col in lig_col_lst:
         df.at[index, lig_col] = lst_to_str(lig_lst_dict[lig_col])
@@ -153,7 +156,7 @@ def annot_lig(
     other_match="Unclassified",
     none_site="None",
     none_match="None",
-    max_site_dist=5,
+    max_site_dist=4,
     coord_path_col=None,
     num_cpu=1,
 ):

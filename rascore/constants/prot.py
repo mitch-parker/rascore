@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright (C) 2021 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
+Copyright (C) 2022 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
 
 This file is part of the rascore project.
 
@@ -9,7 +9,7 @@ The rascore project cannot be copied, edited, and/or distributed without the exp
 permission of Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>.
 """
 
-from scripts.functions import *
+from ..functions import *
 
 rbd_pfam = "RBD"
 pi3k_pfam = "PI3K_RBD"
@@ -28,7 +28,6 @@ none_prot_name = "None"
 gef_cdc_name = "CDC25"
 gef_rem_name = "REM"
 
-
 prot_class_dict = {
     effector_name: [rbd_pfam, pi3k_pfam, ra_pfam, ra_gef_pfam],
     gef_name: [gef_pfam],
@@ -38,7 +37,7 @@ prot_class_dict = {
     none_prot_name: [none_prot_name],
 }
 
-prot_order_lst = [
+prot_class_lst = [
     effector_name,
     gap_name,
     f"{gef_name}.{gef_cdc_name}",
