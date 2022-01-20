@@ -86,10 +86,6 @@ prot_class_col = "protein_class"
 interf_class_col = "interf_class"
 pocket_class_col = "pocket_class"
 
-pocket_class_site_col = "pocket_class_site"
-pocket_class_status_col = "pocket_class_status"
-pocket_class_match_col = "pocket_class_match"
-
 date_col = "date"
 pmid_col = "pmid"
 
@@ -297,9 +293,6 @@ order_col_lst = [
     prot_class_col,
     interf_class_col,
     pocket_class_col,
-    pocket_class_site_col,
-    pocket_class_status_col,
-    pocket_class_match_col,
     loop_col,
     silh_col,
     simi_col,

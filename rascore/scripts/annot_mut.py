@@ -81,7 +81,13 @@ def build_mut_df(df, index, uniprot_dict, resid_lst=None, coord_path_col=None):
 
 
 def annot_mut(
-    df, uniprot_accs, mut_table_path=None, resids=None, coord_path_col=None, num_cpu=1
+    df,
+    uniprot_accs,
+    mut_table_path=None,
+    resids=None,
+    seq_dir=None,
+    coord_path_col=None,
+    num_cpu=1,
 ):
 
     if type(uniprot_accs) == list:
@@ -101,7 +107,8 @@ def annot_mut(
         uniprot_dict[uniprot_acc] = dict()
 
         fasta_url = f"{uniprot_url}{uniprot_acc}.fasta"
-        fasta_file = f"{uniprot_acc}.fasta"
+
+        fasta_file = get_seq_path(uniprot_acc, dir_path=seq_dir)
 
         download_file(fasta_url, fasta_file)
 
@@ -114,8 +121,6 @@ def annot_mut(
         for i, resname in enumerate(seq):
 
             uniprot_dict[uniprot_acc][i + 1] = resname
-
-        delete_path(fasta_file)
 
     mut_df = pd.DataFrame()
 

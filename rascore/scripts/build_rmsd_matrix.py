@@ -241,9 +241,9 @@ def calc_rmsd_dist(
 
 
 def build_rmsd_matrix(
-    included_df,
+    fit_df,
     rmsd_matrix_path,
-    removed_df=None,
+    pred_df=None,
     sup_resids=None,
     rmsd_resids=None,
     rmsd_atomids="CA",
@@ -265,27 +265,27 @@ def build_rmsd_matrix(
     if rmsd_resids is not None:
         rmsd_resid_lst = res_to_lst(rmsd_resids)
 
-    included_df = order_rows(included_df)
+    fit_df = order_rows(fit_df)
 
-    j_df = included_df.copy(deep=True)
+    j_df = fit_df.copy(deep=True)
 
-    coord_path_lst = lst_col(included_df, coord_path_col, unique=True)
+    coord_path_lst = lst_col(fit_df, coord_path_col, unique=True)
 
-    coord_df = included_df.copy(deep=True)
+    coord_df = fit_df.copy(deep=True)
 
-    if removed_df is None:
-        i_df = included_df.copy(deep=True)
+    if pred_df is None:
+        i_df = fit_df.copy(deep=True)
     else:
-        removed_df = order_rows(removed_df)
-        i_df = removed_df.copy(deep=True)
+        pred_df = order_rows(pred_df)
+        i_df = pred_df.copy(deep=True)
 
-        coord_path_lst += lst_col(removed_df, coord_path_col, unique=True)
-        coord_df = pd.concat([coord_df, removed_df])
+        coord_path_lst += lst_col(pred_df, coord_path_col, unique=True)
+        coord_df = pd.concat([coord_df, pred_df])
 
     i_index_lst = list(i_df.index.values)
     j_index_lst = list(j_df.index.values)
 
-    if removed_df is not None:
+    if pred_df is not None:
         index_pairs = itertools.product(i_index_lst, j_index_lst)
     else:
         index_pairs = itertools.combinations(i_index_lst, 2)
@@ -440,7 +440,7 @@ def build_rmsd_matrix(
 
             matrix[i_index, j_index] = dist
 
-            if removed_df is None:
+            if pred_df is None:
                 matrix[j_index, i_index] = dist
 
     else:
@@ -505,7 +505,7 @@ def build_rmsd_matrix(
 
                 matrix[i_index, j_index] = dist
 
-                if removed_df is None:
+                if pred_df is None:
                     matrix[j_index, i_index] = dist
 
     save_matrix(rmsd_matrix_path, matrix)
@@ -515,7 +515,7 @@ def build_rmsd_matrix(
         if rmsd_dict is None:
             rmsd_dict = dict()
 
-        if removed_df is not None:
+        if pred_df is not None:
             index_pairs = itertools.product(i_index_lst, j_index_lst)
         else:
             index_pairs = itertools.combinations(i_index_lst, 2)
@@ -552,7 +552,7 @@ def build_rmsd_matrix(
                 max_workers=num_cpu
             ) as executor:
 
-                if removed_df is not None:
+                if pred_df is not None:
                     index_pairs = itertools.product(i_index_lst, j_index_lst)
                 else:
                     index_pairs = itertools.combinations(i_index_lst, 2)

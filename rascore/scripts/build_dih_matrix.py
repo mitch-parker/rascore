@@ -171,28 +171,28 @@ def calc_dih_dist(i, j, i_df, j_df, flip_diff=180):
 
 
 def build_dih_matrix(
-    included_df,
+    fit_df,
     max_norm_path,
     mean_norm_path=None,
     max_flip_path=None,
     mean_flip_path=None,
-    removed_df=None,
+    pred_df=None,
     flip_diff=180,
 ):
 
-    included_df = order_rows(included_df)
-    j_df = included_df.copy(deep=True)
+    fit_df = order_rows(fit_df)
+    j_df = fit_df.copy(deep=True)
 
-    if removed_df is None:
-        i_df = included_df.copy(deep=True)
+    if pred_df is None:
+        i_df = fit_df.copy(deep=True)
     else:
-        removed_df = order_rows(removed_df)
-        i_df = removed_df.copy(deep=True)
+        pred_df = order_rows(pred_df)
+        i_df = pred_df.copy(deep=True)
 
     i_index_lst = list(i_df.index.values)
     j_index_lst = list(j_df.index.values)
 
-    if removed_df is not None:
+    if pred_df is not None:
         index_pairs = itertools.product(i_index_lst, j_index_lst)
     else:
         index_pairs = itertools.combinations(i_index_lst, 2)
@@ -230,7 +230,7 @@ def build_dih_matrix(
 
             matrix[i_index, j_index] = dist
 
-            if removed_df is None:
+            if pred_df is None:
                 matrix[j_index, i_index] = dist
 
     save_matrix(max_norm_path, max_norm_matrix)

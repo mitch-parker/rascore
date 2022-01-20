@@ -13,6 +13,11 @@ from .scripts import *
 from .constants import *
 
 
-def pymol_rascore(data_path, out_path=None, num_cpu=1):
+def pymol_rascore(data_path=None, out_path=None):
+
+    if data_path is None:
+        data_path = f"{os.getcwd()}/{rascore_str}_{data_str}"
+    if out_path is None:
+        out_path = f"{os.getcwd()}/{rascore_str}_{pymol_str}"
 
     print("Rascore PyMOLs complete!")

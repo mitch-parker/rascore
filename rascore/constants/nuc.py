@@ -33,3 +33,5 @@ nuc_class_dict = {
     "GDP": gdp_name,
     "None": nf_name,
 }
+
+gtp_atomids = ["O1G", "O2G", "O3G", "S1G", "S2G", "S3G"]

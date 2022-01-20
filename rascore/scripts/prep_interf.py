@@ -9,7 +9,6 @@ The rascore project cannot be copied, edited, and/or distributed without the exp
 permission of Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>.
 """
 
-from matplotlib import use
 from tqdm import tqdm
 import concurrent.futures
 import pymol2
@@ -289,12 +288,14 @@ def prep_interf(
     iso_min_simi=0.7,
     use_simpson=True,
     chainid_dict=None,
+    update_interf=False,
     num_cpu=1,
 ):
 
     interf_path = get_dir_path(dir_str=interf_str, dir_path=interf_dir)
 
-    delete_path(interf_path)
+    if update_interf:
+        delete_path(interf_path)
     append_path(interf_path)
 
     coord_path_lst = type_lst(coord_paths)

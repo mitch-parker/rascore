@@ -18,11 +18,15 @@ import numpy as np
 
 from .table import get_col_order, order_cols, order_rows
 
+rascore_str = "rascore"
 data_str = "data"
+cluster_str = "cluster"
+classify_str = "classify"
 table_str = "table"
 pymol_str = "pymol"
 plot_str = "plot"
 
+pdbaa_str = "pdbaa"
 core_str = "core"
 rcsb_str = "rcsb"
 renum_str = "renum"
@@ -30,6 +34,7 @@ rcsb_assembly_str = "rcsb_assembly"
 renum_assembly_str = "renum_assembly"
 sifts_str = "sifts"
 edia_str = "edia"
+seq_str = "sequence"
 interf_str = "interface"
 pocket_str = "pocket"
 lig_str = "ligand"
@@ -37,7 +42,6 @@ eds_str = "eds"
 map_str = "2mFo-DFc"
 diff_str = "mFo-DFc"
 sup_str = "super"
-conf_str = "conformation"
 
 
 def path_exists(path):
@@ -268,6 +272,13 @@ def get_renum_path(pdb_code, dir_path=None):
         dir_str=renum_str,
         dir_path=dir_path,
         pre_str=False,
+    )
+
+
+def get_seq_path(uniprot_acc, dir_path=None):
+
+    return get_file_path(
+        f"{uniprot_acc}.fasta", dir_str=seq_str, dir_path=dir_path, pre_str=False
     )
 
 

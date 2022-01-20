@@ -658,6 +658,7 @@ def run_pdb_chain(
                     add_h_his=add_h_his,
                     bound_chainid_dict=bound_chainid_dict,
                     all_models=all_models,
+                    update_coords=update_coords,
                 )
                 for pdb_code in list(pdb_dict.keys())
             ]

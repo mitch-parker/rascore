@@ -8,6 +8,7 @@ This file is part of the rascore project.
 The rascore project cannot be copied, edited, and/or distributed without the express
 permission of Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>.
 """
+from datetime import datetime
 
 from .scripts import *
 from .constants import *
@@ -60,6 +61,8 @@ def update_prep(data_path=None, past_df=None, num_cpu=1):
             renum_dir=data_path,
             sifts_json_path=sifts_json_path,
             data=df,
+            lig_resids="3-164",
+            update_coords=False,
             num_cpu=num_cpu,
         )
 
@@ -135,6 +138,7 @@ def update_annot(data_path=None, past_df=None, num_cpu=1):
             df=df,
             uniprot_accs=uniprot_acc_lst,
             resids="1-166",
+            seq_dir=data_path,
             num_cpu=num_cpu,
         )
 
@@ -188,6 +192,7 @@ def update_annot(data_path=None, past_df=None, num_cpu=1):
             past_df is not None
             and len([x for x in class_col_lst if x not in list(past_df.columns)]) == 0
         ):
+            df[complete_col] = str(False)
             df = pd.concat([df, past_df], sort=False)
             save_table(entry_table_path, df)
 
@@ -246,8 +251,6 @@ def update_interf(data_path=None, past_df=None, num_cpu=1):
             interf_dict = merge_dicts([interf_dict, past_interf_dict])
         save_json(interf_json_path, interf_dict)
 
-        print(xray_df.index.values)
-
         interf_df = build_interf_table(
             df=xray_df,
             interf_dict=interf_dict,
@@ -261,17 +264,17 @@ def update_interf(data_path=None, past_df=None, num_cpu=1):
             interf_df = pd.concat([interf_df, past_interf_df], sort=False)
         save_table(interf_table_path, interf_df)
 
-        if past_df is not None:
-            if interf_class_col in list(past_df.columns):
-                df = pd.concat([df, past_df], sort=False)
-                save_table(entry_table_path, df)
-
         interf_pdb_id_lst = lst_col(interf_df, pdb_id_col)
         df[interf_class_col] = (
             df[pdb_id_col]
             .map(make_dict(interf_pdb_id_lst, len(interf_pdb_id_lst) * [dimer_name]))
             .fillna(none_dimer_name)
         )
+
+        if past_df is not None:
+            if interf_class_col in list(past_df.columns):
+                df[complete_col] = str(False)
+                df = pd.concat([df, past_df], sort=False)
 
         save_table(entry_table_path, df)
 
@@ -324,6 +327,11 @@ def update_pocket(data_path=None, past_df=None, num_cpu=1):
             pocket_dict = merge_dicts([pocket_dict, past_pocket_dict])
         save_json(pocket_json_path, pocket_dict)
 
+        if past_df is not None:
+            if pocket_class_col in list(past_df.columns):
+                df[complete_col] = str(False)
+                df = pd.concat([df, past_df], sort=False)
+
         temp_df = build_pocket_table(
             df=df,
             pocket_dict=pocket_dict,
@@ -334,7 +342,7 @@ def update_pocket(data_path=None, past_df=None, num_cpu=1):
 
         pocket_df = pd.DataFrame()
         for pharm_name in [sp2_name, sp12_name]:
-            bound_df = mask_equal(temp_df, pharm_class_col, [sp12_name, sp2_name])
+            bound_df = mask_equal(temp_df, pharm_class_col, pharm_name)
             bound_df = mask_equal(bound_df, pocket_status_col, pocket_bound_name)
 
             search_cont_lst = lst_col(
@@ -362,20 +370,16 @@ def update_pocket(data_path=None, past_df=None, num_cpu=1):
             temp_df, pocket_id_col, lst_col(pocket_df, pocket_id_col)
         )
         other_df = mask_equal(other_df, pocket_status_col, pocket_unbound_name)
+        other_df = mask_equal(other_df, pharm_class_col, none_pharm_name)
 
         other_df[pocket_site_col] = other_pharm_name
 
         pocket_df = pd.concat([pocket_df, other_df], sort=False)
 
-        past_pocket_df = load_table(pocket_table_path)
-        if past_pocket_df is not None and pocket_class_col in list(past_df.columns):
-            pocket_df = pd.concat([pocket_df, past_pocket_df], sort=False)
         save_table(pocket_table_path, pocket_df)
 
-        if past_df is not None:
-            if pocket_class_col in list(past_df.columns):
-                df = pd.concat([df, past_df], sort=False)
-                save_table(entry_table_path, df)
+        pocket_df = load_table(pocket_table_path)
+        annot_df = mask_equal(pocket_df, pocket_site_col, [sp2_name, sp12_name])
 
         for index in tqdm(
             list(df.index.values),
@@ -383,7 +387,7 @@ def update_pocket(data_path=None, past_df=None, num_cpu=1):
             position=0,
             leave=True,
         ):
-            pdb_df = mask_equal(pocket_df, pdb_id_col, df.at[index, pdb_id_col])
+            pdb_df = mask_equal(annot_df, pdb_id_col, df.at[index, pdb_id_col])
 
             pocket_site_lst = lst_col(pdb_df, pocket_site_col, unique=True)
             pocket_status_lst = lst_col(pdb_df, pocket_status_col, unique=True)
@@ -392,33 +396,25 @@ def update_pocket(data_path=None, past_df=None, num_cpu=1):
                 if other_pharm_name in pocket_site_lst:
                     pocket_site_lst.remove(other_pharm_name)
 
-            pharm_class = df.at[index, pharm_class_col]
-
-            if len(pocket_site_lst) == 0 or pharm_class == other_pharm_name:
-
-                pocket_site_lst = [other_pharm_name]
-
-                if pharm_class == other_pharm_name:
+            if len(pocket_site_lst) == 0:
+                pharm_class = df.at[index, pharm_class_col]
+                if pharm_class in [sp2_name, sp12_name, other_pharm_name]:
+                    pocket_site_lst = [pharm_class]
                     pocket_status_lst = [pocket_bound_name]
                 else:
+                    pocket_site_lst = [other_pharm_name]
                     pocket_status_lst = [pocket_unbound_name]
 
             pocket_site = lst_to_str(pocket_site_lst, join_txt="|")
             pocket_status = lst_to_str(pocket_status_lst)
-            pocket_match = df.at[index, pharm_lig_match_col]
 
-            df.at[index, pocket_class_site_col] = pocket_site
-            df.at[index, pocket_class_status_col] = pocket_status
-            df.at[index, pocket_class_match_col] = pocket_match
+            df.at[index, pocket_site_col] = pocket_site
+            df.at[index, pocket_status_col] = pocket_status
 
             pocket_class = pocket_site
 
-            pocket_class += "."
+            pocket_class += "-"
             pocket_class += pocket_status
-
-            if pocket_site != other_pharm_name and pocket_status != pocket_unbound_name:
-                pocket_class += "-"
-                pocket_class += pocket_match
 
             df.at[index, pocket_class_col] = pocket_class
 
@@ -427,18 +423,34 @@ def update_pocket(data_path=None, past_df=None, num_cpu=1):
 
 def update_rascore(data_path=None, pdbaa_fasta_path=None, num_cpu=1):
 
+    if data_path is None:
+        data_path = f"{os.getcwd()}/{rascore_str}_{data_str}"
+
     entry_table_path = get_file_path(entry_table_file, dir_path=data_path)
 
     if pdbaa_fasta_path is None:
-        pdbaa_fasta_path = get_file_path(pdbaa_fasta_file, dir_path=data_path)
+        curr_date = datetime.today().strftime("%Y-%m-%d")
+        pdbaa_fasta_path = get_file_path(
+            f"{curr_date}_{pdbaa_fasta_file}",
+            dir_str=pdbaa_str,
+            dir_path=data_path,
+            pre_str=False,
+        )
+    else:
+        delete_path(entry_table_path)
 
     past_df = load_table(entry_table_path)
 
     if past_df is None:
-        print("No rascore database found! Building rascore database from scratch!")
+        print("No rascore database found! Building database from scratch!")
+    else:
+        if complete_col in list(past_df.columns):
+            past_df = mask_equal(past_df, complete_col, str(True))
+        else:
+            past_df[complete_col] = str(True)
 
-    print("Downloading update pdbaa file")
-    # download_unzip(url=pdbaa_url, path=pdbaa_fasta_path)
+    print("Downloading updated pdbaa file.")
+    download_unzip(url=pdbaa_url, path=pdbaa_fasta_path)
 
     search_pdbaa(
         pdbaa_fasta_path=pdbaa_fasta_path,
@@ -447,9 +459,20 @@ def update_rascore(data_path=None, pdbaa_fasta_path=None, num_cpu=1):
         min_length=25,
     )
 
+    if past_df is not None:
+        df = load_table(entry_table_path)
+        if len(df) < len(past_df):
+            print("Downgrading rascore database to older version.")
+            past_df = None
+
     update_prep(data_path=data_path, past_df=past_df, num_cpu=num_cpu)
     update_annot(data_path=data_path, past_df=past_df, num_cpu=num_cpu)
     update_interf(data_path=data_path, past_df=past_df, num_cpu=num_cpu)
     update_pocket(data_path=data_path, past_df=past_df, num_cpu=num_cpu)
+
+    df = load_table(entry_table_path)
+    if complete_col in list(df.columns):
+        del df[complete_col]
+    save_table(entry_table_path, df)
 
     print("Rascore update complete!")

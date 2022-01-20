@@ -364,12 +364,14 @@ def prep_pocket(
     check_dist=3.5,
     check_min_simi=0.1,
     use_simpson=True,
+    update_pocket=False,
     num_cpu=1,
 ):
 
     pocket_dir_path = get_dir_path(dir_str=pocket_str, dir_path=pocket_dir)
 
-    delete_path(pocket_dir_path)
+    if update_pocket:
+        delete_path(pocket_dir_path)
     append_path(pocket_dir_path)
 
     coord_path_lst = type_lst(coord_paths)

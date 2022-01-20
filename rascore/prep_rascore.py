@@ -42,7 +42,7 @@ def prep_json(file_name, data_path=None):
         for old_key in list(old_dict.keys()):
             for col in path_col_lst:
                 dir_str = col.split("_path")[0]
-                if dir_str in old_key:
+                if f"/{dir_str}/" in old_key:
                     break
             new_key = get_file_path(
                 get_file_name(old_key), dir_path=f"{data_path}/{dir_str}"
@@ -51,9 +51,10 @@ def prep_json(file_name, data_path=None):
             for sub_key in list(new_dict[new_key].keys()):
                 for col in path_col_lst:
                     if col in list(new_dict[new_key][sub_key].keys()):
+                        sub_dir_str = col.split("_path")[0]
                         new_dict[new_key][sub_key][col] = get_file_path(
                             get_file_name(new_dict[new_key][sub_key][col]),
-                            dir_path=f"{data_path}/{dir_str}",
+                            dir_path=f"{data_path}/{sub_dir_str}",
                         )
 
         save_json(file_path, new_dict)

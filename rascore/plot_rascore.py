@@ -13,6 +13,11 @@ from .scripts import *
 from .constants import *
 
 
-def plot_rascore(data_path, out_path=None, num_cpu=1):
+def plot_rascore(data_path, out_path=None):
+
+    if data_path is None:
+        data_path = f"{os.getcwd()}/{rascore_str}_{data_str}"
+    if out_path is None:
+        out_path = f"{os.getcwd()}/{rascore_str}_{plot_str}"
 
     print("Rascore plots complete!")

@@ -660,7 +660,7 @@ def build_count_table(df, cols):
                 count_df = merge_tables(count_df, count_df_lst[i])
 
         if prot_col in df_col_lst:
-            pd.crosstab(
+            prot_df = pd.crosstab(
                 columns=temp_df[prot_col], index=[temp_df[col] for col in col_lst]
             )
             for col in list(prot_df.columns):

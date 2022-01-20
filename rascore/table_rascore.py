@@ -15,6 +15,11 @@ from .constants import *
 from .update_rascore import *
 
 
-def table_rascore(data_path, out_path=None, num_cpu=1):
+def table_rascore(data_path=None, out_path=None):
+
+    if data_path is None:
+        data_path = f"{os.getcwd()}/{rascore_str}_{data_str}"
+    if out_path is None:
+        out_path = f"{os.getcwd()}/{rascore_str}_{table_str}"
 
     print("Rascore tables complete!")

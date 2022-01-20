@@ -42,29 +42,29 @@ def calc_dist_dist(i_index, j_index, i_df, j_df):
 
 
 def build_dist_matrix(
-    included_df,
+    fit_df,
     dist_matrix_path,
-    removed_df=None,
+    pred_df=None,
     coord_path_col=None,
 ):
 
     if coord_path_col is None:
         coord_path_col = core_path_col
 
-    included_df = order_rows(included_df)
+    fit_df = order_rows(fit_df)
 
-    j_df = included_df.copy(deep=True)
+    j_df = fit_df.copy(deep=True)
 
-    if removed_df is None:
-        i_df = included_df.copy(deep=True)
+    if pred_df is None:
+        i_df = fit_df.copy(deep=True)
     else:
-        removed_df = order_rows(removed_df)
-        i_df = removed_df.copy(deep=True)
+        pred_df = order_rows(pred_df)
+        i_df = pred_df.copy(deep=True)
 
     i_index_lst = list(i_df.index.values)
     j_index_lst = list(j_df.index.values)
 
-    if removed_df is not None:
+    if pred_df is not None:
         index_pairs = itertools.product(i_index_lst, j_index_lst)
     else:
         index_pairs = itertools.combinations(i_index_lst, 2)
@@ -87,7 +87,7 @@ def build_dist_matrix(
 
         matrix[i_index, j_index] = dist
 
-        if removed_df is None:
+        if pred_df is None:
             matrix[j_index, i_index] = dist
 
     save_matrix(dist_matrix_path, matrix)

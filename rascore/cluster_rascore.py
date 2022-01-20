@@ -13,7 +13,12 @@ from .scripts import *
 from .constants import *
 
 
-def cluster_rascore(data_path, out_path=None, name_table_path=None, num_cpu=1):
+def cluster_rascore(out_path=None, data_path=None, name_table_path=None):
+
+    if data_path is None:
+        data_path = f"{os.getcwd()}/{rascore_str}_{data_str}"
+    if out_path is None:
+        out_path = f"{os.getcwd()}/{rascore_str}_{cluster_str}"
 
     if name_table_path is None:
         name_dict = conf_name_dict
@@ -45,164 +50,166 @@ def cluster_rascore(data_path, out_path=None, name_table_path=None, num_cpu=1):
         loop_cluster_report_df = pd.DataFrame()
         loop_classify_report_df = pd.DataFrame()
 
+        loop_path = f"{out_path}/{loop_name}"
+
         for nuc_class in nuc_class_lst:
 
-            run_name = f"{loop_name}_{nuc_class}"
+            loop_nuc_name = f"{loop_name}_{nuc_class}"
 
             dih_table_path = get_file_path(
-                dih_table_file, dir_str=run_name, dir_path=data_path
+                dih_table_file, dir_str=loop_nuc_name, dir_path=loop_path
             )
 
-            included_table_path = get_file_path(
-                included_table_file, dir_str=run_name, dir_path=data_path
+            fit_table_path = get_file_path(
+                fit_table_file, dir_str=loop_nuc_name, dir_path=loop_path
             )
 
-            removed_table_path = get_file_path(
-                removed_table_file, dir_str=run_name, dir_path=data_path
+            pred_table_path = get_file_path(
+                pred_table_file, dir_str=loop_nuc_name, dir_path=loop_path
             )
 
             cluster_table_path = get_file_path(
-                cluster_table_file, dir_str=run_name, dir_path=data_path
+                cluster_table_file, dir_str=loop_nuc_name, dir_path=loop_path
             )
 
             result_table_path = get_file_path(
-                result_table_file, dir_str=run_name, dir_path=data_path
+                result_table_file, dir_str=loop_nuc_name, dir_path=loop_path
             )
 
             cluster_report_table_path = get_file_path(
-                cluster_report_table_file, dir_str=run_name, dir_path=data_path
+                cluster_report_table_file, dir_str=loop_nuc_name, dir_path=loop_path
             )
             classify_report_table_path = get_file_path(
-                classify_report_table_file, dir_str=run_name, dir_path=data_path
+                classify_report_table_file, dir_str=loop_nuc_name, dir_path=loop_path
             )
 
             sum_table_path = get_file_path(
-                sum_table_file, dir_str=run_name, dir_path=data_path
+                sum_table_file, dir_str=loop_nuc_name, dir_path=loop_path
             )
 
             dih_matrix_path = get_file_path(
-                dih_matrix_file, dir_str=run_name, dir_path=data_path
+                dih_matrix_file, dir_str=loop_nuc_name, dir_path=loop_path
             )
 
             rmsd_matrix_path = get_file_path(
-                rmsd_matrix_file, dir_str=run_name, dir_path=data_path
+                rmsd_matrix_file, dir_str=loop_nuc_name, dir_path=loop_path
             )
 
             rmsd_json_path = get_file_path(
-                rmsd_json_file, dir_str=run_name, dir_path=data_path
+                rmsd_json_file, dir_str=loop_nuc_name, dir_path=loop_path
             )
 
             dih_fit_matrix_path = get_file_path(
-                dih_fit_matrix_file, dir_str=run_name, dir_path=data_path
+                dih_fit_matrix_file, dir_str=loop_nuc_name, dir_path=loop_path
             )
 
             dih_pred_matrix_path = get_file_path(
-                dih_pred_matrix_file, dir_str=run_name, dir_path=data_path
+                dih_pred_matrix_file, dir_str=loop_nuc_name, dir_path=loop_path
             )
 
             rmsd_fit_matrix_path = get_file_path(
-                rmsd_fit_matrix_file, dir_str=run_name, dir_path=data_path
+                rmsd_fit_matrix_file, dir_str=loop_nuc_name, dir_path=loop_path
             )
 
             rmsd_pred_matrix_path = get_file_path(
-                rmsd_pred_matrix_file, dir_str=run_name, dir_path=data_path
+                rmsd_pred_matrix_file, dir_str=loop_nuc_name, dir_path=loop_path
             )
 
-            nuc_df = mask_equal(df, nuc_class_col, nuc_class)
+            # nuc_df = mask_equal(df, nuc_class_col, nuc_class)
 
-            chi1_resids = None
-            if loop_name == sw2_name:
-                chi1_resids = 71
+            # chi1_resids = None
+            # if loop_name == sw2_name:
+            #     chi1_resids = 71
 
-            build_dih_table(
-                df=nuc_df,
-                dih_dict=dih_dict,
-                dih_table_path=dih_table_path,
-                bb_resids=loop_resids,
-                chi1_resids=chi1_resids,
-            )
-            dih_df = load_table(dih_table_path)
+            # build_dih_table(
+            #     df=nuc_df,
+            #     dih_dict=dih_dict,
+            #     dih_table_path=dih_table_path,
+            #     bb_resids=loop_resids,
+            #     chi1_resids=chi1_resids,
+            # )
+            # dih_df = load_table(dih_table_path)
 
-            rmsd_dict = load_json(rmsd_json_path)
-            build_rmsd_matrix(
-                included_df=dih_df,
-                rmsd_matrix_path=rmsd_matrix_path,
-                sup_resids=sup_resids,
-                rmsd_resids=loop_resids,
-                rmsd_atomids="CA",
-                pair_aln=False,
-                rmsd_dict=rmsd_dict,
-                rmsd_json_path=rmsd_json_path,
-            )
+            # rmsd_dict = load_json(rmsd_json_path)
+            # build_rmsd_matrix(
+            #     fit_df=dih_df,
+            #     rmsd_matrix_path=rmsd_matrix_path,
+            #     sup_resids=sup_resids,
+            #     rmsd_resids=loop_resids,
+            #     rmsd_atomids="CA",
+            #     pair_aln=False,
+            #     rmsd_dict=rmsd_dict,
+            #     rmsd_json_path=rmsd_json_path,
+            # )
 
-            build_dih_matrix(
-                included_df=dih_df,
-                max_norm_path=dih_matrix_path,
-            )
+            # build_dih_matrix(
+            #     fit_df=dih_df,
+            #     max_norm_path=dih_matrix_path,
+            # )
 
-            dih_matrix = load_matrix(dih_matrix_path)
-            rmsd_matrix = load_matrix(rmsd_matrix_path)
+            # dih_matrix = load_matrix(dih_matrix_path)
+            # rmsd_matrix = load_matrix(rmsd_matrix_path)
 
-            mask_dih_data(
-                df=dih_df,
-                matrix=dih_matrix,
-                included_table_path=included_table_path,
-                fit_matrix_path=dih_fit_matrix_path,
-                removed_table_path=removed_table_path,
-                pred_matrix_path=dih_pred_matrix_path,
-                edia_dict=edia_dict,
-                edia_min=0.4,
-                edia_atomids="O",
-            )
-            mask_dih_data(
-                df=dih_df,
-                matrix=rmsd_matrix,
-                included_table_path=included_table_path,
-                fit_matrix_path=rmsd_fit_matrix_path,
-                removed_table_path=removed_table_path,
-                pred_matrix_path=rmsd_pred_matrix_path,
-                edia_dict=edia_dict,
-                edia_min=0.4,
-                edia_atomids="O",
-            )
+            # mask_dih_data(
+            #     df=dih_df,
+            #     matrix=dih_matrix,
+            #     fit_table_path=fit_table_path,
+            #     fit_matrix_path=dih_fit_matrix_path,
+            #     pred_table_path=pred_table_path,
+            #     pred_matrix_path=dih_pred_matrix_path,
+            #     edia_dict=edia_dict,
+            #     edia_min=0.4,
+            #     edia_atomids="O",
+            # )
+            # mask_dih_data(
+            #     df=dih_df,
+            #     matrix=rmsd_matrix,
+            #     fit_table_path=fit_table_path,
+            #     fit_matrix_path=rmsd_fit_matrix_path,
+            #     pred_table_path=pred_table_path,
+            #     pred_matrix_path=rmsd_pred_matrix_path,
+            #     edia_dict=edia_dict,
+            #     edia_min=0.4,
+            #     edia_atomids="O",
+            # )
 
-            included_df = load_table(included_table_path)
-            dih_fit_matrix = load_matrix(dih_fit_matrix_path)
-            rmsd_fit_matrix = load_matrix(rmsd_fit_matrix_path)
+            # fit_df = load_table(fit_table_path)
+            # dih_fit_matrix = load_matrix(dih_fit_matrix_path)
+            # rmsd_fit_matrix = load_matrix(rmsd_fit_matrix_path)
 
-            cluster_matrix(
-                df=included_df,
-                matrix=dih_fit_matrix,
-                cluster_table_path=cluster_table_path,
-                report_table_path=cluster_report_table_path,
-                max_nn_dist=0.45,
-                constr_matrix=rmsd_fit_matrix,
-                max_constr_dist=1.2,
-                merge_constr_dist=1.2,
-                min_samples_range="3-15",
-                min_min_samples=7,
-                min_pdb=5,
-            )
+            # cluster_matrix(
+            #     df=fit_df,
+            #     matrix=dih_fit_matrix,
+            #     cluster_table_path=cluster_table_path,
+            #     report_table_path=cluster_report_table_path,
+            #     max_nn_dist=0.45,
+            #     constr_matrix=rmsd_fit_matrix,
+            #     max_constr_dist=1.2,
+            #     merge_constr_dist=1.2,
+            #     min_samples_range="3-15",
+            #     min_min_samples=7,
+            #     min_pdb=5,
+            # )
             cluster_df = load_table(cluster_table_path)
 
-            removed_df = load_table(removed_table_path)
+            # pred_df = load_table(pred_table_path)
 
-            dih_pred_matrix = load_matrix(dih_pred_matrix_path)
-            rmsd_pred_matrix = load_matrix(rmsd_pred_matrix_path)
+            # dih_pred_matrix = load_matrix(dih_pred_matrix_path)
+            # rmsd_pred_matrix = load_matrix(rmsd_pred_matrix_path)
 
-            classify_matrix(
-                cluster_df=cluster_df,
-                removed_df=removed_df,
-                fit_matrix=dih_fit_matrix,
-                pred_matrix=dih_pred_matrix,
-                result_table_path=result_table_path,
-                report_table_path=classify_report_table_path,
-                sum_table_path=sum_table_path,
-                fit_constr_matrix=rmsd_fit_matrix,
-                pred_constr_matrix=rmsd_pred_matrix,
-                max_nn_dist=0.45,
-                max_constr_dist=1.2,
-            )
+            # classify_matrix(
+            #     cluster_df=cluster_df,
+            #     pred_df=pred_df,
+            #     fit_matrix=dih_fit_matrix,
+            #     pred_matrix=dih_pred_matrix,
+            #     result_table_path=result_table_path,
+            #     report_table_path=classify_report_table_path,
+            #     sum_table_path=sum_table_path,
+            #     fit_constr_matrix=rmsd_fit_matrix,
+            #     pred_constr_matrix=rmsd_pred_matrix,
+            #     max_nn_dist=0.45,
+            #     max_constr_dist=1.2,
+            # )
 
             result_df = load_table(result_table_path)
             sum_df = load_table(sum_table_path)
@@ -217,6 +224,10 @@ def cluster_rascore(data_path, out_path=None, name_table_path=None, num_cpu=1):
                 name = cluster
                 if cluster != noise_name:
                     rama = sum_df.at[index, f"{common_col}_{rama_col}"]
+
+                    if loop_name == sw2_name:
+                        rama += sum_df.at[index, f"{common_col}_{rotamer_col}"]
+
                     if rama in list(name_dict[loop_name][nuc_class].keys()):
                         name = name_dict[loop_name][nuc_class][rama]
                     else:
@@ -225,11 +236,11 @@ def cluster_rascore(data_path, out_path=None, name_table_path=None, num_cpu=1):
 
                 rename_dict[cluster] = name
 
+            cluster_df[cluster_col] = cluster_df[cluster_col].map(rename_dict)
             result_df[cluster_col] = result_df[cluster_col].map(rename_dict)
             sum_df[cluster_col] = sum_df[cluster_col].map(rename_dict)
-            classify_report_df[cluster_col] = cluster_report_df[cluster_col].map(
-                rename_dict
-            )
+
+            save_table(cluster_table_path, cluster_df)
 
             result_df[loop_col] = loop_name
             sum_df[loop_col] = loop_name
@@ -241,8 +252,15 @@ def cluster_rascore(data_path, out_path=None, name_table_path=None, num_cpu=1):
             cluster_report_df[nuc_class_col] = nuc_class
             classify_report_df[nuc_class_col] = nuc_class
 
+            for index in list(sum_df.index.values):
+                cluster = sum_df.at[index, cluster_col]
+                if cluster == noise_name:
+                    sum_df.at[
+                        index, cluster_col
+                    ] = f"{loop_name}.{nuc_class}-{noise_name}"
+
             loop_result_df = pd.concat([loop_result_df, result_df], sort=False)
-            loop_sum_df = pd.concat([loop_result_df, sum_df], sort=False)
+            loop_sum_df = pd.concat([loop_sum_df, sum_df], sort=False)
             loop_cluster_report_df = pd.concat(
                 [loop_cluster_report_df, cluster_report_df], sort=False
             )
@@ -257,22 +275,22 @@ def cluster_rascore(data_path, out_path=None, name_table_path=None, num_cpu=1):
         )
 
         loop_result_table_path = get_file_path(
-            result_table_file, dir_str=loop_name, dir_path=data_path
+            result_table_file, dir_str=loop_name, dir_path=out_path
         )
         loop_sum_table_path = get_file_path(
-            sum_table_file, dir_str=loop_name, dir_path=data_path
+            sum_table_file, dir_str=loop_name, dir_path=out_path
         )
         loop_cluster_report_table_path = get_file_path(
-            cluster_report_table_file, dir_str=loop_name, dir_path=data_path
+            cluster_report_table_file, dir_str=loop_name, dir_path=out_path
         )
         loop_classify_report_table_path = get_file_path(
-            classify_report_table_file, dir_str=loop_name, dir_path=data_path
+            classify_report_table_file, dir_str=loop_name, dir_path=out_path
         )
 
-        save_table(loop_result_table_path, loop_result_df)
-        save_table(loop_sum_table_path, loop_sum_df)
-        save_table(loop_cluster_report_table_path, loop_cluster_report_df)
-        save_table(loop_classify_report_table_path, loop_classify_report_df)
+        save_table(loop_result_table_path, loop_result_df, fillna="-")
+        save_table(loop_sum_table_path, loop_sum_df, fillna="-")
+        save_table(loop_cluster_report_table_path, loop_cluster_report_df, fillna="-")
+        save_table(loop_classify_report_table_path, loop_classify_report_df, fillna="-")
 
         cluster_dict = make_dict(
             lst_col(loop_result_df, pdb_id_col), lst_col(loop_result_df, cluster_col)
@@ -280,42 +298,54 @@ def cluster_rascore(data_path, out_path=None, name_table_path=None, num_cpu=1):
 
         df[loop_name] = df[pdb_id_col].map(cluster_dict)
 
-    save_table(entry_table_path, df)
+    if sw1_gtp_name in lst_col(df, sw1_name, unique=True):
+        dist_df = build_dist_table(
+            mask_equal(df, sw1_name, sw1_gtp_name),
+            x_resids=[32],
+            y_resids=[bio_lig_col],
+            x_atomids=["OH"],
+            y_atomids=[gtp_atomids],
+            hb_status_col_lst=[hb_status_col],
+            check_hb=True,
+        )
 
-    df = load_table(entry_table_path)
+        dist_df[hb_status_col] = "-" + dist_df[hb_status_col].map(str)
 
-    gtp_atomids = ["O1G", "O2G", "O3G", "S1G", "S2G", "S3G"]
+        sw1_gtp_dict = make_dict(
+            lst_col(dist_df, pdb_id_col), lst_col(dist_df, hb_status_col)
+        )
 
-    dist_df = build_dist_table(
-        mask_equal(df, sw1_name, sw1_gtp_name),
-        x_resids=[32],
-        y_resids=[bio_lig_col],
-        x_atomids=["OH"],
-        y_atomids=[gtp_atomids],
-        atom_dist_col_lst=[atom_dist_col],
-        hb_status_col_lst=[hb_status_col],
-        outlier_col_lst=[outlier_col],
-        check_hb=True,
-    )
+        df[hb_status_col] = df[pdb_id_col].map(sw1_gtp_dict).fillna("")
+        df[sw1_name] += df[hb_status_col].map(str)
 
-    sw1_gtp_dict = make_dict(
-        lst_col(dist_df, pdb_id_col), lst_col(dist_df, hb_status_col)
-    )
-
-    df[hb_status_col] = df[pdb_id_col].map(sw1_gtp_dict).fillna("")
-    df[sw1_name].replace(
-        {
-            sw1_gtp_name: "",
-            sw1_gtp_wat_name: "",
-            sw1_gtp_dir_name: "",
-            sw1_gtp_no_name: "",
-        },
-        inplace=True,
-    )
-    df[sw1_name] += df[hb_status_col].map(str)
-
-    del df[hb_status_col]
+        del df[hb_status_col]
 
     save_table(entry_table_path, df)
+
+    for loop_name, loop_resids in loop_resid_dict.items():
+
+        pymol_pml_path = get_file_path(
+            pymol_pml_file, dir_str=loop_name, dir_path=out_path
+        )
+
+        if loop_name == sw1_name:
+            stick_resids = [32]
+        elif loop_name == sw2_name:
+            stick_resids = [71]
+
+        write_pymol_script(
+            df,
+            pymol_pml_path,
+            group_col=loop_name,
+            stick_resids=stick_resids,
+            loop_resids=loop_resids,
+            style_ribbon=True,
+            thick_bb=False,
+            show_bio=True,
+            color_palette=conf_color_dict[loop_name],
+            sup_group=True,
+            sup_resids=sup_resids,
+            show_resids="1-166",
+        )
 
     print("Rascore clustering complete!")

@@ -21,11 +21,8 @@ sw2_resids = "56-76"
 
 loop_resid_dict = {sw1_name: sw1_resids, sw2_name: sw2_resids}
 
-sw1_color = pink_hex
-sw2_color = blue_hex
-
-y32_name = "Y32"
-y71_name = "Y71"
+sw1_color = "#e7298a"
+sw2_color = "#7570b3"
 
 sw1_nf_name = f"{sw1_name}.{nf_name}"
 sw1_gdp_name = f"{sw1_name}.{gdp_name}"
@@ -141,7 +138,7 @@ conf_color_dict = {
         sw2_gtp_sp12_a_name: light_cyan_hex,
         sw2_gtp_r_name: light_pink_hex,
         sw2_gtp_sp12_b_name: light_brown_hex,
-        noise_name: light_gray_hex,
+        noise_name: noise_color,
     },
 }
 

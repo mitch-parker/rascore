@@ -140,6 +140,9 @@ def build_pocket_table(
 
     pocket_df = pocket_df.reset_index(drop=True)
 
+    pocket_df[pocket_col] = pocket_df[pocket_col].map(str)
+    pocket_df = fix_col(pocket_df, pocket_col)
+
     pocket_df[pocket_id_col] = pocket_df[pdb_id_col] + pocket_df[pocket_col]
 
     if pocket_table_path is not None:

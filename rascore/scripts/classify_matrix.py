@@ -17,7 +17,7 @@ from ..functions import *
 
 def classify_matrix(
     cluster_df,
-    removed_df,
+    pred_df,
     fit_matrix,
     pred_matrix,
     result_table_path,
@@ -56,7 +56,7 @@ def classify_matrix(
         }
 
     for index in tqdm(
-        list(removed_df.index.values),
+        list(pred_df.index.values),
         desc="Classifying clusters",
         position=0,
         leave=True,
@@ -128,36 +128,36 @@ def classify_matrix(
             pred_cluster = pred_lst[0]
             report_dict[pred_cluster][classified_dict[pred_cluster]] += 1
 
-        removed_df.at[index, cluster_col] = pred_cluster
+        pred_df.at[index, cluster_col] = pred_cluster
 
         if pred_cluster in list(nn_dict.keys()):
             nn_dist = nn_dict[pred_cluster]
         else:
             nn_dist = 0
 
-        removed_df.at[index, nn_dist_col] = nn_dist
+        pred_df.at[index, nn_dist_col] = nn_dist
 
         if fit_constr_matrix is not None and pred_constr_matrix is not None:
             if pred_cluster in list(constr_dict.keys()):
                 constr_dist = constr_dict[pred_cluster]
             else:
                 constr_dist = 0
-            removed_df.at[index, constr_dist_col] = constr_dist
+            pred_df.at[index, constr_dist_col] = constr_dist
 
     if not only_save_pred:
-        removed_df = pd.concat([cluster_df, removed_df], sort=False)
-        removed_df = removed_df.reset_index(drop=True)
+        pred_df = pd.concat([cluster_df, pred_df], sort=False)
+        pred_df = pred_df.reset_index(drop=True)
         if reorder_class:
-            removed_df = order_clusters(removed_df)
+            pred_df = order_clusters(pred_df)
 
-    save_table(result_table_path, removed_df)
+    save_table(result_table_path, pred_df)
 
     if sum_table_path is not None:
-        sum_df = build_sum_table(removed_df)
+        sum_df = build_sum_table(pred_df)
         save_table(sum_table_path, sum_df)
 
     if report_table_path is not None:
-        cluster_count_dict = build_col_count_dict(removed_df, cluster_col)
+        cluster_count_dict = build_col_count_dict(pred_df, cluster_col)
         report_df = pd.DataFrame()
         for i, cluster in enumerate(cluster_lst):
             report_df.at[i, cluster_col] = cluster

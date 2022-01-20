@@ -43,8 +43,13 @@ def download_file(url, path, check=True, alarm=60, tries=3):
             signal.alarm(0)
 
 
-def download_unzip(url, path):
+def download_unzip(url, path, check=True):
 
     append_file_path(path)
 
-    unzip_file(urllib.request.urlopen(url), out_path=path)
+    present = False
+    if check:
+        present = path_exists(path)
+
+    if not present:
+        unzip_file(urllib.request.urlopen(url), out_path=path)

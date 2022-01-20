@@ -33,8 +33,8 @@ dist_table_file = "distance.txt"
 interf_table_file = "interface.txt"
 pocket_table_file = "pocket.txt"
 
-included_table_file = "included.txt"
-removed_table_file = "removed.txt"
+fit_table_file = "fit.txt"
+pred_table_file = "predict.txt"
 
 dih_matrix_file = "dihedral.csv"
 dist_matrix_file = "distance.csv"
@@ -74,3 +74,5 @@ venn_img_file = "venn.pdf"
 pymol_pml_file = "pymol.pml"
 
 stat_table_file = "statistic.txt"
+
+nom_table_file = "nomenclature.txt"
