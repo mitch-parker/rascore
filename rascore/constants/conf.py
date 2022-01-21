@@ -46,18 +46,18 @@ sw2_nf_name = f"{sw2_name}.{nf_name}"
 sw2_gdp_name = f"{sw2_name}.{gdp_name}"
 sw2_gtp_name = f"{sw2_name}.{gtp_name}"
 
-wat_hb_name = "WaterHB"
-dir_hb_name = "DirectHB"
-no_hb_name = "NoHB"
+wathb_name = "WaterHB"
+dirhb_name = "DirectHB"
+nohb_name = "NoHB"
 
 r_name = "R"
 t_name = "T"
 
 noise_name = "Noise"
 
-sw1_gtp_wat_name = f"{sw1_gtp_name}-{wat_hb_name}"
-sw1_gtp_dir_name = f"{sw1_gtp_name}-{dir_hb_name}"
-sw1_gtp_no_name = f"{sw1_gtp_name}-{no_hb_name}"
+sw1_gtp_wat_name = f"{sw1_gtp_name}-{wathb_name}"
+sw1_gtp_dir_name = f"{sw1_gtp_name}-{dirhb_name}"
+sw1_gtp_no_name = f"{sw1_gtp_name}-{nohb_name}"
 
 sw1_gtp_wat_color = cyan_hex
 sw1_gtp_dir_color = purple_hex

@@ -433,18 +433,19 @@ def update_classify(out_path=None, past_df=None, num_cpu=1):
 
     classify_path = f"{out_path}/{classify_str}"
 
-    classify_rascore(
-        df,
-        out_path=classify_path,
-        dih_dict=dih_dict,
-        num_cpu=num_cpu,
-    )
+    if len(df) > 0:
+        classify_rascore(
+            df,
+            out_path=classify_path,
+            dih_dict=dih_dict,
+            num_cpu=num_cpu,
+        )
 
-    result_df = get_file_path(result_table_file, dir_path=classify_path)
+    result_df = load_table(get_file_path(result_table_file, dir_path=classify_path))
 
     for loop_name in list(loop_resid_dict.keys()):
-        df[loop_name] = df[core_path_col].map(
-            make_dict([lst_col(result_df, pdb_id_col), lst_col(result_df, loop_name)])
+        df[loop_name] = df[pdb_id_col].map(
+            make_dict(lst_col(result_df, pdb_id_col), lst_col(result_df, loop_name))
         )
 
     if past_df is not None:
@@ -540,5 +541,13 @@ def build_rascore(out_path=None, pdbaa_fasta_path=None, num_cpu=1):
         del df[complete_col]
 
     save_table(entry_table_path, df)
+
+    copy_path(
+        entry_table_path,
+        get_file_path(
+            entry_table_file,
+            get_dir_path(dir_str=data_str, dir_path=get_dir_name(__file__)),
+        ),
+    )
 
     print("Rascore update complete!")

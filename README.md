@@ -1,8 +1,8 @@
-# rascore: A package for analyzing the conformations of RAS structures
+# rascore: A tool for analyzing the conformations of RAS structures
 
 ## Summary
 
-rascore is a package for analyzing RAS structures (KRAS, NRAS, and HRAS) by the conformations of their catalytic switch 1 (SW1) and switch 2 (SW2) loops. In addition, rascore can be used to build and query an updatable database of all available RAS structures from the Protein Data Bank with their SW1 and SW2 loops conformationally classified and their molecular contents annotated (e.g., mutation status, nucleotide state, bound proteins, small molecule inhibitors). 
+rascore is a tool for analyzing RAS structures (KRAS, NRAS, and HRAS) by the conformations of their catalytic switch 1 (SW1) and switch 2 (SW2) loops. In addition, rascore can be used to build and query an updatable database of all available RAS structures from the Protein Data Bank with their SW1 and SW2 loops conformationally classified and their molecular contents annotated (e.g., mutation status, nucleotide state, bound proteins, small molecule inhibitors). 
 
 Details of our RAS conformational classification and approach are provided on BioArxiv in the manuscript: "An expanded classification of active, inactive and druggable RAS conformations." We hope that researchers will use rascore to gain novel insights into RAS biology and drug discovery. 
 
@@ -22,8 +22,11 @@ Quickstart environment setup with an installation of Anaconda (https://www.anaco
 - conda install -c conda-forge matplotlib-venn
 - conda install -c conda-forge fpocket
 - conda install -c conda-forge pyfiglet 
+
 - pip install streamlit
 - pip install futures
+- pip install py3Dmol
+- pip install stmol
 
 ## Usage
 

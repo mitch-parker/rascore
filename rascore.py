@@ -30,7 +30,7 @@ import pyfiglet
 from rascore import *
 
 print(pyfiglet.figlet_format("rascore"))
-print("A package for conformationally analyzing RAS structures\n")
+print("A tool for conformationally analyzing RAS structures\n")
 print("Author: Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>")
 print("License: MIT License\n")
 
@@ -52,7 +52,7 @@ def main(args):
         )
     elif build is not None:
         pdbaa_fasta_path = None
-        if build is not str(True):
+        if build is not True:
             pdbaa_fasta_path = build
         prep_rascore(build_path=out)
         build_rascore(
@@ -61,11 +61,27 @@ def main(args):
             num_cpu=cpu,
         )
     elif app is not None:
-        if path_exists(app):
+        if app is not True:
+            print(type(app))
             prep_rascore(build_path=app)
-            app_rascore(build_path=app)
-        else:
-            print("No rascore database found. Please run build first.")
+            entry_table_path = get_file_path(entry_table_file, dir_path=app)
+            copy_path(
+                entry_table_path,
+                get_file_path(
+                    entry_table_file,
+                    get_dir_path(
+                        dir_str=data_str,
+                        dir_path=f"{get_dir_name(__file__)}/{rascore_str}",
+                    ),
+                ),
+            )
+
+        rascore_app_path = get_file_path(
+            "rascore-app.py",
+            dir_path=get_dir_name(__file__),
+        )
+
+        os.system(f"streamlit run {rascore_app_path}")
 
 
 if __name__ == "__main__":
@@ -95,10 +111,10 @@ if __name__ == "__main__":
         "-app",
         "--app",
         type=str,
-        const=f"{os.getcwd()}/{rascore_str}_{build_str}",
+        const=True,
         nargs="?",
         required=False,
-        help="path to rascore database directory (must run build first) to run rascore application (output files saved to rascore_app in current working directory unless an output directory path is specified)",
+        help="path to rascore database directory (can run limited version if not specified) for running rascore application (output files saved to rascore_app in current working directory unless an output directory path is specified)",
     )
     parser.add_argument(
         "-out",
