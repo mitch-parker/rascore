@@ -58,12 +58,6 @@ def get_path_len_ang_df(coord_path):
 
             df.at[0, col] = search_cif_dict(cif_dict, f"_cell.angle_{letter}")
 
-        df.at[0, year_col] = date_to_year(
-            search_cif_dict(
-                cif_dict, "_pdbx_database_status.recvd_initial_deposition_date"
-            )
-        )
-
     else:
         df.at[0, space_col] = "None"
         for col, letter in zip(len_col_lst, len_letter_lst):

@@ -27,9 +27,9 @@ from .scripts import *
 from .constants import *
 
 
-def prep_table(file_name, data_path=None):
+def prep_table(file_name, build_path=None):
 
-    file_path = get_file_path(file_name, dir_path=data_path)
+    file_path = get_file_path(file_name, dir_path=build_path)
 
     df = load_table(file_path)
 
@@ -39,15 +39,15 @@ def prep_table(file_name, data_path=None):
             for col in [x for x in path_col_lst if x in df_col_lst]:
                 dir_str = col.split("_path")[0]
                 df.at[index, col] = get_file_path(
-                    get_file_name(df.at[index, col]), dir_path=f"{data_path}/{dir_str}"
+                    get_file_name(df.at[index, col]), dir_path=f"{build_path}/{dir_str}"
                 )
 
         save_table(file_path, df)
 
 
-def prep_json(file_name, data_path=None):
+def prep_json(file_name, build_path=None):
 
-    file_path = get_file_path(file_name, dir_path=data_path)
+    file_path = get_file_path(file_name, dir_path=build_path)
 
     old_dict = load_json(file_path)
 
@@ -59,7 +59,7 @@ def prep_json(file_name, data_path=None):
                 if f"/{dir_str}/" in old_key:
                     break
             new_key = get_file_path(
-                get_file_name(old_key), dir_path=f"{data_path}/{dir_str}"
+                get_file_name(old_key), dir_path=f"{build_path}/{dir_str}"
             )
             new_dict[new_key] = old_dict[old_key]
             for sub_key in list(new_dict[new_key].keys()):
@@ -68,13 +68,16 @@ def prep_json(file_name, data_path=None):
                         sub_dir_str = col.split("_path")[0]
                         new_dict[new_key][sub_key][col] = get_file_path(
                             get_file_name(new_dict[new_key][sub_key][col]),
-                            dir_path=f"{data_path}/{sub_dir_str}",
+                            dir_path=f"{build_path}/{sub_dir_str}",
                         )
 
         save_json(file_path, new_dict)
 
 
-def prep_rascore(data_path=None):
+def prep_rascore(build_path=None):
+
+    if build_path is None:
+        build_path = f"{os.getcwd()}/{rascore_str}_{build_str}"
 
     table_file_lst = [entry_table_file, interf_table_file, pocket_table_file]
 
@@ -86,7 +89,7 @@ def prep_rascore(data_path=None):
         position=0,
         leave=True,
     ):
-        prep_table(table_file, data_path=data_path)
+        prep_table(table_file, build_path=build_path)
 
     for json_file in tqdm(
         json_file_lst,
@@ -94,4 +97,4 @@ def prep_rascore(data_path=None):
         position=0,
         leave=True,
     ):
-        prep_json(json_file, data_path=data_path)
+        prep_json(json_file, build_path=build_path)

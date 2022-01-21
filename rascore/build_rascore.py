@@ -25,13 +25,14 @@ SOFTWARE.
 
 from .scripts import *
 from .constants import *
+from .classify_rascore import *
 
 
-def update_prep(data_path=None, past_df=None, num_cpu=1):
+def update_prep(out_path=None, past_df=None, num_cpu=1):
 
-    entry_table_path = get_file_path(entry_table_file, dir_path=data_path)
-    sifts_json_path = get_file_path(sifts_json_file, dir_path=data_path)
-    dih_json_path = get_file_path(dih_json_file, dir_path=data_path)
+    entry_table_path = get_file_path(entry_table_file, dir_path=out_path)
+    sifts_json_path = get_file_path(sifts_json_file, dir_path=out_path)
+    dih_json_path = get_file_path(dih_json_file, dir_path=out_path)
 
     df = load_table(entry_table_path)
 
@@ -66,10 +67,10 @@ def update_prep(data_path=None, past_df=None, num_cpu=1):
             pdb_id_lst=pdb_id_lst,
             renum_script_path=f"{get_dir_name(__file__)}/PDBrenum/PDBrenum.py",
             coord_table_path=entry_table_path,
-            core_dir=data_path,
-            rcsb_dir=data_path,
-            sifts_dir=data_path,
-            renum_dir=data_path,
+            core_dir=out_path,
+            rcsb_dir=out_path,
+            sifts_dir=out_path,
+            renum_dir=out_path,
             sifts_json_path=sifts_json_path,
             data=df,
             lig_resids="3-164",
@@ -107,9 +108,9 @@ def update_prep(data_path=None, past_df=None, num_cpu=1):
                 save_table(entry_table_path, df)
 
 
-def update_annot(pdbaa_fasta_path, data_path=None, past_df=None, num_cpu=1):
+def update_annot(pdbaa_fasta_path, out_path=None, past_df=None, num_cpu=1):
 
-    entry_table_path = get_file_path(entry_table_file, dir_path=data_path)
+    entry_table_path = get_file_path(entry_table_file, dir_path=out_path)
 
     df = load_table(entry_table_path)
 
@@ -134,7 +135,7 @@ def update_annot(pdbaa_fasta_path, data_path=None, past_df=None, num_cpu=1):
             df=df,
             uniprot_accs=uniprot_acc_lst,
             resids="1-166",
-            seq_dir=data_path,
+            seq_dir=out_path,
             num_cpu=num_cpu,
         )
 
@@ -202,11 +203,11 @@ def update_annot(pdbaa_fasta_path, data_path=None, past_df=None, num_cpu=1):
         save_table(entry_table_path, df)
 
 
-def update_interf(data_path=None, past_df=None, num_cpu=1):
+def update_interf(out_path=None, past_df=None, num_cpu=1):
 
-    entry_table_path = get_file_path(entry_table_file, dir_path=data_path)
-    interf_json_path = get_file_path(interf_json_file, dir_path=data_path)
-    interf_table_path = get_file_path(interf_table_file, dir_path=data_path)
+    entry_table_path = get_file_path(entry_table_file, dir_path=out_path)
+    interf_json_path = get_file_path(interf_json_file, dir_path=out_path)
+    interf_table_path = get_file_path(interf_table_file, dir_path=out_path)
 
     df = load_table(entry_table_path)
 
@@ -237,7 +238,7 @@ def update_interf(data_path=None, past_df=None, num_cpu=1):
 
         interf_dict = prep_interf(
             coord_paths=coord_path_lst,
-            interf_dir=data_path,
+            interf_dir=out_path,
             chainid_dict=chainid_dict,
             num_cpu=num_cpu,
         )
@@ -250,7 +251,7 @@ def update_interf(data_path=None, past_df=None, num_cpu=1):
         interf_df = build_interf_table(
             df=xray_df,
             interf_dict=interf_dict,
-            search_coord_path=get_renum_path(sup_pdb_code, dir_path=data_path),
+            search_coord_path=get_renum_path(sup_pdb_code, dir_path=out_path),
             search_chainid=sup_chainid,
             search_interf="4",
         )
@@ -275,11 +276,11 @@ def update_interf(data_path=None, past_df=None, num_cpu=1):
         save_table(entry_table_path, df)
 
 
-def update_pocket(data_path=None, past_df=None, num_cpu=1):
+def update_pocket(out_path=None, past_df=None, num_cpu=1):
 
-    entry_table_path = get_file_path(entry_table_file, dir_path=data_path)
-    pocket_json_path = get_file_path(pocket_json_file, dir_path=data_path)
-    pocket_table_path = get_file_path(pocket_table_file, dir_path=data_path)
+    entry_table_path = get_file_path(entry_table_file, dir_path=out_path)
+    pocket_json_path = get_file_path(pocket_json_file, dir_path=out_path)
+    pocket_table_path = get_file_path(pocket_table_file, dir_path=out_path)
 
     df = load_table(entry_table_path)
 
@@ -312,7 +313,7 @@ def update_pocket(data_path=None, past_df=None, num_cpu=1):
 
         pocket_dict = prep_pocket(
             coord_paths=coord_path_lst,
-            pocket_dir=data_path,
+            pocket_dir=out_path,
             pharm_dict=pharm_dict,
             chainid_dict=chainid_dict,
             num_cpu=num_cpu,
@@ -417,26 +418,63 @@ def update_pocket(data_path=None, past_df=None, num_cpu=1):
         save_table(entry_table_path, df)
 
 
-def build_rascore(data_path=None, pdbaa_fasta_path=None, num_cpu=1):
+def update_classify(out_path=None, past_df=None, num_cpu=1):
 
-    if data_path is None:
-        data_path = f"{os.getcwd()}/{rascore_str}_{data_str}"
+    entry_table_path = get_file_path(entry_table_file, dir_path=out_path)
+    dih_json_path = get_file_path(dih_json_file, dir_path=out_path)
 
-    entry_table_path = get_file_path(entry_table_file, dir_path=data_path)
+    df = load_table(entry_table_path)
+
+    if past_df is not None:
+        if sw1_name in list(past_df.columns) and sw2_name in list(past_df.columns):
+            df = mask_unequal(df, pdb_id_col, lst_col(past_df, pdb_id_col))
+
+    dih_dict = load_json(dih_json_path)
+
+    classify_path = f"{out_path}/{classify_str}"
+
+    classify_rascore(
+        df,
+        out_path=classify_path,
+        dih_dict=dih_dict,
+        num_cpu=num_cpu,
+    )
+
+    result_df = get_file_path(result_table_file, dir_path=classify_path)
+
+    for loop_name in list(loop_resid_dict.keys()):
+        df[loop_name] = df[core_path_col].map(
+            make_dict([lst_col(result_df, pdb_id_col), lst_col(result_df, loop_name)])
+        )
+
+    if past_df is not None:
+        if sw1_name in list(past_df.columns) and sw2_name in list(past_df.columns):
+            df[complete_col] = str(False)
+            df = pd.concat([df, past_df], sort=False)
+
+    save_table(entry_table_path, df)
+
+
+def build_rascore(out_path=None, pdbaa_fasta_path=None, num_cpu=1):
+
+    if out_path is None:
+        out_path = f"{os.getcwd()}/{rascore_str}_{build_str}"
+
+    entry_table_path = get_file_path(entry_table_file, dir_path=out_path)
 
     if pdbaa_fasta_path is None:
         curr_date = datetime.today().strftime("%Y-%m-%d")
         pdbaa_fasta_path = get_file_path(
             f"{curr_date}_{pdbaa_fasta_file}",
             dir_str=pdbaa_str,
-            dir_path=data_path,
+            dir_path=out_path,
             pre_str=False,
         )
 
     past_df = load_table(entry_table_path)
 
     if past_df is None:
-        print("No rascore database found! Building database from scratch!")
+        print("No rascore database found! Building rascore database from scratch!")
     else:
         if complete_col in list(past_df.columns):
             past_df = mask_equal(past_df, complete_col, str(True))
@@ -448,24 +486,37 @@ def build_rascore(data_path=None, pdbaa_fasta_path=None, num_cpu=1):
     try:
         download_unzip(url=pdbaa_url, path=pdbaa_fasta_path)
     except:
-        pdbaa_fasta_path = sorted(
-            [
-                x
-                for x in os.listdir(get_dir_path(dir_str=pdbaa_str, dir_path=data_path))
-                if pdbaa_fasta_file in x
-            ],
-            reverse=True,
-        )[0]
-        last_date = pdbaa_fasta_path.split(f"_{pdbaa_fasta_file}")[0]
-        last_date = last_date.split(f"{pdbaa_str}/")[1]
-        print(f"Updated pdbaa file unavailable. Using latest version ({last_date})")
+        pdbaa_fasta_path_lst = [
+            x
+            for x in os.listdir(get_dir_path(dir_str=pdbaa_str, dir_path=out_path))
+            if pdbaa_fasta_file in x
+        ]
+        if len(pdbaa_fasta_path_lst) > 0:
+            pdbaa_fasta_path = sorted(
+                pdbaa_fasta_path_lst,
+                reverse=True,
+            )[0]
 
-    search_pdbaa(
-        pdbaa_fasta_path=pdbaa_fasta_path,
-        search_lst=swiss_id_lst,
-        entry_table_path=entry_table_path,
-        min_length=25,
-    )
+            last_date = pdbaa_fasta_path.split(f"_{pdbaa_fasta_file}")[0]
+            last_date = last_date.split(f"{pdbaa_str}/")[1]
+            print(f"Updated pdbaa file unavailable. Using latest version ({last_date})")
+
+    try:
+        search_pdbaa(
+            pdbaa_fasta_path=pdbaa_fasta_path,
+            search_lst=swiss_id_lst,
+            entry_table_path=entry_table_path,
+            min_length=25,
+        )
+    except:
+        print("Error reading pdbaa file.")
+        copy_path(
+            get_file_path(
+                entry_table_file,
+                get_dir_path(dir_str=data_str, dir_path=get_dir_name(__file__)),
+            ),
+            entry_table_path,
+        )
 
     if past_df is not None:
         df = load_table(entry_table_path)
@@ -473,19 +524,21 @@ def build_rascore(data_path=None, pdbaa_fasta_path=None, num_cpu=1):
             print("Downgrading rascore database to older version.")
             past_df = None
 
-    update_prep(data_path=data_path, past_df=past_df, num_cpu=num_cpu)
+    update_prep(out_path=out_path, past_df=past_df, num_cpu=num_cpu)
     update_annot(
         pdbaa_fasta_path,
-        data_path=data_path,
+        out_path=out_path,
         past_df=past_df,
         num_cpu=num_cpu,
     )
-    update_interf(data_path=data_path, past_df=past_df, num_cpu=num_cpu)
-    update_pocket(data_path=data_path, past_df=past_df, num_cpu=num_cpu)
+    update_interf(out_path=out_path, past_df=past_df, num_cpu=num_cpu)
+    update_pocket(out_path=out_path, past_df=past_df, num_cpu=num_cpu)
+    update_classify(out_path=out_path, past_df=past_df, num_cpu=num_cpu)
 
     df = load_table(entry_table_path)
     if complete_col in list(df.columns):
         del df[complete_col]
+
     save_table(entry_table_path, df)
 
     print("Rascore update complete!")

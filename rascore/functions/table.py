@@ -701,8 +701,3 @@ def convert_col_percent(df, col):
     df[col] = (df[col] / df[col].sum()) * 100
 
     return df
-
-
-def date_to_year(date_str):
-
-    return datetime.strptime(date_str, "%Y")

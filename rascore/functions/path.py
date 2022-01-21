@@ -33,12 +33,12 @@ import numpy as np
 from .table import get_col_order, order_cols, order_rows
 
 rascore_str = "rascore"
+build_str = "build"
+classify_str = "classify"
+app_str = "app"
+
 data_str = "data"
 cluster_str = "cluster"
-classify_str = "classify"
-table_str = "table"
-pymol_str = "pymol"
-plot_str = "plot"
 
 pdbaa_str = "pdbaa"
 core_str = "core"

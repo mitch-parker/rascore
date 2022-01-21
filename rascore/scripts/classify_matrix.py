@@ -146,6 +146,7 @@ def classify_matrix(
             pred_cluster = pred_lst[0]
             report_dict[pred_cluster][classified_dict[pred_cluster]] += 1
 
+        print(pred_cluster)
         pred_df.at[index, cluster_col] = pred_cluster
 
         if pred_cluster in list(nn_dict.keys()):

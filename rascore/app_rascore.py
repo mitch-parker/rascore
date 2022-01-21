@@ -23,15 +23,47 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import streamlit as st
+from PIL import Image
+
+from .app import *
 from .scripts import *
 from .constants import *
 
 
-def plot_rascore(data_path, out_path=None):
+class MultiPage:
+    def __init__(self) -> None:
+        self.pages = []
 
-    if data_path is None:
-        data_path = f"{os.getcwd()}/{rascore_str}_{data_str}"
-    if out_path is None:
-        out_path = f"{os.getcwd()}/{rascore_str}_{plot_str}"
+    def add_page(self, title, func) -> None:
+        self.pages.append({"title": title, "function": func})
 
-    print("Rascore plots complete!")
+    def run(self):
+        page = st.sidebar.selectbox(
+            "Menu", self.pages, format_func=lambda page: page["title"]
+        )
+        page["function"]()
+
+
+def app_rascore():
+
+    app = MultiPage()
+
+    img = Image.open(
+        get_file_path(
+            plot_img_file,
+            get_dir_path(dir_str=data_str, dir_path=get_dir_name(__file__)),
+        )
+    )
+
+    st.image(img, use_column_width=True)
+    st.title("rascore: A package for analyzing the conformations of RAS structures")
+    st.write("Author: Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>")
+    st.write("License: MIT License")
+
+    app.add_page("Home", home.app)
+    app.add_page("Search PDB Entry", pdb.app)
+    app.add_page("Query Database", query.app)
+    app.add_page("Classify RAS Structure(s)", classify.app)
+
+    app.run()

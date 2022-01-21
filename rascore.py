@@ -37,58 +37,35 @@ print("License: MIT License\n")
 
 def main(args):
 
-    data_path = args.data_path
-    out_path = args.out_path
+    classify = args.classify
+    build = args.build
+    app = args.app
 
-    update_database = args.update_database
+    out = args.out
+    cpu = args.cpu
 
-    classify_structures = args.classify_structures
-    cluster_structures = args.cluster_structures
-
-    plot_database = args.plot_database
-    pymol_database = args.pymol_database
-    table_database = args.table_database
-
-    pdbaa_path = args.pdbaa_path
-    nomenclature_path = args.nomenclature_path
-
-    num_cpu = args.num_cpu
-
-    if data_path is not None:
-        prep_rascore(data_path=data_path)
-
-    if update_database:
-        update_rascore(
-            data_path=data_path,
-            pdbaa_fasta_path=pdbaa_path,
-            num_cpu=num_cpu,
-        )
-
-    if cluster_structures:
-        cluster_rascore(
-            out_path=out_path,
-            data_path=data_path,
-            name_table_path=nomenclature_path,
-        )
-
-    if classify_structures is not None:
+    if classify is not None:
         classify_rascore(
-            coord_paths=classify_structures,
-            out_path=out_path,
-            num_cpu=num_cpu,
+            coord_paths=classify,
+            out_path=out,
+            num_cpu=cpu,
         )
-
-    if plot_database:
-        plot_rascore(out_path=out_path, data_path=data_path)
-        print("Created rascore database plots!")
-
-    if pymol_database:
-        pymol_rascore(out_path=out_path, data_path=data_path)
-        print("Created rascore database  PyMOLs!")
-
-    if table_database:
-        table_rascore(out_path=out_path, data_path=data_path)
-        print("Created rascore database tables!")
+    elif build is not None:
+        pdbaa_fasta_path = None
+        if build is not str(True):
+            pdbaa_fasta_path = build
+        prep_rascore(build_path=out)
+        build_rascore(
+            out_path=out,
+            pdbaa_fasta_path=pdbaa_fasta_path,
+            num_cpu=cpu,
+        )
+    elif app is not None:
+        if path_exists(app):
+            prep_rascore(build_path=app)
+            app_rascore(build_path=app)
+        else:
+            print("No rascore database found. Please run build first.")
 
 
 if __name__ == "__main__":
@@ -96,98 +73,43 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="rascore: A package for analyzing the conformations of RAS structures"
     )
-    parser.add_argument(
-        "-data",
-        "--data_path",
-        type=str,
+
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(
+        "-classify",
+        "--classify",
+        nargs="+",
         required=False,
-        help=f"path to racore database directory (e.g., {os.getcwd()}/{rascore_str}_{data_str})",
+        help="path to coordinate file(s) of RAS structures to conformationally classify provided as a space-separated list, text list file (line separated), or text table file (tab-separated with columns core_path, modelid, chainid, nuc_class) (output files saved to rascore_classify in current working directory unless an output directory path is specified)",
+    )
+    group.add_argument(
+        "-build",
+        "--build",
+        type=str,
+        const=True,
+        nargs="?",
+        required=False,
+        help="build or update rascore database from the Protein Data Bank (output files saved to rascore_build in current working directory unless an output directory path is specified)",
+    )
+    group.add_argument(
+        "-app",
+        "--app",
+        type=str,
+        const=f"{os.getcwd()}/{rascore_str}_{build_str}",
+        nargs="?",
+        required=False,
+        help="path to rascore database directory (must run build first) to run rascore application (output files saved to rascore_app in current working directory unless an output directory path is specified)",
     )
     parser.add_argument(
         "-out",
-        "--out_path",
+        "--out",
         type=str,
         required=False,
-        help=f"output path; default is {os.getcwd()}",
-    )
-    parser.add_argument(
-        "-update",
-        "--update_database",
-        action="store_true",
-        required=False,
-        help=f"update rascore database from the Protein Data Bank; files saved to {os.getcwd()}/{rascore_str}_{data_str} unless specified otherwise with -data flag",
-    )
-
-    classify_str = "three options to input coordinate file paths (PDB or mmCIF formats) for conformational classification"
-    classify_str = ";"
-    classify_str += f"files saved to {rascore_str}_{classify_str} folder within specified output path"
-    classify_str = ":"
-    classify_str += "\n"
-    classify_str += "a) space separated list "
-    classify_str += "\n"
-    classify_str += "b) line seperated text file"
-    classify_str += "\n"
-    classify_str += "c) tab-separated text file with columns (1) core_path (coordinate file path), (2) modelid (optional, 0 or another model number), (3) chainid (chain identifier), and (4) nuc_class (optional, overwrites suggested nucleotide state)"
-
-    parser.add_argument(
-        "-classify",
-        "--classify_structures",
-        nargs="+",
-        required=False,
-        help=classify_str,
-    )
-    parser.add_argument(
-        "-cluster",
-        "--cluster_structures",
-        action="store_true",
-        required=False,
-        help=f"path to tab-separated text file with columns (1) loop (SW1 or SW2), (2) nucleotide (0P, 2P, or 3P), (3) rama (ABLE sequence), and (4) cluster (conformation name) can be specified with -nomenclature flag; files saved to {rascore_str}_{cluster_str} folder within specified output path",
-    )
-    parser.add_argument(
-        "-plot",
-        "--plot_database",
-        action="store_true",
-        required=False,
-        help=f"create plots for rascore database; files saved to {rascore_str}_{plot_str} folder within specified output path",
-    )
-    parser.add_argument(
-        "-pymol",
-        "--pymol_database",
-        action="store_true",
-        required=False,
-        help=f"create PyMOL sessions for rascore database; ; files saved to {rascore_str}_{pymol_str} folder within specified output path",
-    )
-    parser.add_argument(
-        "-table",
-        "--table_database",
-        action="store_true",
-        required=False,
-        help=f"create tables for rascore database; files saved to {rascore_str}_{table_str} folder within specified output path",
-    )
-    parser.add_argument(
-        "-pdbaa",
-        "--pdbaa_path",
-        type=str,
-        required=False,
-        help="path to alternative pdbaa file (for -update flag)",
-    )
-    parser.add_argument(
-        "-nomenclature",
-        "--nomenclature_path",
-        type=str,
-        required=False,
-        help="path to alternative nomenclature file (for -cluster flag)",
-    )
-    parser.add_argument(
-        "-edia",
-        "--update_edia",
-        action="store_true",
-        required=False,
-        help="update EDIA scores",
+        help=f"output directory path (default = {os.getcwd()}",
     )
     parser.add_argument(
         "-cpu",
-        "--num_cpu",
+        "--cpu",
         type=int,
         default=1,
         required=False,

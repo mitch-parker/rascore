@@ -55,7 +55,6 @@ r_factor_col = "r_factor"
 seq_col = "sequence"
 len_col = "length"
 range_col = "range"
-year_col = "year"
 
 len_a_col = "length_a"
 len_b_col = "length_b"
@@ -104,9 +103,6 @@ pharm_class_col = "pharm_class"
 prot_class_col = "protein_class"
 interf_class_col = "interf_class"
 pocket_class_col = "pocket_class"
-
-date_col = "date"
-pmid_col = "pmid"
 
 bound_lig_col = "bound_ligand"
 bound_prot_col = "bound_protein"
@@ -334,7 +330,6 @@ order_col_lst = [
     space_col,
     len_col,
     range_col,
-    year_col,
     index_col,
     p_col,
     correct_p_col,
@@ -414,8 +409,6 @@ order_col_lst = [
     resolution_col,
     r_factor_col,
     seq_col,
-    date_col,
-    pmid_col,
     bb_resid_col,
     bb_seq_col,
     bb_len_col,

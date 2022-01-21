@@ -27,7 +27,7 @@ from .scripts import *
 from .constants import *
 
 
-def classify_rascore(coord_paths, out_path=None, num_cpu=1):
+def classify_rascore(coord_paths, out_path=None, dih_dict=None, num_cpu=1):
 
     if out_path is None:
         out_path = f"{os.getcwd()}/{rascore_str}_{classify_str}"
@@ -36,42 +36,47 @@ def classify_rascore(coord_paths, out_path=None, num_cpu=1):
 
     coord_path_lst = type_lst(coord_paths)
 
-    df = pd.DataFrame()
-    if ".txt" in coord_path_lst[0]:
-        df = load_table(coord_path_lst[0])
-        df_col_lst = list(df.columns)
-        if core_path_col in df_col_lst and chainid_col in df_col_lst:
-            if modelid_col not in df_col_lst:
-                df[modelid_col] = 0
-        else:
-            if core_path_col in df_col_lst and chainid_col not in df_col_lst:
-                coord_path_lst = lst_col(df, core_path_col)
+    if type(coord_path_lst[0]) == DataFrame:
+        df = coord_path_lst[0]
+    else:
+        df = pd.DataFrame()
+        if ".txt" in coord_path_lst[0]:
+            df = load_table(coord_path_lst[0])
+            df_col_lst = list(df.columns)
+            if core_path_col in df_col_lst and chainid_col in df_col_lst:
+                if modelid_col not in df_col_lst:
+                    df[modelid_col] = 0
             else:
-                coord_path_lst = load_lst(coord_path_lst[0])
-            df = pd.DataFrame()
+                if core_path_col in df_col_lst and chainid_col not in df_col_lst:
+                    coord_path_lst = lst_col(df, core_path_col)
+                else:
+                    coord_path_lst = load_lst(coord_path_lst[0])
+                df = pd.DataFrame()
 
-    if len(df) == 0:
+        if len(df) == 0:
 
-        i = 0
-        for coord_path in tqdm(
-            coord_path_lst,
-            desc="Loading coordinates",
-            position=0,
-            leave=True,
-        ):
-            structure = load_coord(coord_path)
-            for model in structure:
-                modelid = get_modelid(model)
-                for chain in model:
-                    chainid = get_chainid(chain)
-                    df.at[i, core_path_col] = coord_path
-                    df.at[i, modelid_col] = modelid
-                    df.at[i, chainid_col] = chainid
-
-    for index in list(df.index.values):
-        df.at[index, id_col] = get_file_name(df.at[index, core_path_col])
+            i = 0
+            for coord_path in tqdm(
+                coord_path_lst,
+                desc="Loading coordinates",
+                position=0,
+                leave=True,
+            ):
+                structure = load_coord(coord_path)
+                for model in structure:
+                    modelid = get_modelid(model)
+                    for chain in model:
+                        chainid = get_chainid(chain)
+                        df.at[i, core_path_col] = coord_path
+                        df.at[i, modelid_col] = modelid
+                        df.at[i, chainid_col] = chainid
+                        i += 1
 
     df_col_lst = list(df.columns)
+
+    if id_col not in df_col_lst and pdb_id_col not in df_col_lst:
+        for index in list(df.index.values):
+            df.at[index, id_col] = get_file_name(df.at[index, core_path_col])
 
     missing_col_lst = [
         x for x in [core_path_col, modelid_col, chainid_col] if x not in df_col_lst
@@ -98,7 +103,8 @@ def classify_rascore(coord_paths, out_path=None, num_cpu=1):
         if nuc_class_col not in df_col_lst:
             df[nuc_class_col] = df[bio_lig_col].map(nuc_class_dict).fillna(gtp_name)
 
-        dih_dict = prep_dih(coord_paths, num_cpu=num_cpu)
+        if dih_dict is None:
+            dih_dict = prep_dih(coord_paths, num_cpu=num_cpu)
 
         for loop_name, loop_resids in loop_resid_dict.items():
 
@@ -166,11 +172,11 @@ def classify_rascore(coord_paths, out_path=None, num_cpu=1):
 
                     cluster_df = load_table(cluster_table_path)
 
-                    build_dih_matrix(
-                        fit_df=cluster_df,
-                        pred_df=dih_df,
-                        max_norm_path=pred_matrix_path,
-                    )
+                    # build_dih_matrix(
+                    #     fit_df=cluster_df,
+                    #     pred_df=dih_df,
+                    #     max_norm_path=pred_matrix_path,
+                    # )
 
                     fit_matrix = load_matrix(fit_matrix_path)
                     pred_matrix = load_matrix(pred_matrix_path)

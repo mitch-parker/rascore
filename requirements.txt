@@ -8,9 +8,9 @@ pandas==1.2.4
 pyfiglet==0.8.post1
 rdkit==2009.Q1-1
 requests==2.25.1
-scikit_learn==1.0.2
 scipy==1.6.2
 seaborn==0.11.1
 statannot==0.2.3
 statsmodels==0.12.2
+streamlit==1.4.0
 tqdm==4.59.0

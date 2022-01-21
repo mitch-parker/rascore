@@ -2,33 +2,19 @@
 
 ## Summary
 
-rascore is a package for conformationally classifying RAS structures (KRAS, NRAS, and HRAS) by the conformations of their catalytic switch 1 (SW1) and switch 2 (SW2) loops. In addition, rascore can be used to build an updatable database of all available RAS structures from the Protein Data Bank with their SW1 and SW2 loops conformationally classified and their molecular contents annotated (e.g., mutation status, nucleotide state, bound proteins, small molecule inhibitors). Details of our RAS conformational classification and approach are provided on BioArxiv in the manuscript: "An expanded classification of active, inactive and druggable RAS conformations." We hope that researchers will use rascore to gain novel insights into RAS biology and drug discovery. 
+rascore is a package for analyzing RAS structures (KRAS, NRAS, and HRAS) by the conformations of their catalytic switch 1 (SW1) and switch 2 (SW2) loops. In addition, rascore can be used to build and query an updatable database of all available RAS structures from the Protein Data Bank with their SW1 and SW2 loops conformationally classified and their molecular contents annotated (e.g., mutation status, nucleotide state, bound proteins, small molecule inhibitors). 
+
+Details of our RAS conformational classification and approach are provided on BioArxiv in the manuscript: "An expanded classification of active, inactive and druggable RAS conformations." We hope that researchers will use rascore to gain novel insights into RAS biology and drug discovery. 
 
 ## Installation
 
-The following package versions are required:
+- pip install rascore
 
-- Bio==1.3.3
-- CairoSVG==2.5.2
-- lxml==4.6.3
-- matplotlib==3.3.4
-- matplotlib_venn==0.11.6
-- numpy==1.20.1
-- pandas==1.2.4
-- pyfiglet==0.8.post1
-- rdkit==2009.Q1-1
-- requests==2.25.1
-- scikit_learn==1.0.2
-- scipy==1.6.2
-- seaborn==0.11.1
-- statannot==0.2.3
-- statsmodels==0.12.2
-- tqdm==4.59.0
-
-Quickstart commands with an installation of Anaconda (https://www.anaconda.com/products/individual):
+Quickstart environment setup with an installation of Anaconda (https://www.anaconda.com/products/individual):
 
 - conda create -n rascore_env
-- conda install -c conda-forge -c schrodinger pymol-bundle
+- conda activate rascore_env
+- conda install -n rascore_env -c conda-forge -c schrodinger pymol-bundle
 - conda install -c conda-forge rdkit
 - conda install -c conda-forge cairosvg 
 - conda install -c conda-forge tqdm
@@ -36,12 +22,30 @@ Quickstart commands with an installation of Anaconda (https://www.anaconda.com/p
 - conda install -c conda-forge matplotlib-venn
 - conda install -c conda-forge fpocket
 - conda install -c conda-forge pyfiglet 
+- pip install streamlit
+- pip install futures
 
 ## Usage
 
-Users may provide RAS stuctures in mmCIF or PDB format for conformational classification, or rascore can be used to download all available KRAS, NRAS, and HRAS structures from the Protein Data Bank (PDB) to conformationally classify. Importantly, any user inputted structure(s) must be numbered according to UniProt scheme. Below, we provide commands for running the scripts in rascore:
+Activate rascore conda environment if setups:
 
-# Authors
+- conda activate rascore_env
+
+Conformationally classify RAS structures (mmCIF or PDB format; must be numbered according to UniProt scheme):
+
+- rascore -classify [path to coordinate file(s) of RAS structures to conformationally classify provided as a space-separated list, text list file (line separated), or text table file (tab-separated with columns core_path, modelid, chainid, nuc_class)] -out [output directory path]
+
+Build rascore database (takes ~1 hour from scratch and requires ~3 GB of storage):
+
+- rascore -build -out [output directory path]
+
+Run rascore application (must run build first):
+
+- rascore -app [path to rascore database directory] -out [output directory path]
+
+## Authors
+
+Please feel free to contact us with any issues or comments regarding rascore.
 
 **Mitchell Parker**
 
@@ -52,6 +56,11 @@ Users may provide RAS stuctures in mmCIF or PDB format for conformational classi
 
 - Email: roland.dunbrack@gmail.com
 - GitHub: https://github.com/DunbrackLab
+
+## Funding
+
+- NIH F30 GM142263 (to M..P.)
+- NIH R35 GM122517 (to R.D.)
 
 ## License
 MIT License
