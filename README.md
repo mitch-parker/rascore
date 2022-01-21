@@ -2,15 +2,15 @@
 
 ## Summary
 
-rascore is a tool for analyzing RAS structures (KRAS, NRAS, and HRAS) by the conformations of their catalytic switch 1 (SW1) and switch 2 (SW2) loops. In addition, rascore can be used to build and query an updatable database of all available RAS structures from the Protein Data Bank with their SW1 and SW2 loops conformationally classified and their molecular contents annotated (e.g., mutation status, nucleotide state, bound proteins, small molecule inhibitors). 
+rascore is a tool for analyzing RAS structures (KRAS, NRAS, and HRAS) by the conformations of their catalytic switch 1 (SW1) and switch 2 (SW2) loops. In addition, rascore can be used to build and query an updatable database of all available RAS structures from the Protein Data Bank with their SW1 and SW2 loops conformationally classified and their molecular contents annotated (e.g., mutation status, nucleotide state, bound proteins, small molecule inhibitors, etc.). 
 
-Details of our RAS conformational classification and approach are provided on BioArxiv in the manuscript: "An expanded classification of active, inactive and druggable RAS conformations." We hope that researchers will use rascore to gain novel insights into RAS biology and drug discovery. 
+Details of our RAS conformational classification and approach are provided on *BioArxiv* in the manuscript: **An expanded classification of active, inactive and druggable RAS conformations.** We hope that researchers will use rascore to gain novel insights into RAS biology and drug discovery. 
 
 ## Installation
 
 - pip install rascore
 
-Quickstart environment setup with an installation of Anaconda (https://www.anaconda.com/products/individual):
+**Quickstart environment setup with an installation of Anaconda (https://www.anaconda.com/products/individual):**
 
 - conda create -n rascore_env
 - conda activate rascore_env
@@ -30,39 +30,39 @@ Quickstart environment setup with an installation of Anaconda (https://www.anaco
 
 ## Usage
 
-Activate rascore conda environment if setups:
+**Activate rascore conda environment if setup:**
 
 - conda activate rascore_env
 
-Conformationally classify RAS structures (mmCIF or PDB format; must be numbered according to UniProt scheme):
+**Conformationally classify RAS structures (mmCIF or PDB format; must be numbered according to UniProt scheme):**
 
 - rascore -classify [path to coordinate file(s) of RAS structures to conformationally classify provided as a space-separated list, text list file (line separated), or text table file (tab-separated with columns core_path, modelid, chainid, nuc_class)] -out [output directory path]
 
-Build rascore database (takes ~1 hour from scratch and requires ~3 GB of storage):
+**Build rascore database (takes ~1 hour from scratch and requires ~3 GB of storage):**
 
 - rascore -build -out [output directory path]
 
-Run rascore application (must run build first):
+**Run rascore application (must run build first):**
 
-- rascore -app [path to rascore database directory] -out [output directory path]
+- rascore -app [path to rascore database directory (can run limited version if not specified)] -out [output directory path]
 
 ## Authors
 
-Please feel free to contact us with any issues or comments regarding rascore.
+Please feel free to contact us with any issues, comments, or questions regarding rascore.
 
 **Mitchell Parker**
 
-- Email: mitch.isaac.parker@gmail.com
+- Email: <mitch.isaac.parker@gmail.com>
 - GitHub: https://github.com/mitch-parker
 
 **Roland Dunbrack**
 
-- Email: roland.dunbrack@gmail.com
+- Email: <roland.dunbrack@gmail.com>
 - GitHub: https://github.com/DunbrackLab
 
 ## Funding
 
-- NIH F30 GM142263 (to M..P.)
+- NIH F30 GM142263 (to M.P.)
 - NIH R35 GM122517 (to R.D.)
 
 ## License

@@ -119,7 +119,7 @@ def classify_rascore(coord_paths, out_path=None, dih_dict=None, num_cpu=1):
                 for nuc_class in nuc_class_lst:
 
                     print(
-                        f"Classifying {loop_name} conformations in {nuc_class} strructures."
+                        f"Classifying {loop_name} conformations in {nuc_class} structures."
                     )
 
                     loop_nuc_name = f"{loop_name}_{nuc_class}"

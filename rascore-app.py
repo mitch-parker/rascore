@@ -54,14 +54,10 @@ img = Image.open(
         ),
     )
 )
-
 st.image(img)
-st.title("rascore: A tool for analyzing the conformations of RAS structures")
-st.write("Author: Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>")
-st.write("License: MIT License")
 
 app.add_page("Home", home_page.app)
-app.add_page("Search PDB Entry", pdb_page.app)
+app.add_page("Search for PDB Entry", pdb_page.app)
 app.add_page("Query Database", query_page.app)
 app.add_page("Classify RAS Structure(s)", classify_page.app)
 
