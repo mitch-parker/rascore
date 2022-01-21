@@ -1,0 +1,7 @@
+cluster	total_chain	total_entry	total_cf	nn_dist_mean	nn_dist_max	constraint_distance_mean	constraint_distance_max	nucleotide_class	loop	common_rama	common_bb_seq	common_sc_seq	entropy_rama	entropy_bb_seq	entropy_sc_seq	occupancy_rama	occupancy_bb_seq	occupancy_sc_seq	GTPase HRas	GTPase KRas	GTPase NRas
+SW1.0P	23	23	1	8.11	14.07	0.05	0.21	0P	SW1	BBAABBBBBAABBLAA	QNHFVDEYDPTIEDSY	None	-0.0	-0.0	-0.0	1.0	1.0	1.0	23	-	-
+SW1.0P-Noise	44	37	8	89.71	170.06	3.59	9.44	0P	SW1	-	-	-	-	-	-	-	-	-	33	11	-
+SW1.2P	164	96	45	15.2	38.74	0.58	1.05	2P	SW1	ALBBBABBBAABBBBB	QNHFVDEYDPTIEDSY	None	0.07	0.03	-0.0	0.84	0.94	1.0	20	138	6
+SW1.2P-Noise	87	49	31	96.03	171.89	6.71	21.38	2P	SW1	-	-	-	-	-	-	-	-	-	17	70	-
+SW1.3P	268	173	40	12.84	35.9	0.5	1.09	3P	SW1	ALBBBABBBBBABBBB	QNHFVDEYDPTIEDSY	None	0.03	0.02	-0.0	0.93	0.96	1.0	130	136	2
+SW1.3P-Noise	113	69	30	79.92	160.05	3.57	15.35	3P	SW1	-	-	-	-	-	-	-	-	-	45	66	2

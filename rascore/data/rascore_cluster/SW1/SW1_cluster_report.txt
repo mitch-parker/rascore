@@ -1,0 +1,4 @@
+nucleotide_class	loop	silhouette_score	similarity_score	total_complete	cluster_count	total_cluster_pre	total_noise_pre	total_pruned_nn	total_pruned_constr	total_cluster_post	total_noise_post	select
+0P	SW1	0.6	0.9	25.0	1.0	18.0	7.0	9.0	0.0	9.0	16.0	True
+2P	SW1	0.6	0.9	166.0	1.0	142.0	24.0	2.0	0.0	140.0	26.0	True
+3P	SW1	0.6	0.9	296.0	1.0	280.0	16.0	31.0	3.0	246.0	50.0	True

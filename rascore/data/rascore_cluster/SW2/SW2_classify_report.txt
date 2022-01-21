@@ -1,0 +1,13 @@
+cluster	total	nucleotide_class	loop	total_classified_nn	total_classified_constr	nn_cutoff	constraint_cutoff
+SW2.0P-GEF	53.0	0P	SW2	0.0	0.0	0.45	1.2
+Noise	14.0	0P	SW2	0.0	0.0	0.45	1.2
+SW2.2P-SP12	22.0	2P	SW2	0.0	0.0	0.45	1.2
+SW2.2P-SP2-A	20.0	2P	SW2	2.0	0.0	0.45	1.2
+SW2.2P-SP2-B	19.0	2P	SW2	5.0	0.0	0.45	1.2
+SW2.2P-Binder	13.0	2P	SW2	3.0	0.0	0.45	1.2
+Noise	177.0	2P	SW2	0.0	0.0	0.45	1.2
+SW2.3P-R	98.0	3P	SW2	13.0	0.0	0.45	1.2
+SW2.3P-SP12-A	31.0	3P	SW2	5.0	0.0	0.45	1.2
+SW2.3P-T	21.0	3P	SW2	1.0	0.0	0.45	1.2
+SW2.3P-SP12-B	14.0	3P	SW2	20.0	0.0	0.45	1.2
+Noise	217.0	3P	SW2	0.0	0.0	0.45	1.2

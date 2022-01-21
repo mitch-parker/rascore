@@ -121,7 +121,9 @@ def classify_rascore(coord_paths, out_path=None, num_cpu=1):
                 )
 
                 fit_matrix_path = get_file_path(
-                    fit_matrix_file, dir_str=loop_nuc_name, dir_path=cluster_loop_path
+                    dih_fit_matrix_file,
+                    dir_str=loop_nuc_name,
+                    dir_path=cluster_loop_path,
                 )
 
                 result_table_path = get_file_path(
@@ -146,64 +148,60 @@ def classify_rascore(coord_paths, out_path=None, num_cpu=1):
 
                 nuc_df = mask_equal(df, nuc_class_col, nuc_class)
 
-                chi1_resids = None
-                if loop_name == sw2_name:
-                    chi1_resids = 71
+                if len(nuc_df) > 0:
 
-                dih_df = build_dih_table(
-                    df=nuc_df,
-                    dih_dict=dih_dict,
-                    bb_resids=loop_resids,
-                    chi1_resids=chi1_resids,
-                )
+                    chi1_resids = None
+                    if loop_name == sw2_name:
+                        chi1_resids = 71
 
-                cluster_df = load_table(cluster_table_path)
+                    dih_df = build_dih_table(
+                        df=nuc_df,
+                        dih_dict=dih_dict,
+                        bb_resids=loop_resids,
+                        chi1_resids=chi1_resids,
+                    )
 
-                build_dih_matrix(
-                    fit_df=cluster_df,
-                    pred_df=dih_df,
-                    max_norm_path=pred_matrix_path,
-                )
+                    cluster_df = load_table(cluster_table_path)
 
-                fit_matrix = load_matrix(fit_matrix_path)
-                pred_matrix = load_matrix(pred_matrix_path)
+                    build_dih_matrix(
+                        fit_df=cluster_df,
+                        pred_df=dih_df,
+                        max_norm_path=pred_matrix_path,
+                    )
 
-                classify_matrix(
-                    cluster_df=cluster_df,
-                    pred_df=dih_df,
-                    fit_matrix=fit_matrix,
-                    pred_matrix=pred_matrix,
-                    result_table_path=result_table_path,
-                    sum_table_path=sum_table_path,
-                    report_table_path=classify_report_table_path,
-                    max_nn_dist=0.45,
-                    only_save_pred=True,
-                    reorder_class=False,
-                )
+                    fit_matrix = load_matrix(fit_matrix_path)
+                    pred_matrix = load_matrix(pred_matrix_path)
 
-                result_df = load_table(result_table_path)
-                sum_df = load_table(sum_table_path)
-                classify_report_df = load_table(classify_report_table_path)
+                    classify_matrix(
+                        cluster_df=cluster_df,
+                        pred_df=dih_df,
+                        fit_matrix=fit_matrix,
+                        pred_matrix=pred_matrix,
+                        result_table_path=result_table_path,
+                        sum_table_path=sum_table_path,
+                        report_table_path=classify_report_table_path,
+                        max_nn_dist=0.45,
+                        only_save_pred=True,
+                        reorder_class=False,
+                    )
 
-                result_df[loop_col] = loop_name
-                sum_df[loop_col] = loop_name
-                classify_report_df[loop_col] = loop_name
+                    result_df = load_table(result_table_path)
+                    sum_df = load_table(sum_table_path)
+                    classify_report_df = load_table(classify_report_table_path)
 
-                result_df[nuc_class_col] = nuc_class
-                sum_df[nuc_class_col] = nuc_class
-                classify_report_df[nuc_class_col] = nuc_class
+                    result_df[loop_col] = loop_name
+                    sum_df[loop_col] = loop_name
+                    classify_report_df[loop_col] = loop_name
 
-                loop_result_df = pd.concat([loop_result_df, result_df], sort=False)
-                loop_sum_df = pd.concat([loop_sum_df, sum_df], sort=False)
-                loop_classify_report_df = pd.concat(
-                    [loop_classify_report_df, classify_report_df], sort=False
-                )
+                    result_df[nuc_class_col] = nuc_class
+                    sum_df[nuc_class_col] = nuc_class
+                    classify_report_df[nuc_class_col] = nuc_class
 
-            loop_result_df = loop_result_df.reset_index(drop=True)
-
-            loop_sum_df = loop_sum_df.sort_values(
-                by=[nuc_class_col, total_chain_col], ascending=[True, False]
-            )
+                    loop_result_df = pd.concat([loop_result_df, result_df], sort=False)
+                    loop_sum_df = pd.concat([loop_sum_df, sum_df], sort=False)
+                    loop_classify_report_df = pd.concat(
+                        [loop_classify_report_df, classify_report_df], sort=False
+                    )
 
             loop_result_table_path = get_file_path(
                 result_table_file, dir_str=loop_name, dir_path=out_path
@@ -227,7 +225,7 @@ def classify_rascore(coord_paths, out_path=None, num_cpu=1):
                 :, [core_path_col, modelid_col, chainid_col, loop_name]
             ]
 
-            df = merge_tables([df, loop_result_df])
+            df = merge_tables(df, loop_result_df)
 
         if sw1_gtp_name in lst_col(df, sw1_name, unique=True):
             dist_df = build_dist_table(
@@ -240,11 +238,14 @@ def classify_rascore(coord_paths, out_path=None, num_cpu=1):
                 check_hb=True,
             )
 
-            sw1_gtp_dict = make_dict(
-                lst_col(dist_df, pdb_id_col), lst_col(dist_df, hb_status_col)
-            )
+            dist_df[hb_status_col] = dist_df[hb_status_col].map(sw1_gtp_dict)
 
-            df[hb_status_col] = df[pdb_id_col].map(sw1_gtp_dict).fillna("")
+            dist_df = dist_df.loc[
+                :, [core_path_col, modelid_col, chainid_col, hb_status_col]
+            ]
+
+            df = merge_tables(df, dist_df)
+
             df[sw1_name].replace(
                 {
                     sw1_gtp_name: "",
@@ -254,7 +255,7 @@ def classify_rascore(coord_paths, out_path=None, num_cpu=1):
                 },
                 inplace=True,
             )
-            df[sw1_name] += df[hb_status_col].map(str)
+            df[sw1_name] += df[hb_status_col].fillna("").map(str)
 
             del df[hb_status_col]
 

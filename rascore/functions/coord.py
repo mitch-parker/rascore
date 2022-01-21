@@ -936,8 +936,8 @@ def find_hb_status(
     if has_resid(structure, chainid_1, resid_1, modelid=modelid_1) and has_resid(
         structure, chainid_2, resid_2, modelid=modelid_2
     ):
-        residue_1 = structure[int(modelid_1)][chainid_1][resid_1]
-        residue_2 = structure[int(modelid_2)][chainid_2][resid_2]
+        residue_1 = structure[fix_val(modelid_1, return_int=True)][chainid_1][resid_1]
+        residue_2 = structure[fix_val(modelid_2, return_int=True)][chainid_2][resid_2]
 
         resname_1 = get_resname(residue_1)
         resname_2 = get_resname(residue_2)
@@ -972,9 +972,9 @@ def find_hb_status(
                 if has_atomid(
                     structure, chainid_1, resid_1, adj_atomid_1, modelid=modelid_1
                 ):
-                    adj_atom_1 = structure[int(modelid_1)][chainid_1][resid_1][
-                        adj_atomid_1
-                    ]
+                    adj_atom_1 = structure[fix_val(modelid_1, return_int=True)][
+                        chainid_1
+                    ][resid_1][adj_atomid_1]
                     find_adj_1 = False
             if find_adj_1:
                 adj_atom_1 = get_adj_atom(
@@ -991,9 +991,9 @@ def find_hb_status(
                 if has_atomid(
                     structure, chainid_2, resid_2, adj_atomid_2, modelid=modelid_2
                 ):
-                    adj_atom_2 = structure[int(modelid_2)][chainid_2][resid_2][
-                        adj_atomid_2
-                    ]
+                    adj_atom_2 = structure[fix_val(modelid_2, return_int=True)][
+                        chainid_2
+                    ][resid_2][adj_atomid_2]
                     find_adj_2 = False
             if find_adj_2:
                 adj_atom_2 = get_adj_atom(
@@ -1034,8 +1034,12 @@ def find_hb_status(
                     else:
                         outlier_status = True
                 else:
-                    neighbors_1 = get_neighbors(structure[int(modelid_1)][chainid_1])
-                    neighbors_2 = get_neighbors(structure[int(modelid_2)][chainid_2])
+                    neighbors_1 = get_neighbors(
+                        structure[fix_val(modelid_1, return_int=True)][chainid_1]
+                    )
+                    neighbors_2 = get_neighbors(
+                        structure[fix_val(modelid_2, return_int=True)][chainid_2]
+                    )
 
                     atom_cont_1_lst = get_atom_cont(
                         neighbors_1, atom_1, max_dist=max_wmhb_dist

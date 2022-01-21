@@ -161,16 +161,19 @@ def get_index_dist_lst(matrix, index_lst, index=None):
 
 def calc_dist_stat(dist_lst, method="mean", dec=2):
 
-    if method == "mean":
-        dist = np.mean(dist_lst)
-    elif method == "max":
-        dist = np.max(dist_lst)
-    elif method == "min":
-        dist = np.min(dist_lst)
-    elif method == "median":
-        dist = np.median(dist_lst)
-    elif method == "std":
-        dist = np.std(dist_lst)
+    if len(dist_lst) < 2:
+        dist = dist_lst[0]
+    else:
+        if method == "mean":
+            dist = np.mean(dist_lst)
+        elif method == "max":
+            dist = np.max(dist_lst)
+        elif method == "min":
+            dist = np.min(dist_lst)
+        elif method == "median":
+            dist = np.median(dist_lst)
+        elif method == "std":
+            dist = np.std(dist_lst)
 
     return round(dist, dec)
 

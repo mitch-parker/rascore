@@ -71,7 +71,7 @@ def classify_matrix(
 
     for index in tqdm(
         list(pred_df.index.values),
-        desc="Classifying clusters",
+        desc="Classifying matrix",
         position=0,
         leave=True,
     ):
@@ -92,8 +92,12 @@ def classify_matrix(
             if len(index_lst) == 1:
                 nn_dist = 0
             else:
+                if len(pred_df) < 2:
+                    dist_lst = pred_matrix[index_lst]
+                else:
+                    dist_lst = pred_matrix[index, index_lst]
                 nn_dist = calc_dist_stat(
-                    pred_matrix[index, index_lst],
+                    dist_lst,
                     method="min",
                 )
 
@@ -173,7 +177,9 @@ def classify_matrix(
     if report_table_path is not None:
         cluster_count_dict = build_col_count_dict(pred_df, cluster_col)
         report_df = pd.DataFrame()
-        for i, cluster in enumerate(cluster_lst):
+        for i, cluster in enumerate(
+            [x for x in cluster_lst if x in list(cluster_count_dict.keys())]
+        ):
             report_df.at[i, cluster_col] = cluster
             report_df.at[i, total_col] = cluster_count_dict[cluster]
             report_df.at[i, nn_cutoff_col] = nn_cutoff_dict[cluster]

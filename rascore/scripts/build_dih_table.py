@@ -47,10 +47,13 @@ def get_index_dih(
 
     if coord_path in list(dih_dict.keys()):
 
-        modelid = int(index_df.at[index, modelid_col])
+        modelid = fix_val(index_df.at[index, modelid_col], return_int=True)
         chainid = index_df.at[index, chainid_col]
 
-        dih_resid_lst = list(dih_dict[coord_path][str(modelid)][chainid].keys())
+        try:
+            dih_resid_lst = list(dih_dict[coord_path][str(modelid)][chainid].keys())
+        except:
+            dih_resid_lst = list(dih_dict[coord_path][int(modelid)][chainid].keys())
 
         index_df.at[index, complete_col] = True
 
@@ -83,14 +86,24 @@ def get_index_dih(
 
                     if str(add_resid) in dih_resid_lst:
 
-                        val = dih_dict[coord_path][str(modelid)][chainid][
-                            str(add_resid)
-                        ][dih_col]
-                        resname = resname_to_letter(
-                            dih_dict[coord_path][str(modelid)][chainid][str(add_resid)][
-                                resname_col
-                            ]
-                        )
+                        try:
+                            val = dih_dict[coord_path][str(modelid)][chainid][
+                                str(add_resid)
+                            ][dih_col]
+                            resname = resname_to_letter(
+                                dih_dict[coord_path][str(modelid)][chainid][
+                                    str(add_resid)
+                                ][resname_col]
+                            )
+                        except:
+                            val = dih_dict[coord_path][int(modelid)][chainid][
+                                str(add_resid)
+                            ][dih_col]
+                            resname = resname_to_letter(
+                                dih_dict[coord_path][int(modelid)][chainid][
+                                    str(add_resid)
+                                ][resname_col]
+                            )
 
                     if dih_col == phi_col:
                         bb_resid_lst.append(add_resid)

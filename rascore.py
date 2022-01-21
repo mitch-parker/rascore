@@ -29,6 +29,11 @@ import pyfiglet
 
 from rascore import *
 
+print(pyfiglet.figlet_format("rascore"))
+print("A package for conformationally analyzing RAS structures\n")
+print("Author: Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>")
+print("License: MIT License\n")
+
 
 def main(args):
 
@@ -49,9 +54,6 @@ def main(args):
 
     num_cpu = args.num_cpu
 
-    print(pyfiglet.figlet_format("rascore"))
-    print("Author: Mitchell Parker <mitch.parker@gmail.com>\n")
-
     if data_path is not None:
         prep_rascore(data_path=data_path)
 
@@ -62,7 +64,7 @@ def main(args):
             num_cpu=num_cpu,
         )
 
-    if cluster_structures is not None:
+    if cluster_structures:
         cluster_rascore(
             out_path=out_path,
             data_path=data_path,
@@ -72,8 +74,7 @@ def main(args):
     if classify_structures is not None:
         classify_rascore(
             coord_paths=classify_structures,
-            output_path=out_path,
-            data_path=data_path,
+            out_path=out_path,
             num_cpu=num_cpu,
         )
 

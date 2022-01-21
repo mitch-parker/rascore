@@ -147,165 +147,166 @@ def cluster_rascore(out_path=None, data_path=None, name_table_path=None, num_cpu
 
             nuc_df = mask_equal(df, nuc_class_col, nuc_class)
 
-            chi1_resids = None
-            if loop_name == sw2_name:
-                chi1_resids = 71
+            if len(nuc_df) > 0:
 
-            build_dih_table(
-                df=nuc_df,
-                dih_dict=dih_dict,
-                dih_table_path=dih_table_path,
-                bb_resids=loop_resids,
-                chi1_resids=chi1_resids,
-            )
-            dih_df = load_table(dih_table_path)
+                #     chi1_resids = None
+                #     if loop_name == sw2_name:
+                #         chi1_resids = 71
 
-            rmsd_dict = load_json(rmsd_json_path)
-            build_rmsd_matrix(
-                fit_df=dih_df,
-                rmsd_matrix_path=rmsd_matrix_path,
-                sup_resids=sup_resids,
-                rmsd_resids=loop_resids,
-                rmsd_atomids="CA",
-                pair_aln=False,
-                rmsd_dict=rmsd_dict,
-                rmsd_json_path=rmsd_json_path,
-            )
+                #     build_dih_table(
+                #         df=nuc_df,
+                #         dih_dict=dih_dict,
+                #         dih_table_path=dih_table_path,
+                #         bb_resids=loop_resids,
+                #         chi1_resids=chi1_resids,
+                #     )
+                #     dih_df = load_table(dih_table_path)
 
-            build_dih_matrix(
-                fit_df=dih_df,
-                max_norm_path=dih_matrix_path,
-            )
+                #     rmsd_dict = load_json(rmsd_json_path)
+                #     build_rmsd_matrix(
+                #         fit_df=dih_df,
+                #         rmsd_matrix_path=rmsd_matrix_path,
+                #         sup_resids=sup_resids,
+                #         rmsd_resids=loop_resids,
+                #         rmsd_atomids="CA",
+                #         pair_aln=False,
+                #         rmsd_dict=rmsd_dict,
+                #         rmsd_json_path=rmsd_json_path,
+                #     )
 
-            dih_matrix = load_matrix(dih_matrix_path)
-            rmsd_matrix = load_matrix(rmsd_matrix_path)
+                #     build_dih_matrix(
+                #         fit_df=dih_df,
+                #         max_norm_path=dih_matrix_path,
+                #     )
 
-            mask_dih_data(
-                df=dih_df,
-                matrix=dih_matrix,
-                fit_table_path=fit_table_path,
-                fit_matrix_path=dih_fit_matrix_path,
-                pred_table_path=pred_table_path,
-                pred_matrix_path=dih_pred_matrix_path,
-                edia_dict=edia_dict,
-                edia_min=0.4,
-                edia_atomids="O",
-            )
-            mask_dih_data(
-                df=dih_df,
-                matrix=rmsd_matrix,
-                fit_table_path=fit_table_path,
-                fit_matrix_path=rmsd_fit_matrix_path,
-                pred_table_path=pred_table_path,
-                pred_matrix_path=rmsd_pred_matrix_path,
-                edia_dict=edia_dict,
-                edia_min=0.4,
-                edia_atomids="O",
-            )
+                #     dih_matrix = load_matrix(dih_matrix_path)
+                #     rmsd_matrix = load_matrix(rmsd_matrix_path)
 
-            fit_df = load_table(fit_table_path)
-            dih_fit_matrix = load_matrix(dih_fit_matrix_path)
-            rmsd_fit_matrix = load_matrix(rmsd_fit_matrix_path)
+                #     mask_dih_data(
+                #         df=dih_df,
+                #         matrix=dih_matrix,
+                #         fit_table_path=fit_table_path,
+                #         fit_matrix_path=dih_fit_matrix_path,
+                #         pred_table_path=pred_table_path,
+                #         pred_matrix_path=dih_pred_matrix_path,
+                #         edia_dict=edia_dict,
+                #         edia_min=0.4,
+                #         edia_atomids="O",
+                #     )
+                #     mask_dih_data(
+                #         df=dih_df,
+                #         matrix=rmsd_matrix,
+                #         fit_table_path=fit_table_path,
+                #         fit_matrix_path=rmsd_fit_matrix_path,
+                #         pred_table_path=pred_table_path,
+                #         pred_matrix_path=rmsd_pred_matrix_path,
+                #         edia_dict=edia_dict,
+                #         edia_min=0.4,
+                #         edia_atomids="O",
+                #     )
 
-            cluster_matrix(
-                df=fit_df,
-                matrix=dih_fit_matrix,
-                cluster_table_path=cluster_table_path,
-                report_table_path=cluster_report_table_path,
-                max_nn_dist=0.45,
-                constr_matrix=rmsd_fit_matrix,
-                max_constr_dist=1.2,
-                merge_constr_dist=1.2,
-                min_samples_range="3-15",
-                min_min_samples=7,
-                min_pdb=5,
-            )
-            cluster_df = load_table(cluster_table_path)
+                #     fit_df = load_table(fit_table_path)
+                #     dih_fit_matrix = load_matrix(dih_fit_matrix_path)
+                #     rmsd_fit_matrix = load_matrix(rmsd_fit_matrix_path)
 
-            pred_df = load_table(pred_table_path)
+                #     cluster_matrix(
+                #         df=fit_df,
+                #         matrix=dih_fit_matrix,
+                #         cluster_table_path=cluster_table_path,
+                #         report_table_path=cluster_report_table_path,
+                #         max_nn_dist=0.45,
+                #         constr_matrix=rmsd_fit_matrix,
+                #         max_constr_dist=1.2,
+                #         merge_constr_dist=1.2,
+                #         min_samples_range="3-15",
+                #         min_min_samples=7,
+                #         min_pdb=5,
+                #     )
+                cluster_df = load_table(cluster_table_path)
 
-            dih_pred_matrix = load_matrix(dih_pred_matrix_path)
-            rmsd_pred_matrix = load_matrix(rmsd_pred_matrix_path)
+                # pred_df = load_table(pred_table_path)
 
-            classify_matrix(
-                cluster_df=cluster_df,
-                pred_df=pred_df,
-                fit_matrix=dih_fit_matrix,
-                pred_matrix=dih_pred_matrix,
-                result_table_path=result_table_path,
-                report_table_path=classify_report_table_path,
-                sum_table_path=sum_table_path,
-                fit_constr_matrix=rmsd_fit_matrix,
-                pred_constr_matrix=rmsd_pred_matrix,
-                max_nn_dist=0.45,
-                max_constr_dist=1.2,
-            )
+                # dih_pred_matrix = load_matrix(dih_pred_matrix_path)
+                # rmsd_pred_matrix = load_matrix(rmsd_pred_matrix_path)
 
-            result_df = load_table(result_table_path)
-            sum_df = load_table(sum_table_path)
-            cluster_report_df = load_table(cluster_report_table_path)
-            classify_report_df = load_table(classify_report_table_path)
+                # classify_matrix(
+                #     cluster_df=cluster_df,
+                #     pred_df=pred_df,
+                #     fit_matrix=dih_fit_matrix,
+                #     pred_matrix=dih_pred_matrix,
+                #     result_table_path=result_table_path,
+                #     report_table_path=classify_report_table_path,
+                #     sum_table_path=sum_table_path,
+                #     fit_constr_matrix=rmsd_fit_matrix,
+                #     pred_constr_matrix=rmsd_pred_matrix,
+                #     max_nn_dist=0.45,
+                #     max_constr_dist=1.2,
+                # )
 
-            rename_dict = dict()
+                result_df = load_table(result_table_path)
+                sum_df = load_table(sum_table_path)
+                cluster_report_df = load_table(cluster_report_table_path)
+                classify_report_df = load_table(classify_report_table_path)
 
-            i = 1
-            for index in list(sum_df.index.values):
-                cluster = sum_df.at[index, cluster_col]
-                name = cluster
-                if cluster != noise_name:
-                    rama = sum_df.at[index, f"{common_col}_{rama_col}"]
+                rename_dict = dict()
 
-                    if loop_name == sw2_name:
-                        rama += sum_df.at[index, f"{common_col}_{rotamer_col}"]
+                i = 1
+                for index in list(sum_df.index.values):
+                    cluster = sum_df.at[index, cluster_col]
+                    name = cluster
+                    if cluster != noise_name:
+                        rama = sum_df.at[index, f"{common_col}_{rama_col}"]
 
-                    if rama in list(name_dict[loop_name][nuc_class].keys()):
-                        name = name_dict[loop_name][nuc_class][rama]
-                    else:
-                        name = f"{loop_name}.{nuc_class}-Unknown-{i}"
-                        i += 1
+                        if loop_name == sw2_name:
+                            rama += sum_df.at[index, f"{common_col}_{rotamer_col}"]
 
-                rename_dict[cluster] = name
+                        if rama in list(name_dict[loop_name][nuc_class].keys()):
+                            name = name_dict[loop_name][nuc_class][rama]
+                        else:
+                            name = f"{loop_name}.{nuc_class}-Unknown-{i}"
+                            i += 1
 
-            cluster_df[cluster_col] = cluster_df[cluster_col].map(rename_dict)
-            result_df[cluster_col] = result_df[cluster_col].map(rename_dict)
-            sum_df[cluster_col] = sum_df[cluster_col].map(rename_dict)
-            classify_report_df[cluster_col] = classify_report_df[cluster_col].map(
-                rename_dict
-            )
+                    rename_dict[cluster] = name
 
-            save_table(cluster_table_path, cluster_df)
+                result_df[cluster_col] = result_df[cluster_col].map(rename_dict)
+                sum_df[cluster_col] = sum_df[cluster_col].map(rename_dict)
+                classify_report_df[cluster_col] = classify_report_df[cluster_col].map(
+                    rename_dict
+                )
 
-            result_df[loop_col] = loop_name
-            sum_df[loop_col] = loop_name
-            cluster_report_df[loop_col] = loop_name
-            classify_report_df[loop_col] = loop_name
+                cluster_df[cluster_col] = cluster_df[pdb_id_col].map(
+                    make_dict(
+                        lst_col(result_df, pdb_id_col), lst_col(result_df, cluster_col)
+                    )
+                )
 
-            result_df[nuc_class_col] = nuc_class
-            sum_df[nuc_class_col] = nuc_class
-            cluster_report_df[nuc_class_col] = nuc_class
-            classify_report_df[nuc_class_col] = nuc_class
+                save_table(cluster_table_path, cluster_df)
 
-            for index in list(sum_df.index.values):
-                cluster = sum_df.at[index, cluster_col]
-                if cluster == noise_name:
-                    sum_df.at[
-                        index, cluster_col
-                    ] = f"{loop_name}.{nuc_class}-{noise_name}"
+                result_df[loop_col] = loop_name
+                sum_df[loop_col] = loop_name
+                cluster_report_df[loop_col] = loop_name
+                classify_report_df[loop_col] = loop_name
 
-            loop_result_df = pd.concat([loop_result_df, result_df], sort=False)
-            loop_sum_df = pd.concat([loop_sum_df, sum_df], sort=False)
-            loop_cluster_report_df = pd.concat(
-                [loop_cluster_report_df, cluster_report_df], sort=False
-            )
-            loop_classify_report_df = pd.concat(
-                [loop_classify_report_df, classify_report_df], sort=False
-            )
+                result_df[nuc_class_col] = nuc_class
+                sum_df[nuc_class_col] = nuc_class
+                cluster_report_df[nuc_class_col] = nuc_class
+                classify_report_df[nuc_class_col] = nuc_class
 
-        loop_result_df = loop_result_df.reset_index(drop=True)
+                for index in list(sum_df.index.values):
+                    cluster = sum_df.at[index, cluster_col]
+                    if cluster == noise_name:
+                        sum_df.at[
+                            index, cluster_col
+                        ] = f"{loop_name}.{nuc_class}-{noise_name}"
 
-        loop_sum_df = loop_sum_df.sort_values(
-            by=[nuc_class_col, total_chain_col], ascending=[True, False]
-        )
+                loop_result_df = pd.concat([loop_result_df, result_df], sort=False)
+                loop_sum_df = pd.concat([loop_sum_df, sum_df], sort=False)
+                loop_cluster_report_df = pd.concat(
+                    [loop_cluster_report_df, cluster_report_df], sort=False
+                )
+                loop_classify_report_df = pd.concat(
+                    [loop_classify_report_df, classify_report_df], sort=False
+                )
 
         loop_result_table_path = get_file_path(
             result_table_file, dir_str=loop_name, dir_path=out_path
@@ -342,13 +343,25 @@ def cluster_rascore(out_path=None, data_path=None, name_table_path=None, num_cpu
             check_hb=True,
         )
 
-        dist_df[hb_status_col] = "-" + dist_df[hb_status_col].map(str)
+        dist_df[hb_status_col] = dist_df[hb_status_col].map(sw1_gtp_dict)
 
-        sw1_gtp_dict = make_dict(
-            lst_col(dist_df, pdb_id_col), lst_col(dist_df, hb_status_col)
+        df[hb_status_col] = (
+            df[pdb_id_col]
+            .map(
+                make_dict(lst_col(dist_df, pdb_id_col), lst_col(dist_df, hb_status_col))
+            )
+            .fillna("")
         )
 
-        df[hb_status_col] = df[pdb_id_col].map(sw1_gtp_dict).fillna("")
+        df[sw1_name].replace(
+            {
+                sw1_gtp_name: "",
+                sw1_gtp_wat_name: "",
+                sw1_gtp_dir_name: "",
+                sw1_gtp_no_name: "",
+            },
+            inplace=True,
+        )
         df[sw1_name] += df[hb_status_col].map(str)
 
         del df[hb_status_col]

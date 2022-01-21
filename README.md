@@ -1,26 +1,27 @@
-# rascore: A tool for analyzing the conformations of RAS structures
+# rascore: A package for conformationally analyzing RAS structures
 
 ## Summary
 
-rascore is a package for conformationally classifying RAS structures (KRAS, NRAS, and HRAS) by their switch 1 and switch 2 loop conformations. Details of our RAS conformational classification are provided on BioArxiv in the manuscript: "An expanded classification of active, inactive and druggable RAS conformations." We hope that researchers will use rascore to gain novel insights into RAS biology and drug discovery. 
+rascore is a package for conformationally classifying RAS structures (KRAS, NRAS, and HRAS) by the conformations of their catalytic switch 1 (SW1) and switch 2 (SW2) loops. In addition, rascore can be used to build an updatable database of all available RAS structures from the Protein Data Bank with their SW1 and SW2 loops conformationally classified and their molecular contents annotated (e.g., mutation status, nucleotide state, bound proteins, small molecule inhibitors). Details of our RAS conformational classification and approach are provided on BioArxiv in the manuscript: "An expanded classification of active, inactive and druggable RAS conformations." We hope that researchers will use rascore to gain novel insights into RAS biology and drug discovery. 
 
 ## Installation
 
 The following package versions are required:
 
-- Bio==1.3.2
-- rdkit==2009.Q1-1
-- pandas==1.2.4
-- numpy==1.20.1
-- scikit_learn==1.0.1
-- statsmodels==0.12.2
-- matplotlib==3.3.4
-- seaborn==0.11.1
-- tqdm==4.59.0
-- requests==2.25.1
+- Bio >= 1.3.2
+- rdkit >= 2009.Q1-1
+- pandas >= 1.2.4
+- numpy >= 1.20.1
+- scikit_learn >= 1.0.1
+- statsmodels >= 0.12.2
+- matplotlib >= 3.3.4
+- seaborn >= 0.11.1
+- tqdm >= 4.59.0
+- requests >= 2.25.1
 
 Quickstart commands with an installation of Anaconda (https://www.anaconda.com/products/individual):
 
+- conda create -n rascore_env
 - conda install -c conda-forge -c schrodinger pymol-bundle
 - conda install -c conda-forge rdkit
 - conda install -c conda-forge cairosvg 
