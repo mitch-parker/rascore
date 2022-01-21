@@ -22,10 +22,22 @@ def classify_rascore(coord_paths, out_path=None, num_cpu=1):
 
     coord_path_lst = type_lst(coord_paths)
 
+    df = pd.DataFrame()
     if ".txt" in coord_path_lst[0]:
         df = load_table(coord_path_lst[0])
-    else:
-        df = pd.DataFrame()
+        df_col_lst = list(df.columns)
+        if core_path_col in df_col_lst and chainid_col in df_col_lst:
+            if modelid_col not in df_col_lst:
+                df[modelid_col] = 0
+        else:
+            if core_path_col in df_col_lst and chainid_col not in df_col_lst:
+                coord_path_lst = lst_col(df, core_path_col)
+            else:
+                coord_path_lst = load_lst(coord_path_lst[0])
+            df = pd.DataFrame()
+
+    if len(df) == 0:
+
         i = 0
         for coord_path in tqdm(
             coord_path_lst,

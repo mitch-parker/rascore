@@ -11,6 +11,7 @@ permission of Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>.
 
 import os
 import argparse
+import pyfiglet
 
 from rascore import *
 
@@ -34,12 +35,17 @@ def main(args):
 
     num_cpu = args.num_cpu
 
+    print(pyfiglet.figlet_format("rascore"))
+    print("Author: Mitchell Parker <mitch.parker@gmail.com>\n")
+
     if data_path is not None:
         prep_rascore(data_path=data_path)
 
     if update_database:
         update_rascore(
-            data_path=data_path, pdbaa_fasta_path=pdbaa_path, num_cpu=num_cpu
+            data_path=data_path,
+            pdbaa_fasta_path=pdbaa_path,
+            num_cpu=num_cpu,
         )
 
     if cluster_structures is not None:
@@ -96,12 +102,24 @@ if __name__ == "__main__":
         required=False,
         help=f"update rascore database from the Protein Data Bank; files saved to {os.getcwd()}/{rascore_str}_{data_str} unless specified otherwise with -data flag",
     )
+
+    classify_str = "three options to input coordinate file paths (PDB or mmCIF formats) for conformational classification"
+    classify_str = ";"
+    classify_str += f"files saved to {rascore_str}_{classify_str} folder within specified output path"
+    classify_str = ":"
+    classify_str += "\n"
+    classify_str += "a) space separated list "
+    classify_str += "\n"
+    classify_str += "b) line seperated text file"
+    classify_str += "\n"
+    classify_str += "c) tab-separated text file with columns (1) core_path (coordinate file path), (2) modelid (optional, 0 or another model number), (3) chainid (chain identifier), and (4) nuc_class (optional, overwrites suggested nucleotide state)"
+
     parser.add_argument(
         "-classify",
         "--classify_structures",
         nargs="+",
         required=False,
-        help=f"space separated list of coordinate file paths (PDB or mmCIF formats) to conformationally classify or path to tab-separated text file with columns (1) core_path (coordinate file path to classify), (2) modelid (0 or another model number to classsify), (3) chainid (chain to classify), and (4) nuc_class (optional to overwride automated nucleotide classification); files saved to {rascore_str}_{classify_str} folder within specified output path",
+        help=classify_str,
     )
     parser.add_argument(
         "-cluster",
@@ -144,6 +162,13 @@ if __name__ == "__main__":
         type=str,
         required=False,
         help="path to alternative nomenclature file (for -cluster flag)",
+    )
+    parser.add_argument(
+        "-edia",
+        "--update_edia",
+        action="store_true",
+        required=False,
+        help="update EDIA scores",
     )
     parser.add_argument(
         "-cpu",

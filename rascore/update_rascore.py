@@ -18,7 +18,6 @@ def update_prep(data_path=None, past_df=None, num_cpu=1):
 
     entry_table_path = get_file_path(entry_table_file, dir_path=data_path)
     sifts_json_path = get_file_path(sifts_json_file, dir_path=data_path)
-    edia_json_path = get_file_path(edia_json_file, dir_path=data_path)
     dih_json_path = get_file_path(dih_json_file, dir_path=data_path)
 
     df = load_table(entry_table_path)
@@ -40,7 +39,6 @@ def update_prep(data_path=None, past_df=None, num_cpu=1):
 
     if delete_paths:
         delete_path(sifts_json_path)
-        delete_path(edia_json_path)
         delete_path(dih_json_path)
 
     if len(df) == 0:
@@ -73,20 +71,6 @@ def update_prep(data_path=None, past_df=None, num_cpu=1):
 
         df = load_table(entry_table_path)
 
-        pdb_code_lst = lst_col(df, pdb_code_col, unique=True)
-        sifts_dict = load_json(sifts_json_path)
-        edia_dict = prep_edia(
-            pdb_codes=pdb_code_lst,
-            edia_dir=data_path,
-            sifts_dict=sifts_dict,
-            num_cpu=num_cpu,
-        )
-
-        past_edia_dict = load_json(edia_json_path)
-        if past_edia_dict is not None:
-            edia_dict = merge_dicts([edia_dict, past_edia_dict])
-        save_json(edia_json_path, edia_dict)
-
         core_path_lst = lst_col(df, core_path_col, unique=True)
         dih_dict = prep_dih(coord_paths=core_path_lst, num_cpu=num_cpu)
 
@@ -110,10 +94,9 @@ def update_prep(data_path=None, past_df=None, num_cpu=1):
                 save_table(entry_table_path, df)
 
 
-def update_annot(data_path=None, past_df=None, num_cpu=1):
+def update_annot(pdbaa_fasta_path, data_path=None, past_df=None, num_cpu=1):
 
     entry_table_path = get_file_path(entry_table_file, dir_path=data_path)
-    pdbaa_fasta_path = get_file_path(pdbaa_fasta_file, dir_path=data_path)
 
     df = load_table(entry_table_path)
 
@@ -436,8 +419,6 @@ def update_rascore(data_path=None, pdbaa_fasta_path=None, num_cpu=1):
             dir_path=data_path,
             pre_str=False,
         )
-    else:
-        delete_path(entry_table_path)
 
     past_df = load_table(entry_table_path)
 
@@ -450,7 +431,21 @@ def update_rascore(data_path=None, pdbaa_fasta_path=None, num_cpu=1):
             past_df[complete_col] = str(True)
 
     print("Downloading updated pdbaa file.")
-    download_unzip(url=pdbaa_url, path=pdbaa_fasta_path)
+
+    try:
+        download_unzip(url=pdbaa_url, path=pdbaa_fasta_path)
+    except:
+        pdbaa_fasta_path = sorted(
+            [
+                x
+                for x in os.listdir(get_dir_path(dir_str=pdbaa_str, dir_path=data_path))
+                if pdbaa_fasta_file in x
+            ],
+            reverse=True,
+        )[0]
+        last_date = pdbaa_fasta_path.split(f"_{pdbaa_fasta_file}")[0]
+        last_date = last_date.split(f"{pdbaa_str}/")[1]
+        print(f"Updated pdbaa file unavailable. Using latest version ({last_date})")
 
     search_pdbaa(
         pdbaa_fasta_path=pdbaa_fasta_path,
@@ -466,7 +461,12 @@ def update_rascore(data_path=None, pdbaa_fasta_path=None, num_cpu=1):
             past_df = None
 
     update_prep(data_path=data_path, past_df=past_df, num_cpu=num_cpu)
-    update_annot(data_path=data_path, past_df=past_df, num_cpu=num_cpu)
+    update_annot(
+        pdbaa_fasta_path,
+        data_path=data_path,
+        past_df=past_df,
+        num_cpu=num_cpu,
+    )
     update_interf(data_path=data_path, past_df=past_df, num_cpu=num_cpu)
     update_pocket(data_path=data_path, past_df=past_df, num_cpu=num_cpu)
 

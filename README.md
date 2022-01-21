@@ -28,6 +28,7 @@ Quickstart commands with an installation of Anaconda (https://www.anaconda.com/p
 - conda install -c conda-forge statannot 
 - conda install -c conda-forge matplotlib-venn
 - conda install -c conda-forge fpocket
+- conda install -c conda-forge pyfiglet 
 
 ## Usage
 

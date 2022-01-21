@@ -13,7 +13,7 @@ from .scripts import *
 from .constants import *
 
 
-def cluster_rascore(out_path=None, data_path=None, name_table_path=None):
+def cluster_rascore(out_path=None, data_path=None, name_table_path=None, num_cpu=1):
 
     if data_path is None:
         data_path = f"{os.getcwd()}/{rascore_str}_{data_str}"
@@ -36,10 +36,25 @@ def cluster_rascore(out_path=None, data_path=None, name_table_path=None):
 
     entry_table_path = get_file_path(entry_table_file, dir_path=data_path)
 
-    dih_json_path = get_file_path(dih_json_file, dir_path=data_path)
+    sifts_json_path = get_file_path(sifts_json_file, dir_path=data_path)
     edia_json_path = get_file_path(edia_json_file, dir_path=data_path)
+    dih_json_path = get_file_path(dih_json_file, dir_path=data_path)
 
     df = load_table(entry_table_path)
+
+    try:
+        pdb_code_lst = lst_col(df, pdb_code_col, unique=True)
+        sifts_dict = load_json(sifts_json_path)
+        prep_edia(
+            pdb_codes=pdb_code_lst,
+            edia_dir=data_path,
+            sifts_dict=sifts_dict,
+            edia_json_path=edia_json_path,
+            num_cpu=num_cpu,
+        )
+    except:
+        delete_path(edia_json_path)
+
     dih_dict = load_json(dih_json_path)
     edia_dict = load_json(edia_json_path)
 
@@ -115,101 +130,101 @@ def cluster_rascore(out_path=None, data_path=None, name_table_path=None):
                 rmsd_pred_matrix_file, dir_str=loop_nuc_name, dir_path=loop_path
             )
 
-            # nuc_df = mask_equal(df, nuc_class_col, nuc_class)
+            nuc_df = mask_equal(df, nuc_class_col, nuc_class)
 
-            # chi1_resids = None
-            # if loop_name == sw2_name:
-            #     chi1_resids = 71
+            chi1_resids = None
+            if loop_name == sw2_name:
+                chi1_resids = 71
 
-            # build_dih_table(
-            #     df=nuc_df,
-            #     dih_dict=dih_dict,
-            #     dih_table_path=dih_table_path,
-            #     bb_resids=loop_resids,
-            #     chi1_resids=chi1_resids,
-            # )
-            # dih_df = load_table(dih_table_path)
+            build_dih_table(
+                df=nuc_df,
+                dih_dict=dih_dict,
+                dih_table_path=dih_table_path,
+                bb_resids=loop_resids,
+                chi1_resids=chi1_resids,
+            )
+            dih_df = load_table(dih_table_path)
 
-            # rmsd_dict = load_json(rmsd_json_path)
-            # build_rmsd_matrix(
-            #     fit_df=dih_df,
-            #     rmsd_matrix_path=rmsd_matrix_path,
-            #     sup_resids=sup_resids,
-            #     rmsd_resids=loop_resids,
-            #     rmsd_atomids="CA",
-            #     pair_aln=False,
-            #     rmsd_dict=rmsd_dict,
-            #     rmsd_json_path=rmsd_json_path,
-            # )
+            rmsd_dict = load_json(rmsd_json_path)
+            build_rmsd_matrix(
+                fit_df=dih_df,
+                rmsd_matrix_path=rmsd_matrix_path,
+                sup_resids=sup_resids,
+                rmsd_resids=loop_resids,
+                rmsd_atomids="CA",
+                pair_aln=False,
+                rmsd_dict=rmsd_dict,
+                rmsd_json_path=rmsd_json_path,
+            )
 
-            # build_dih_matrix(
-            #     fit_df=dih_df,
-            #     max_norm_path=dih_matrix_path,
-            # )
+            build_dih_matrix(
+                fit_df=dih_df,
+                max_norm_path=dih_matrix_path,
+            )
 
-            # dih_matrix = load_matrix(dih_matrix_path)
-            # rmsd_matrix = load_matrix(rmsd_matrix_path)
+            dih_matrix = load_matrix(dih_matrix_path)
+            rmsd_matrix = load_matrix(rmsd_matrix_path)
 
-            # mask_dih_data(
-            #     df=dih_df,
-            #     matrix=dih_matrix,
-            #     fit_table_path=fit_table_path,
-            #     fit_matrix_path=dih_fit_matrix_path,
-            #     pred_table_path=pred_table_path,
-            #     pred_matrix_path=dih_pred_matrix_path,
-            #     edia_dict=edia_dict,
-            #     edia_min=0.4,
-            #     edia_atomids="O",
-            # )
-            # mask_dih_data(
-            #     df=dih_df,
-            #     matrix=rmsd_matrix,
-            #     fit_table_path=fit_table_path,
-            #     fit_matrix_path=rmsd_fit_matrix_path,
-            #     pred_table_path=pred_table_path,
-            #     pred_matrix_path=rmsd_pred_matrix_path,
-            #     edia_dict=edia_dict,
-            #     edia_min=0.4,
-            #     edia_atomids="O",
-            # )
+            mask_dih_data(
+                df=dih_df,
+                matrix=dih_matrix,
+                fit_table_path=fit_table_path,
+                fit_matrix_path=dih_fit_matrix_path,
+                pred_table_path=pred_table_path,
+                pred_matrix_path=dih_pred_matrix_path,
+                edia_dict=edia_dict,
+                edia_min=0.4,
+                edia_atomids="O",
+            )
+            mask_dih_data(
+                df=dih_df,
+                matrix=rmsd_matrix,
+                fit_table_path=fit_table_path,
+                fit_matrix_path=rmsd_fit_matrix_path,
+                pred_table_path=pred_table_path,
+                pred_matrix_path=rmsd_pred_matrix_path,
+                edia_dict=edia_dict,
+                edia_min=0.4,
+                edia_atomids="O",
+            )
 
-            # fit_df = load_table(fit_table_path)
-            # dih_fit_matrix = load_matrix(dih_fit_matrix_path)
-            # rmsd_fit_matrix = load_matrix(rmsd_fit_matrix_path)
+            fit_df = load_table(fit_table_path)
+            dih_fit_matrix = load_matrix(dih_fit_matrix_path)
+            rmsd_fit_matrix = load_matrix(rmsd_fit_matrix_path)
 
-            # cluster_matrix(
-            #     df=fit_df,
-            #     matrix=dih_fit_matrix,
-            #     cluster_table_path=cluster_table_path,
-            #     report_table_path=cluster_report_table_path,
-            #     max_nn_dist=0.45,
-            #     constr_matrix=rmsd_fit_matrix,
-            #     max_constr_dist=1.2,
-            #     merge_constr_dist=1.2,
-            #     min_samples_range="3-15",
-            #     min_min_samples=7,
-            #     min_pdb=5,
-            # )
+            cluster_matrix(
+                df=fit_df,
+                matrix=dih_fit_matrix,
+                cluster_table_path=cluster_table_path,
+                report_table_path=cluster_report_table_path,
+                max_nn_dist=0.45,
+                constr_matrix=rmsd_fit_matrix,
+                max_constr_dist=1.2,
+                merge_constr_dist=1.2,
+                min_samples_range="3-15",
+                min_min_samples=7,
+                min_pdb=5,
+            )
             cluster_df = load_table(cluster_table_path)
 
-            # pred_df = load_table(pred_table_path)
+            pred_df = load_table(pred_table_path)
 
-            # dih_pred_matrix = load_matrix(dih_pred_matrix_path)
-            # rmsd_pred_matrix = load_matrix(rmsd_pred_matrix_path)
+            dih_pred_matrix = load_matrix(dih_pred_matrix_path)
+            rmsd_pred_matrix = load_matrix(rmsd_pred_matrix_path)
 
-            # classify_matrix(
-            #     cluster_df=cluster_df,
-            #     pred_df=pred_df,
-            #     fit_matrix=dih_fit_matrix,
-            #     pred_matrix=dih_pred_matrix,
-            #     result_table_path=result_table_path,
-            #     report_table_path=classify_report_table_path,
-            #     sum_table_path=sum_table_path,
-            #     fit_constr_matrix=rmsd_fit_matrix,
-            #     pred_constr_matrix=rmsd_pred_matrix,
-            #     max_nn_dist=0.45,
-            #     max_constr_dist=1.2,
-            # )
+            classify_matrix(
+                cluster_df=cluster_df,
+                pred_df=pred_df,
+                fit_matrix=dih_fit_matrix,
+                pred_matrix=dih_pred_matrix,
+                result_table_path=result_table_path,
+                report_table_path=classify_report_table_path,
+                sum_table_path=sum_table_path,
+                fit_constr_matrix=rmsd_fit_matrix,
+                pred_constr_matrix=rmsd_pred_matrix,
+                max_nn_dist=0.45,
+                max_constr_dist=1.2,
+            )
 
             result_df = load_table(result_table_path)
             sum_df = load_table(sum_table_path)
