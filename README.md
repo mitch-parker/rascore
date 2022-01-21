@@ -2,7 +2,7 @@
 
 ## Summary
 
-rascore is a Python package for conformationally classifying RAS structures (KRAS, NRAS, and HRAS) by their switch 1 and switch 2 loop conformations. Details of our RAS conformational classification are provided on BioArxiv in the manuscript: "An expanded classification of active, inactive and druggable RAS conformations." We hope that researchers will use rascore to gain novel insights into RAS biology and drug discovery. 
+rascore is a package for conformationally classifying RAS structures (KRAS, NRAS, and HRAS) by their switch 1 and switch 2 loop conformations. Details of our RAS conformational classification are provided on BioArxiv in the manuscript: "An expanded classification of active, inactive and druggable RAS conformations." We hope that researchers will use rascore to gain novel insights into RAS biology and drug discovery. 
 
 ## Installation
 
@@ -47,9 +47,24 @@ Users may provide RAS stuctures in mmCIF or PDB format for conformational classi
 - GitHub: https://github.com/DunbrackLab
 
 ## License
-Copyright (C) 2022 Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>
+MIT License
 
-This file is part of the rascore project.
+Copyright (c) 2022 Mitchell Isaac Parker
 
-The rascore project cannot be copied, edited, and/or distributed without the express
-permission of Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

@@ -269,6 +269,9 @@ def cluster_rascore(out_path=None, data_path=None, name_table_path=None, num_cpu
             cluster_df[cluster_col] = cluster_df[cluster_col].map(rename_dict)
             result_df[cluster_col] = result_df[cluster_col].map(rename_dict)
             sum_df[cluster_col] = sum_df[cluster_col].map(rename_dict)
+            classify_report_df[cluster_col] = classify_report_df[cluster_col].map(
+                rename_dict
+            )
 
             save_table(cluster_table_path, cluster_df)
 
