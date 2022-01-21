@@ -26,6 +26,7 @@ SOFTWARE.
 import re
 import pandas as pd
 import numpy as np
+from datetime import datetime
 
 from .col import (
     pdb_id_col,
@@ -700,3 +701,8 @@ def convert_col_percent(df, col):
     df[col] = (df[col] / df[col].sum()) * 100
 
     return df
+
+
+def date_to_year(date_str):
+
+    return datetime.strptime(date_str, "%Y")

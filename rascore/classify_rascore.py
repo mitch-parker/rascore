@@ -68,6 +68,9 @@ def classify_rascore(coord_paths, out_path=None, num_cpu=1):
                     df.at[i, modelid_col] = modelid
                     df.at[i, chainid_col] = chainid
 
+    for index in list(df.index.values):
+        df.at[index, id_col] = get_file_name(df.at[index, core_path_col])
+
     df_col_lst = list(df.columns)
 
     missing_col_lst = [

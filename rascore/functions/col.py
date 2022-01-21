@@ -23,6 +23,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+sw1_col = "SW1"
+sw2_col = "SW2"
+id_col = "id"
+
 core_path_col = "core_path"
 rcsb_path_col = "rcsb_path"
 renum_path_col = "renum_path"
@@ -51,6 +55,7 @@ r_factor_col = "r_factor"
 seq_col = "sequence"
 len_col = "length"
 range_col = "range"
+year_col = "year"
 
 len_a_col = "length_a"
 len_b_col = "length_b"
@@ -275,10 +280,13 @@ count_col_dict = {
 }
 
 order_col_lst = [
+    id_col,
     pdb_id_col,
     pdb_code_col,
     modelid_col,
     chainid_col,
+    sw1_col,
+    sw2_col,
     cf_col,
     cluster_col,
     total_col,
@@ -326,6 +334,7 @@ order_col_lst = [
     space_col,
     len_col,
     range_col,
+    year_col,
     index_col,
     p_col,
     correct_p_col,

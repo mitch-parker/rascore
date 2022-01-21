@@ -24,7 +24,7 @@ SOFTWARE.
 """
 
 from .prep_rascore import *
-from .update_rascore import *
+from .build_rascore import *
 from .classify_rascore import *
 from .cluster_rascore import *
 from .plot_rascore import *

@@ -94,7 +94,7 @@ def main(args):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
-        description="rascore: A tool for analyzing the conformations of RAS structures"
+        description="rascore: A package for analyzing the conformations of RAS structures"
     )
     parser.add_argument(
         "-data",

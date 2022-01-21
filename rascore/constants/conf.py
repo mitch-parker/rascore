@@ -150,7 +150,7 @@ conf_color_dict = {
         sw2_gdp_binder_name: light_purple_hex,
         sw2_gtp_r_name: light_green_hex,
         sw2_gtp_sp12_a_name: light_cyan_hex,
-        sw2_gtp_r_name: light_pink_hex,
+        sw2_gtp_t_name: light_pink_hex,
         sw2_gtp_sp12_b_name: light_brown_hex,
         noise_name: noise_color,
     },

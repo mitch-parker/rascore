@@ -22,7 +22,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from datetime import datetime
 
 from .scripts import *
 from .constants import *
@@ -418,7 +417,7 @@ def update_pocket(data_path=None, past_df=None, num_cpu=1):
         save_table(entry_table_path, df)
 
 
-def update_rascore(data_path=None, pdbaa_fasta_path=None, num_cpu=1):
+def build_rascore(data_path=None, pdbaa_fasta_path=None, num_cpu=1):
 
     if data_path is None:
         data_path = f"{os.getcwd()}/{rascore_str}_{data_str}"
