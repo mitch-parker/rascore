@@ -1,4 +1,4 @@
-![alt text](https://github.com/mitch-parker/rascore/blob/main/rascore/data/rascore_logo.png? raw=true)
+![alt text](https://github.com/mitch-parker/rascore/blob/main/rascore/data/rascore_logo.png?)
 
 ## Summary
 
@@ -12,21 +12,21 @@ Details of our RAS conformational classification and approach are provided on *B
 
 pip install rascore
 
-conda create -n rascore_env
-conda activate rascore_env
-conda install -n rascore_env -c conda-forge -c schrodinger pymol-bundle
-conda install -c conda-forge rdkit
-conda install -c conda-forge cairosvg 
-conda install -c conda-forge tqdm
-conda install -c conda-forge statannot 
-conda install -c conda-forge matplotlib-venn
-conda install -c conda-forge fpocket
-conda install -c conda-forge pyfiglet 
+conda create -n rascore_env\n
+conda activate rascore_env\n
+conda install -n rascore_env -c conda-forge -c schrodinger pymol-bundle\n
+conda install -c conda-forge rdkit\n
+conda install -c conda-forge cairosvg\n
+conda install -c conda-forge tqdm\n
+conda install -c conda-forge statannot\n 
+conda install -c conda-forge matplotlib-venn\n
+conda install -c conda-forge fpocket\n
+conda install -c conda-forge pyfiglet\n 
 
-pip install streamlit
-pip install futures
-pip install py3Dmol
-pip install stmol
+pip install streamlit\n
+pip install futures\n
+pip install py3Dmol\n
+pip install stmol\n
 
 ## Usage
 
@@ -51,7 +51,7 @@ rascore -build [optional, path to pdbaa file] -out *[output directory path]*
 
 rascore -app *[optional, path to rascore database directory]* -out *[output directory path]*
 
-*Note.** Can run limited version if rascore database directory not specified.
+*Note.* Can run limited version if rascore database directory not specified.
 
 ## Authors
 
