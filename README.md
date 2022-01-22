@@ -42,13 +42,13 @@ pip install stmol
 
 ## Usage
 
-**Activate rascore conda environment if setup:**
+### Activate rascore conda environment if setup:**
 
-*conda activate rascore_env*
+**conda activate rascore_env**
 
-**Conformationally classify RAS structures (mmCIF or PDB format, must be numbered according to UniProt scheme):**
+### Conformationally classify RAS structures (mmCIF or PDB format, must be numbered according to UniProt scheme):**
 
-*rascore -classify [path to coordinate file(s)]* -out *[output directory path]*
+**rascore -classify [path to coordinate file(s)]* -out *[output directory path]**
 
 *Note.* Coordinate files can be provided in the following formats: 
 - Space-separated list
@@ -57,11 +57,11 @@ pip install stmol
 
 **Build rascore database (takes ~1 hour from scratch and requires ~3 GB of storage):**
 
-*rascore -build [optional, path to pdbaa file] -out [output directory path]*
+**rascore -build [optional, path to pdbaa file] -out [output directory path]**
 
-**Run rascore application (must run build first):**
+### Run rascore application (must run build first):
 
-rascore -app *[optional, path to rascore database directory]* -out *[output directory path]*
+**rascore -app [optional, path to rascore database directory]* -out *[output directory path]**
 
 *Note.* Can run limited version if rascore database directory not specified.
 
