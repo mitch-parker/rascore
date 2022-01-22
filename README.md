@@ -20,25 +20,7 @@ conda install -n rascore_env -c conda-forge -c schrodinger pymol-bundle
 
 conda install -c conda-forge rdkit
 
-conda install -c conda-forge cairosvg
-
-conda install -c conda-forge tqdm
-
-conda install -c conda-forge statannot
-
-conda install -c conda-forge matplotlib-venn
-
 conda install -c conda-forge fpocket
-
-conda install -c conda-forge pyfiglet
-
-pip install streamlit
-
-pip install futures
-
-pip install py3Dmol
-
-pip install stmol
 
 # Usage
 
