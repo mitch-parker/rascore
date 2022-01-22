@@ -42,26 +42,22 @@ pip install stmol
 
 # Usage
 
-## Activate rascore conda environment if setup:
+### 1) Conformationally classify RAS structures (mmCIF or PDB format, must be numbered according to UniProt scheme):**
 
-**conda activate rascore_env**
-
-## Conformationally classify RAS structures (mmCIF or PDB format, must be numbered according to UniProt scheme):**
-
-**rascore -classify [path to coordinate file(s)]* -out *[output directory path]**
+rascore -classify [path to coordinate file(s)]* -out *[output directory path]
 
 *Note.* Coordinate files can be provided in the following formats: 
 - Space-separated list
 - Line-separated list file
 - Tab-separated table file with columns core_path (coordinate path), modelid (optional, model number), chainid (chain identifier), nuc_class (optional, nucleotide class)
 
-## Build rascore database (takes ~1 hour from scratch and requires ~3 GB of storage):
+### 2) Build rascore database (takes ~1 hour from scratch and requires ~3 GB of storage):
 
-**rascore -build [optional, path to pdbaa file] -out [output directory path]**
+rascore -build [optional, path to pdbaa file] -out [output directory path]
 
-## Run rascore application (must run build first):
+### 3) Run rascore application (must run build first):
 
-**rascore -app [optional, path to rascore database directory]* -out *[output directory path]**
+rascore -app [optional, path to rascore database directory]* -out *[output directory path]
 
 *Note.* Can run limited version if rascore database directory not specified.
 
@@ -71,18 +67,21 @@ Please feel free to contact us with any issues, comments, or questions regarding
 
 **Mitchell Parker**
 
-- Email: <mitch.isaac.parker@gmail.com>
-- GitHub: https://github.com/mitch-parker
+Email: <mitch.isaac.parker@gmail.com>
+
+GitHub: https://github.com/mitch-parker
 
 **Roland Dunbrack**
 
-- Email: <roland.dunbrack@gmail.com>
-- GitHub: https://github.com/DunbrackLab
+Email: <roland.dunbrack@gmail.com>
+
+GitHub: https://github.com/DunbrackLab
 
 # Funding
 
-- NIH F30 GM142263 (to M.P.)
-- NIH R35 GM122517 (to R.D.)
+NIH F30 GM142263 (to M.P.)
+
+NIH R35 GM122517 (to R.D.)
 
 # License
 MIT License
