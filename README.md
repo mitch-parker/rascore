@@ -8,9 +8,9 @@ Details of our RAS conformational classification and approach are provided on *B
 
 # Installation
 
-### Quickstart environment setup with an installation of Anaconda (https://www.anaconda.com/products/individual):
-
 pip install rascore
+
+**Quickstart environment setup with an installation of Anaconda (https://www.anaconda.com/products/individual):**
 
 conda create -n rascore_env
 
