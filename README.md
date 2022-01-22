@@ -8,7 +8,7 @@ Details of our RAS conformational classification and approach are provided on *B
 
 # Installation
 
-**Quickstart environment setup with an installation of Anaconda (https://www.anaconda.com/products/individual):**
+### Quickstart environment setup with an installation of Anaconda (https://www.anaconda.com/products/individual):
 
 pip install rascore
 
@@ -42,22 +42,24 @@ pip install stmol
 
 # Usage
 
-### 1) Conformationally classify RAS structures (mmCIF or PDB format, must be numbered according to UniProt scheme):
+### 1) Conformationally classify RAS structures:
 
-**rascore -classify** [path to coordinate file(s)] **-out** [output directory path]
+rascore -classify *[path to coordinate file(s)]* -out *[output directory path]*
 
-*Note.* Coordinate files can be provided in the following formats: 
+*Note.* Coordinate files must be provided in mmCIF or PDB formats and numbered according to UniProt scheme. The following inputs are possible: 
 - Space-separated list
 - Line-separated list file
 - Tab-separated table file with columns core_path (coordinate path), modelid (optional, model number), chainid (chain identifier), nuc_class (optional, nucleotide class)
 
-### 2) Build rascore database (takes ~1 hour from scratch and requires ~3 GB of storage):
+### 2) Build rascore database:
 
-**rascore -build** [optional, path to pdbaa file] **-out** [output directory path]
+rascore -build *[optional, path to pdbaa file]* -out *[output directory path]*
 
-### 3) Run rascore application (must run build first):
+*Note.* Take ~1 hour to build from scratch and requires ~3 GB of storage.
 
-**rascore -app** [optional, path to rascore database directory] *-out* [output directory path]
+### 3) Run rascore application:
+
+rascore -app *[optional, path to rascore database directory]* -out *[output directory path]*
 
 *Note.* Can run limited version if rascore database directory not specified.
 
