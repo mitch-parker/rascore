@@ -1,12 +1,12 @@
 ![alt text](https://github.com/mitch-parker/rascore/blob/main/rascore/data/rascore_logo.png?)
 
-## Summary
+# Summary
 
 *rascore* is a tool for analyzing RAS structures (KRAS, NRAS, and HRAS) by the conformations of their catalytic switch 1 (SW1) and switch 2 (SW2) loops. In addition, *rascore* can be used to build and query an updatable database of all available RAS structures from the Protein Data Bank with their SW1 and SW2 loops conformationally classified and their molecular contents annotated (e.g., mutation status, nucleotide state, bound proteins, small molecule inhibitors, etc.). 
 
 Details of our RAS conformational classification and approach are provided on *BioArxiv* in the manuscript: **An expanded classification of active, inactive and druggable RAS conformations.** We hope that researchers will use *rascore* to gain novel insights into RAS biology and drug discovery. 
 
-## Installation
+# Installation
 
 **Quickstart environment setup with an installation of Anaconda (https://www.anaconda.com/products/individual):**
 
@@ -40,13 +40,13 @@ pip install py3Dmol
 
 pip install stmol
 
-## Usage
+# Usage
 
-### Activate rascore conda environment if setup:**
+## Activate rascore conda environment if setup:
 
 **conda activate rascore_env**
 
-### Conformationally classify RAS structures (mmCIF or PDB format, must be numbered according to UniProt scheme):**
+## Conformationally classify RAS structures (mmCIF or PDB format, must be numbered according to UniProt scheme):**
 
 **rascore -classify [path to coordinate file(s)]* -out *[output directory path]**
 
@@ -55,17 +55,17 @@ pip install stmol
 - Line-separated list file
 - Tab-separated table file with columns core_path (coordinate path), modelid (optional, model number), chainid (chain identifier), nuc_class (optional, nucleotide class)
 
-**Build rascore database (takes ~1 hour from scratch and requires ~3 GB of storage):**
+## Build rascore database (takes ~1 hour from scratch and requires ~3 GB of storage):
 
 **rascore -build [optional, path to pdbaa file] -out [output directory path]**
 
-### Run rascore application (must run build first):
+## Run rascore application (must run build first):
 
 **rascore -app [optional, path to rascore database directory]* -out *[output directory path]**
 
 *Note.* Can run limited version if rascore database directory not specified.
 
-## Authors
+# Authors
 
 Please feel free to contact us with any issues, comments, or questions regarding rascore.
 
@@ -79,12 +79,12 @@ Please feel free to contact us with any issues, comments, or questions regarding
 - Email: <roland.dunbrack@gmail.com>
 - GitHub: https://github.com/DunbrackLab
 
-## Funding
+# Funding
 
 - NIH F30 GM142263 (to M.P.)
 - NIH R35 GM122517 (to R.D.)
 
-## License
+# License
 MIT License
 
 Copyright (c) 2022 Mitchell Isaac Parker
