@@ -1,4 +1,4 @@
-![alt text](https://github.com/mitch-parker/rascore/rascore/rascore/data/rascore.png?raw=true)
+![alt text](https://github.com/mitch-parker/rascore/blob/main/rascore/data/rascore_logo.png? raw=true)
 
 ## Summary
 
