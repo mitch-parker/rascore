@@ -16,7 +16,7 @@ conda create -n rascore_env
 
 conda activate rascore_env
 
-conda install -n rascore_env -c conda-forge -c schrodinger pymol-bundle
+conda install -c conda-forge -c schrodinger pymol-bundle
 
 conda install -c conda-forge rdkit
 
