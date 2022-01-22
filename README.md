@@ -8,9 +8,9 @@ Details of our RAS conformational classification and approach are provided on *B
 
 # Installation
 
-pip install rascore
-
 **Quickstart environment setup with an installation of Anaconda (https://www.anaconda.com/products/individual):**
+
+pip install rascore
 
 conda create -n rascore_env
 
@@ -42,7 +42,7 @@ pip install stmol
 
 # Usage
 
-### 1) Conformationally classify RAS structures:
+### 1) Conformationally classify RAS structure(s):
 
 rascore -classify *[path to coordinate file(s)]* -out *[output directory path]*
 
@@ -51,13 +51,13 @@ rascore -classify *[path to coordinate file(s)]* -out *[output directory path]*
 - Line-separated list file
 - Tab-separated table file with columns core_path (coordinate path), modelid (optional, model number), chainid (chain identifier), nuc_class (optional, nucleotide class)
 
-### 2) Build rascore database:
+### 2) Build rascore database from Protein Data Bank:
 
 rascore -build *[optional, path to pdbaa file]* -out *[output directory path]*
 
 *Note.* Take ~1 hour to build from scratch and requires ~3 GB of storage.
 
-### 3) Run rascore application:
+### 3) Run rascore GUI application:
 
 rascore -app *[optional, path to rascore database directory]* -out *[output directory path]*
 
