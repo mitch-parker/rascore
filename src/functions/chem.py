@@ -32,7 +32,6 @@ from rdkit.Chem import (
     AllChem,
     PyMol,
 )
-from rdkit.Chem.EnumerateHeterocycles import EnumerateHeterocycles
 
 from tqdm import tqdm
 

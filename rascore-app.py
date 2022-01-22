@@ -26,8 +26,8 @@ SOFTWARE.
 import streamlit as st
 from PIL import Image
 
-from rascore import *
-from rascore.pages import classify_page, home_page, pdb_page, query_page
+from src import *
+from src.pages import classify_page, home_page, pdb_page, query_page
 
 
 class MultiPage:
@@ -50,7 +50,7 @@ img = Image.open(
     get_file_path(
         "rascore_logo.png",
         dir_path=get_dir_path(
-            dir_str=data_str, dir_path=f"{get_dir_name(__file__)}/{rascore_str}"
+            dir_str=data_str, dir_path=f"{get_dir_name(__file__)}/{src_str}"
         ),
     )
 )

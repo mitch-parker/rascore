@@ -25,9 +25,10 @@ SOFTWARE.
 
 import os
 import argparse
+import sys
 import pyfiglet
 
-from rascore import *
+from src import *
 
 print(pyfiglet.figlet_format("rascore"))
 print("A tool for conformationally analyzing RAS structures\n")
@@ -84,7 +85,9 @@ def main(args):
         os.system(f"streamlit run {rascore_app_path}")
 
 
-if __name__ == "__main__":
+def cli(args=None):
+    if not args:
+        args = sys.argv[1:]
 
     parser = argparse.ArgumentParser(
         description="rascore: A package for analyzing the conformations of RAS structures"
@@ -131,5 +134,9 @@ if __name__ == "__main__":
         required=False,
         help="number of CPUs to use (default = 1)",
     )
-    args = parser.parse_args()
+    args = parser.parse_args(args)
     main(args)
+
+
+if __name__ == "__main__":
+    cli()

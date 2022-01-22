@@ -37,6 +37,7 @@ build_str = "build"
 classify_str = "classify"
 app_str = "app"
 
+src_str = "src"
 data_str = "data"
 cluster_str = "cluster"
 

@@ -32,7 +32,7 @@ def classify_rascore(coord_paths, out_path=None, dih_dict=None, num_cpu=1):
     if out_path is None:
         out_path = f"{os.getcwd()}/{rascore_str}_{classify_str}"
 
-    cluster_path = f"{get_dir_path(dir_str=data_str, dir_path=get_dir_name(__file__))}/{rascore_str}_{cluster_str}"
+    cluster_path = f"{get_dir_path(dir_str=data_str, dir_path=get_dir_name(__file__))}/{src_str}_{cluster_str}"
 
     coord_path_lst = type_lst(coord_paths)
 
