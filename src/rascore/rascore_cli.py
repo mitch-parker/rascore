@@ -26,14 +26,8 @@ SOFTWARE.
 import os
 import argparse
 import sys
-import pyfiglet
 
-from src import *
-
-print(pyfiglet.figlet_format("rascore"))
-print("A tool for conformationally analyzing RAS structures\n")
-print("Author: Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>")
-print("License: MIT License\n")
+from .scripts import *
 
 
 def main(args):
@@ -63,7 +57,6 @@ def main(args):
         )
     elif app is not None:
         if app is not True:
-            print(type(app))
             prep_rascore(build_path=app)
             entry_table_path = get_file_path(entry_table_file, dir_path=app)
             copy_path(
@@ -71,14 +64,14 @@ def main(args):
                 get_file_path(
                     entry_table_file,
                     get_dir_path(
-                        dir_str=data_str,
-                        dir_path=f"{get_dir_name(__file__)}/{rascore_str}",
+                        dir_str=f"{scripts_str}/{data_str}",
+                        dir_path=get_dir_name(__file__),
                     ),
                 ),
             )
 
         rascore_app_path = get_file_path(
-            "rascore-app.py",
+            "rascore_app.py",
             dir_path=get_dir_name(__file__),
         )
 
@@ -90,7 +83,7 @@ def cli(args=None):
         args = sys.argv[1:]
 
     parser = argparse.ArgumentParser(
-        description="rascore: A package for analyzing the conformations of RAS structures"
+        description="rascore: A tool for analyzing the conformations of RAS structures"
     )
 
     group = parser.add_mutually_exclusive_group()

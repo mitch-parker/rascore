@@ -23,6 +23,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from .prep_rascore import *
-from .build_rascore import *
-from .classify_rascore import *
+from ..functions import *
+from ..tools import *
+
+
+def app():
+
+    entry_table_path = get_file_path(
+        entry_table_file,
+        get_dir_path(
+            dir_str=data_str,
+            dir_path=get_dir_name(__file__),
+        ),
+    )

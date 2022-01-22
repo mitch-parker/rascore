@@ -35,11 +35,10 @@ from .table import get_col_order, order_cols, order_rows
 rascore_str = "rascore"
 build_str = "build"
 classify_str = "classify"
-app_str = "app"
-
-src_str = "src"
-data_str = "data"
 cluster_str = "cluster"
+
+scripts_str = "scripts"
+data_str = "data"
 
 pdbaa_str = "pdbaa"
 core_str = "core"

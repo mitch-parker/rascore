@@ -24,7 +24,8 @@ SOFTWARE.
 """
 
 from ..functions import *
-from ..scripts import *
+from ..tools import *
+from ..classify_rascore import classify_rascore
 
 
 def app():

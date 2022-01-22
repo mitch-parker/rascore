@@ -23,7 +23,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from .scripts import *
+from .tools import *
+from .functions import *
 from .constants import *
 from .classify_rascore import *
 

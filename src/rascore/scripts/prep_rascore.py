@@ -23,7 +23,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from .scripts import *
+from .tools import *
+from .functions import *
 from .constants import *
 
 
@@ -77,7 +78,7 @@ def prep_json(file_name, build_path=None):
 def prep_rascore(build_path=None):
 
     if build_path is None:
-        build_path = f"{os.getcwd()}/{src_str}_{build_str}"
+        build_path = f"{os.getcwd()}/{rascore_str}_{build_str}"
 
     table_file_lst = [entry_table_file, interf_table_file, pocket_table_file]
 

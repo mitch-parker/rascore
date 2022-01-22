@@ -26,7 +26,7 @@ SOFTWARE.
 import streamlit as st
 
 from ..functions import *
-from ..scripts import *
+from ..tools import *
 
 
 def app():

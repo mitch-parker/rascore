@@ -39,7 +39,7 @@ rascore -build *[optional, path to pdbaa file]* -out *[output directory path]*
 
 *Note.* Take ~1 hour to build from scratch and requires ~3 GB of storage.
 
-### 3) Run rascore GUI application:
+### 3) Run rascore GUI application (IN PROGRESS):
 
 rascore -app *[optional, path to rascore database directory]* -out *[output directory path]*
 

@@ -5,8 +5,9 @@ matplotlib==3.3.4
 matplotlib_venn==0.11.6
 numpy==1.20.1
 pandas==1.2.4
-pyfiglet==0.8.post1
+Pillow==9.0.0
 rdkit==2009.Q1-1
+rdkit_pypi==2021.9.4
 requests==2.25.1
 scipy==1.6.2
 seaborn==0.11.1
