@@ -1,4 +1,4 @@
-![alt text](https://github.com/mitch-parker/rascore/rascore/data/rascore.png?raw=true)
+![alt text](https://github.com/mitch-parker/rascore/rascore/rascore/data/rascore.png?raw=true)
 
 ## Summary
 
@@ -10,41 +10,48 @@ Details of our RAS conformational classification and approach are provided on *B
 
 **Quickstart environment setup with an installation of Anaconda (https://www.anaconda.com/products/individual):**
 
-- pip install rascore
+pip install rascore
 
-- conda create -n rascore_env
-- conda activate rascore_env
-- conda install -n rascore_env -c conda-forge -c schrodinger pymol-bundle
-- conda install -c conda-forge rdkit
-- conda install -c conda-forge cairosvg 
-- conda install -c conda-forge tqdm
-- conda install -c conda-forge statannot 
-- conda install -c conda-forge matplotlib-venn
-- conda install -c conda-forge fpocket
-- conda install -c conda-forge pyfiglet 
+conda create -n rascore_env
+conda activate rascore_env
+conda install -n rascore_env -c conda-forge -c schrodinger pymol-bundle
+conda install -c conda-forge rdkit
+conda install -c conda-forge cairosvg 
+conda install -c conda-forge tqdm
+conda install -c conda-forge statannot 
+conda install -c conda-forge matplotlib-venn
+conda install -c conda-forge fpocket
+conda install -c conda-forge pyfiglet 
 
-- pip install streamlit
-- pip install futures
-- pip install py3Dmol
-- pip install stmol
+pip install streamlit
+pip install futures
+pip install py3Dmol
+pip install stmol
 
 ## Usage
 
 **Activate rascore conda environment if setup:**
 
-- conda activate rascore_env
+conda activate rascore_env
 
 **Conformationally classify RAS structures (mmCIF or PDB format; must be numbered according to UniProt scheme):**
 
-- rascore -classify *[path to coordinate file(s) of RAS structures to conformationally classify provided as a space-separated list, text list file (line separated), or text table file (tab-separated with columns core_path, modelid, chainid, nuc_class)]* -out *[output directory path]*
+rascore -classify *[path to coordinate file(s)]* -out *[output directory path]*
+
+*Note.* Coordinate files can be provided in the following formats: 
+- Space-separated list
+- Line-separated list file
+- Tab-separated table file with columns core_path (coordinate path), modelid (optional, model number), chainid (chain identifier), nuc_class (optional, nucleotide class)
 
 **Build rascore database (takes ~1 hour from scratch and requires ~3 GB of storage):**
 
-- rascore -build -out *[output directory path]*
+rascore -build [optional, path to pdbaa file] -out *[output directory path]*
 
 **Run rascore application (must run build first):**
 
-- rascore -app *[path to rascore database directory (can run limited version if not specified)]* -out *[output directory path]*
+rascore -app *[optional, path to rascore database directory]* -out *[output directory path]*
+
+*Note.** Can run limited version if rascore database directory not specified.
 
 ## Authors
 
