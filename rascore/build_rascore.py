@@ -546,7 +546,10 @@ def build_rascore(out_path=None, pdbaa_fasta_path=None, num_cpu=1):
         entry_table_path,
         get_file_path(
             entry_table_file,
-            get_dir_path(dir_str=data_str, dir_path=get_dir_name(__file__)),
+            dir_path=get_dir_path(
+                dir_str=data_str,
+                dir_path=get_dir_name(__file__),
+            ),
         ),
     )
 

@@ -1,4 +1,4 @@
-# rascore: A tool for analyzing the conformations of RAS structures
+![alt text](https://github.com/mitch-parker/rascore/rascore/data/rascore.png?raw=true)
 
 ## Summary
 

@@ -907,8 +907,6 @@ def write_pymol_script(
 
     pymol_file.write("zoom center, 25\n")
 
-    pymol_file.write(f"save {pymol_pml_path.replace('.pml','.pse')}\n")
-
     pymol_file.close()
 
     print("Wrote PyMOL script!")
