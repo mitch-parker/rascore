@@ -41,3 +41,4 @@ from .seq import *
 from .stat import *
 from .table import *
 from .url import *
+from .gui import *

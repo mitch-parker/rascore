@@ -42,9 +42,16 @@ unclass_name = "Unclassified"
 
 sp2_color = "#d95f02"
 sp12_color = "#1b9e77"
+other_pharm_color = "#66a61e"
+none_pharm_color = "#e6ab02"
 
 pharm_class_lst = [sp2_name, sp12_name, other_pharm_name, none_pharm_name]
-pharm_color_dict = {sp2_name: sp2_color, sp12_name: sp12_color}
+pharm_color_dict = {
+    sp2_name: sp2_color,
+    sp12_name: sp12_color,
+    other_pharm_name: other_pharm_color,
+    none_pharm_name: none_pharm_color,
+}
 
 sp2_cont = [12, 96, 99]
 sp12_cont = [5, 39, 54]

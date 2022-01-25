@@ -26,15 +26,18 @@ SOFTWARE.
 import os
 import argparse
 import sys
+import pyfiglet
 
-from .scripts import *
+
+from scripts import *
+from scripts.functions import *
 
 
 def main(args):
 
     classify = args.classify
     build = args.build
-    app = args.app
+    gui = args.gui
 
     out = args.out
     cpu = args.cpu
@@ -55,10 +58,10 @@ def main(args):
             pdbaa_fasta_path=pdbaa_fasta_path,
             num_cpu=cpu,
         )
-    elif app is not None:
-        if app is not True:
-            prep_rascore(build_path=app)
-            entry_table_path = get_file_path(entry_table_file, dir_path=app)
+    elif gui is not None:
+        if gui is not True:
+            prep_rascore(build_path=gui)
+            entry_table_path = get_file_path(entry_table_file, dir_path=gui)
             copy_path(
                 entry_table_path,
                 get_file_path(
@@ -71,7 +74,7 @@ def main(args):
             )
 
         rascore_app_path = get_file_path(
-            "rascore_app.py",
+            "rascore-gui.py",
             dir_path=get_dir_name(__file__),
         )
 
@@ -79,6 +82,12 @@ def main(args):
 
 
 def cli(args=None):
+
+    print(pyfiglet.figlet_format("rascore"))
+    print("A tool for analyzing the conformations of RAS structures\n")
+    print("Author: Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>")
+    print("License: MIT License\n")
+
     if not args:
         args = sys.argv[1:]
 
@@ -104,13 +113,13 @@ def cli(args=None):
         help="build or update rascore database from the Protein Data Bank (output files saved to rascore_build in current working directory unless an output directory path is specified)",
     )
     group.add_argument(
-        "-app",
-        "--app",
+        "-gui",
+        "--gui",
         type=str,
         const=True,
         nargs="?",
         required=False,
-        help="path to rascore database directory (can run limited version if not specified) for running rascore application (output files saved to rascore_app in current working directory unless an output directory path is specified)",
+        help="path to rascore database directory (can run limited version if not specified) for running the rascore GUI application (output files saved to rascore_app in current working directory unless an output directory path is specified)",
     )
     parser.add_argument(
         "-out",

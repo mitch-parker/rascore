@@ -27,7 +27,7 @@ from ..functions import *
 from ..tools import *
 
 
-def app():
+def query_page():
 
     entry_table_path = get_file_path(
         entry_table_file,

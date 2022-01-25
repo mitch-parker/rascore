@@ -39,6 +39,7 @@ cluster_str = "cluster"
 
 scripts_str = "scripts"
 data_str = "data"
+pages_str = "pages"
 
 pdbaa_str = "pdbaa"
 core_str = "core"

@@ -23,9 +23,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from .tools import *
-from .functions import *
-
 from .prep_rascore import *
 from .build_rascore import *
 from .classify_rascore import *

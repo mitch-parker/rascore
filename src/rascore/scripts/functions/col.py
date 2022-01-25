@@ -100,6 +100,7 @@ gene_class_col = "gene_class"
 nuc_class_col = "nucleotide_class"
 mut_class_col = "mut_class"
 pharm_class_col = "pharm_class"
+match_class_col = "match_class"
 prot_class_col = "protein_class"
 interf_class_col = "interf_class"
 pocket_class_col = "pocket_class"
@@ -144,9 +145,6 @@ bb_seq_col = "bb_seq"
 sc_seq_col = "sc_seq"
 bb_len_col = "bb_length"
 sc_len_col = "sc_length"
-
-hse_up_col = "hse_up"
-hse_down_col = "hse_down"
 
 cluster_col = "cluster"
 nn_dist_col = "nn_dist"
@@ -227,9 +225,7 @@ sc_col_lst = [
 
 dih_col_lst = bb_col_lst + sc_col_lst
 
-hse_col_lst = [hse_up_col, hse_down_col]
-
-reformat_col_lst = dih_col_lst + hse_col_lst
+reformat_col_lst = dih_col_lst
 
 dist_col_lst = [
     nn_dist_col,
@@ -252,6 +248,7 @@ class_col_lst = [
     nuc_class_col,
     mut_class_col,
     pharm_class_col,
+    match_class_col,
     prot_class_col,
     interf_class_col,
     pocket_class_col,
@@ -308,6 +305,7 @@ order_col_lst = [
     nuc_class_col,
     mut_class_col,
     pharm_class_col,
+    match_class_col,
     prot_class_col,
     interf_class_col,
     pocket_class_col,
@@ -368,8 +366,6 @@ order_col_lst = [
     chi3_col,
     chi4_col,
     chi5_col,
-    hse_up_col,
-    hse_down_col,
     edia_col,
     b_factor_col,
     vect_1_col,
@@ -432,6 +428,49 @@ order_col_lst = [
     interf_path_col,
     pocket_path_col,
 ]
+
+rename_col_dict = {
+    pdb_id_col: "PDB ID",
+    pdb_code_col: "PDB Code",
+    chainid_col: "Chain",
+    cf_col: "Crystal Form",
+    gene_class_col: "Gene Name",
+    sw1_col: "SW1 Conformation",
+    sw2_col: "SW2 Conformation",
+    mut_status_col: "Mutation Status",
+    nuc_class_col: "Nucleotide State",
+    prot_class_col: "Bound Protein",
+    pharm_class_col: "Inhibitor Site",
+    match_class_col: "Inhibitor Chemistry",
+    pocket_class_col: "Pocket Site",
+    interf_class_col: "Homodimer Status",
+    bound_prot_col: "Bound Protein Name",
+    bound_prot_chainid_col: "Bound Protein Chain",
+    bio_lig_col: "Nucleotide",
+    ion_lig_col: "Ion",
+    pharm_lig_col: "Drug",
+    chem_lig_col: "Chemical",
+    mod_lig_col: "Modification",
+    mem_lig_col: "Membrane",
+    method_col: "Experiment Method",
+    resolution_col: "Resolution",
+    r_factor_col: "R-Factor",
+    len_col: "Sequence Length",
+    interf_area_col: "Interface Area",
+    pocket_site_col: "Pocket Volume",
+    pocket_volume_col: "Pocket Site",
+    pocket_score_col: "Pocket Score",
+    phi_col: "Phi",
+    psi_col: "Psi",
+    omega_col: "Omega",
+    chi1_col: "Chi1",
+    chi2_col: "Chi2",
+    altchi1_col: "AltChi1",
+    altchi2_col: "AltChi2",
+    chi3_col: "Chi3",
+    chi4_col: "Chi4",
+    chi5_col: "Chi5",
+}
 
 
 def get_dist_col(x_resid, y_resid, x_atomid=None, y_atomid=None, ext=None):

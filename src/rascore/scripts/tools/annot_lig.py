@@ -33,6 +33,7 @@ from ..functions import *
 def build_lig_df(
     df,
     index,
+    lig_dir=None,
     site_dict=None,
     match_dict=None,
     other_site="Other",
@@ -88,7 +89,7 @@ def build_lig_df(
                 is_bio = False
                 is_pharm = False
                 for lig_col in lig_col_lst:
-                    if resname in lig_class_dict[lig_col]:
+                    if resname in lig_lst_dict[lig_col]:
                         lig_class = True
                         if resname not in lig_lst_dict[lig_col]:
                             lig_lst_dict[lig_col].append(resname)
@@ -137,7 +138,9 @@ def build_lig_df(
                                     for query in query_lst:
                                         match_name_lst.append(match_name)
                                         match_simi_lst.append(
-                                            get_lig_simi(resname, query)
+                                            get_lig_simi(
+                                                resname, query, lig_dir=lig_dir
+                                            )
                                         )
                             if len(match_name_lst) > 0:
                                 match_status = match_name_lst[
@@ -164,6 +167,7 @@ def build_lig_df(
 def annot_lig(
     df,
     lig_table_path=None,
+    lig_dir=None,
     site_dict=None,
     match_dict=None,
     other_site="Other",
@@ -197,6 +201,7 @@ def annot_lig(
                     build_lig_df(
                         df,
                         index,
+                        lig_dir=lig_dir,
                         site_dict=site_dict,
                         match_dict=match_dict,
                         other_site=other_site,

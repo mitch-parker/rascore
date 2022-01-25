@@ -42,26 +42,37 @@ from .path import path_exists, get_lig_path, append_file_path, lig_str
 from .url import lig_expo_url
 
 
-def download_lig(lig, lig_dir=None):
+def download_lig(lig, lig_dir=None, check=True):
 
     lig_path = get_lig_path(lig, dir_path=lig_dir)
 
     download_file(
-        f"{lig_expo_url}{lig[0]}/{lig}/{lig}_model.sdf",
-        lig_path,
+        f"{lig_expo_url}{lig[0]}/{lig}/{lig}_model.sdf", lig_path, check=check
     )
 
     return lig_path
 
 
-def load_lig(lig, lig_dir=None):
+def load_lig(lig, lig_dir=None, tries=3):
 
     lig_path = get_lig_path(lig, dir_path=lig_dir)
 
     if not path_exists(lig_path):
-        lig_path = download_lig(lig, lig_dir=None)
+        lig_path = download_lig(lig, lig_dir=lig_dir)
 
-    return Chem.MolFromMolFile(lig_path)
+    try_load = True
+    count = 0
+    while try_load:
+        try:
+            mol = Chem.MolFromMolFile(lig_path)
+            try_load = False
+        except:
+            lig_path = download_lig(lig, lig_dir=lig_dir, check=False)
+            count += 1
+            if tries == count:
+                try_load = False
+
+    return mol
 
 
 def get_lig_smiles(lig, lig_dir=None):

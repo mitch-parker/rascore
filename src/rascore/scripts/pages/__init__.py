@@ -23,43 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import streamlit as st
-from PIL import Image
-
-
-from scripts import *
-from scripts.pages import classify_page, home_page, pdb_page, query_page
-
-
-class MultiPage:
-    def __init__(self) -> None:
-        self.pages = []
-
-    def add_page(self, title, func) -> None:
-        self.pages.append({"title": title, "function": func})
-
-    def run(self):
-        page = st.sidebar.selectbox(
-            "Menu", self.pages, format_func=lambda page: page["title"]
-        )
-        page["function"]()
-
-
-app = MultiPage()
-
-img = Image.open(
-    get_file_path(
-        "rascore_logo.png",
-        dir_path=get_dir_path(
-            dir_str=f"{scripts_str}/{data_str}", dir_path=get_dir_name(__file__)
-        ),
-    )
-)
-st.image(img)
-
-app.add_page("Home", home_page.app)
-app.add_page("Search for PDB Entry", pdb_page.app)
-app.add_page("Query Database", query_page.app)
-app.add_page("Classify RAS Structure(s)", classify_page.app)
-
-app.run()
+from .home_page import *
+from .pdb_page import *
+from .query_page import *
+from .classify_page import *

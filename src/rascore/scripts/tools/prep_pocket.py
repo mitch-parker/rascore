@@ -341,7 +341,7 @@ def run_fpocket(
                     pocket_status = pocket_bound_name
                     is_pharm = True
                     for lig_col in lig_col_lst:
-                        if pocket_lig in lig_class_dict[lig_col]:
+                        if pocket_lig in lig_lst_dict[lig_col]:
                             pocket_type = lig_col
                             is_pharm = False
                     if is_pharm:

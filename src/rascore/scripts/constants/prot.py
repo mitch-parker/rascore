@@ -74,6 +74,10 @@ prot_color_dict = get_lst_colors(
     return_dict=True,
 )
 
+prot_color_dict[f"{gef_name}.{gef_cdc_name}"] = prot_color_dict[gef_name]
+prot_color_dict[f"{gef_name}.{gef_rem_name}"] = prot_color_dict[gef_name]
+
+
 prot_pfam_dict = {
     "RASF1_HUMAN": "RA",
     "RADIL_HUMAN": "RA",

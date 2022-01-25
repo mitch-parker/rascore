@@ -23,17 +23,45 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from ..functions import *
-from ..tools import *
-from ..classify_rascore import classify_rascore
+import streamlit as st
+from PIL import Image
 
 
-def classify_page():
+from scripts.functions import *
+from scripts.pages import *
 
-    entry_table_path = get_file_path(
-        entry_table_file,
-        get_dir_path(
-            dir_str=data_str,
-            dir_path=get_dir_name(__file__),
+
+class MultiApp:
+    def __init__(self):
+        self.apps = []
+
+    def add_app(self, title, func):
+        self.apps.append({"title": title, "function": func})
+
+    def run(self):
+        st.sidebar.markdown("## Main Menu")
+        app = st.sidebar.radio(
+            "Select a Page", self.apps, format_func=lambda app: app["title"]
+        )
+        st.sidebar.markdown("---")
+        app["function"]()
+
+
+app = MultiApp()
+
+img = Image.open(
+    get_file_path(
+        "rascore_logo.png",
+        dir_path=get_dir_path(
+            dir_str=f"{scripts_str}/{data_str}", dir_path=get_dir_name(__file__)
         ),
     )
+)
+st.image(img)
+
+app.add_app("Search for PDB Entry", pdb_page)
+app.add_app("Home", home_page)
+app.add_app("Query Database", query_page)
+app.add_app("Classify RAS Structure(s)", classify_page)
+
+app.run()

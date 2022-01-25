@@ -264,18 +264,14 @@ def str_to_lst(
     return_str=False,
     return_int=False,
     return_float=False,
-    empty=None,
 ):
 
     val_str = format_val(val_str, return_str=True)
 
-    if val_str == "None":
-        val_lst = str(empty)
+    if sep_txt in val_str:
+        val_lst = list(val_str.split(sep_txt))
     else:
-        if sep_txt in val_str:
-            val_lst = list(val_str.split(sep_txt))
-        else:
-            val_lst = type_lst(val_str)
+        val_lst = type_lst(val_str)
 
     val_lst = format_lst(
         val_lst,

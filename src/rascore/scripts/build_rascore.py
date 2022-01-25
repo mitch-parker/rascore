@@ -152,6 +152,7 @@ def update_annot(pdbaa_fasta_path, out_path=None, past_df=None, num_cpu=1):
 
         df = annot_lig(
             df=df,
+            lig_dir=out_path,
             site_dict=pharm_site_dict,
             match_dict=pharm_match_dict,
             num_cpu=num_cpu,
@@ -162,6 +163,20 @@ def update_annot(pdbaa_fasta_path, out_path=None, past_df=None, num_cpu=1):
             if pharm_class not in [sp2_name, sp12_name, none_pharm_name]:
                 pharm_class = other_pharm_name
             df.at[index, pharm_class_col] = pharm_class
+
+        for index in list(df.index.values):
+
+            pharm_site = df.at[index, pharm_lig_site_col]
+            match_class = df.at[index, pharm_lig_match_col]
+
+            if pharm_site in [sp2_name, sp12_name]:
+                match_class = f"{pharm_site}.{match_class}"
+            elif pharm_site == none_pharm_name:
+                match_class = none_pharm_name
+            else:
+                match_class = other_pharm_name
+
+            df.at[index, match_class_col] = match_class
 
         df[gene_class_col] = df[prot_col].map(gene_class_dict)
         df[nuc_class_col] = df[bio_lig_col].map(nuc_class_dict).fillna(gtp_name)

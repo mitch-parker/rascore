@@ -2218,7 +2218,7 @@ mod_lst = ["ACE", "FAR", "GER", "CMT", "CSO", "CSX"]
 
 mem_lst = ["PCW", "17F", "7Q9"]
 
-lig_class_dict = {
+lig_lst_dict = {
     bio_lig_col: bio_lst,
     ion_lig_col: ion_lst,
     pharm_lig_col: pharm_lst,
@@ -2227,4 +2227,4 @@ lig_class_dict = {
     mem_lig_col: mem_lst,
 }
 
-lig_col_lst = list(lig_class_dict.keys())
+lig_col_lst = list(lig_lst_dict.keys())
