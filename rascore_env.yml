@@ -1,0 +1,24 @@
+name: rascore_env
+channels:
+  - salilab
+  - conda-forge
+  - defaults
+  - bioconda
+dependencies:
+  - conda
+  - python=3.8
+  - python.app
+  - conda-env
+  - conda-build
+  - conda-verify
+  - _ipyw_jlab_nb_ext_conf
+  - anaconda==2021.05=py38_0
+  - anaconda-navigator
+  - navigator-updater
+  - pymol-bundle
+  - rdkit
+  - cairosvg
+  - tmalign
+  - matplotlib-venn
+  - fpocket
+  - pyfiglet

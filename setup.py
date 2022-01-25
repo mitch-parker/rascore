@@ -6,7 +6,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setuptools.setup(
     name="rascore",
-    version="0.1.19",
+    version="0.1.22",
     author="mitch-parker",
     author_email="mitch.isaac.parker@gmail.com",
     description=" tool for analyzing the conformations of RAS structures",
