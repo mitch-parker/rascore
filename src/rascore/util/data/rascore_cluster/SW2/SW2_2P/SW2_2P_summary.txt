@@ -1,0 +1,6 @@
+cluster	total_chain	total_entry	total_cf	nn_dist_mean	nn_dist_max	constraint_distance_mean	constraint_distance_max	common_rama	common_rotamer	common_bb_seq	common_sc_seq	entropy_rama	entropy_rotamer	entropy_bb_seq	entropy_sc_seq	occupancy_rama	occupancy_rotamer	occupancy_bb_seq	occupancy_sc_seq	GTPase HRas	GTPase KRas	GTPase NRas
+1	22	17	3	11.48	32.86	0.36	0.92	BBBAEBBABAAAAAAAAAABA	p	LDTAGQEEYSAMRDQYMRTGE	Y	0.04	-0.0	-0.0	-0.0	0.91	1.0	1.0	1.0	-	22	-
+2	20	8	6	20.77	38.74	0.84	1.02	BBBBEBBBBBAAAAAAAAABA	m	LDTAGQEEYSAMRDQYMRTGE	Y	0.02	0.04	0.02	0.02	0.95	0.9	0.95	0.95	1	19	-
+3	19	9	6	15.2	33.9	0.42	0.85	BBBALBABBBAAAAAAAAABA	m	LDTAGQEEYSAMRDQYMRTGE	Y	-0.0	-0.0	-0.0	-0.0	1.0	1.0	1.0	1.0	-	17	2
+4	13	5	4	9.94	22.33	0.42	1.08	BBBBLAABBBAAAAAAAAABA	m	LDTAGQEEYSAMRDQYMRTGE	Y	-0.0	-0.0	-0.0	-0.0	1.0	1.0	1.0	1.0	-	13	-
+Noise	177	110	59	80.79	174.27	2.9	5.02	-	-	-	-	-	-	-	-	-	-	-	-	36	137	4

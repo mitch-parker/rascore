@@ -1,0 +1,2 @@
+silhouette_score	similarity_score	total_complete	cluster_count	total_cluster_pre	total_noise_pre	total_pruned_nn	total_pruned_constr	total_cluster_post	total_noise_post	select
+0.6	0.9	60.0	1.0	54.0	6.0	0.0	1.0	53.0	7.0	True

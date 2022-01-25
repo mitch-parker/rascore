@@ -28,9 +28,7 @@ import argparse
 import sys
 import pyfiglet
 
-
-from .scripts import *
-from .scripts.functions import *
+from rascore.util import *
 
 
 def main(args):
@@ -67,7 +65,7 @@ def main(args):
                 get_file_path(
                     entry_table_file,
                     get_dir_path(
-                        dir_str=f"{scripts_str}/{data_str}",
+                        dir_str=f"{util_str}/{data_str}",
                         dir_path=get_dir_name(__file__),
                     ),
                 ),

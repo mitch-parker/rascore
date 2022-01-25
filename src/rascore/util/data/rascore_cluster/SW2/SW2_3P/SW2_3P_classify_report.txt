@@ -1,0 +1,6 @@
+cluster	total	total_classified_nn	total_classified_constr	nn_cutoff	constraint_cutoff
+1	98.0	13.0	0.0	0.45	1.2
+2	31.0	5.0	0.0	0.45	1.2
+3	21.0	1.0	0.0	0.45	1.2
+4	14.0	20.0	0.0	0.45	1.2
+Noise	217.0	0.0	0.0	0.45	1.2

@@ -26,9 +26,8 @@ SOFTWARE.
 import streamlit as st
 from PIL import Image
 
-
-from scripts.functions import *
-from scripts.pages import *
+from rascore.util.functions import *
+from rascore.util.pages import *
 
 
 class MultiApp:
@@ -53,7 +52,7 @@ img = Image.open(
     get_file_path(
         "rascore_logo.png",
         dir_path=get_dir_path(
-            dir_str=f"{scripts_str}/{data_str}", dir_path=get_dir_name(__file__)
+            dir_str=f"{util_str}/{data_str}", dir_path=get_dir_name(__file__)
         ),
     )
 )

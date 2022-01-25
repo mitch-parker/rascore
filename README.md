@@ -10,17 +10,15 @@ Details of our RAS conformational classification are provided on *BioArxiv* in t
 
 **Quickstart environment setup with an installation of Anaconda (https://www.anaconda.com/products/individual):**
 
-pip install rascore
-
-conda create -n rascore_env
+conda create -n rascore_env python=3.8
 
 conda activate rascore_env
 
-conda install -c conda-forge -c schrodinger pymol-bundle
+pip install rascore==0.1.25
 
-conda install -c conda-forge rdkit
+conda install -c conda-forge -c schrodinger pymol-bundle=2.5.2
 
-conda install -c conda-forge fpocket
+conda install -c conda-forge fpocket=4.0.0
 
 # Usage
 
