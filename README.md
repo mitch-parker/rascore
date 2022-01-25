@@ -14,7 +14,7 @@ conda create -n rascore_env python=3.8
 
 conda activate rascore_env
 
-pip install rascore==0.1.25
+pip install rascore
 
 conda install -c conda-forge -c schrodinger pymol-bundle=2.5.2
 
