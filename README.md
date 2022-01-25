@@ -1,4 +1,4 @@
-![alt text](https://github.com/mitch-parker/rascore/blob/main/src/rascore/scripts/data/rascore_logo.png?)
+![alt text](https://github.com/mitch-parker/rascore/blob/main/src/rascore/util/data/rascore_logo.png)
 
 # Summary
 
@@ -8,7 +8,7 @@ Details of our RAS conformational classification are provided on *BioArxiv* in t
 
 # Installation
 
-**Quickstart environment setup with an installation of Anaconda (https://www.anaconda.com/products/individual):**
+**Quickstart environment setup with an installation of [Anaconda](https://www.anaconda.com/products/individual):**
 
 conda create -n rascore_env python=3.8
 
