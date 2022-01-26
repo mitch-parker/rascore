@@ -54,9 +54,9 @@ img = Image.open(
 )
 st.image(img)
 
-app.add_app("Query Database", query_page)
 app.add_app("Home Page", home_page)
 app.add_app("Search PDB", pdb_page)
+app.add_app("Query Database", query_page)
 app.add_app("Classify Structures", classify_page)
 
 app.run()
