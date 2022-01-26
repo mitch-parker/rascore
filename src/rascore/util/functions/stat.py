@@ -30,9 +30,23 @@ import statsmodels.api as sm
 from statsmodels.sandbox.stats.multicomp import multipletests
 from scipy import stats
 
-from .lst import *
-from .table import *
-from .col import *
+from .lst import type_lst
+from .table import lst_col, mask_equal, mask_unequal
+from .col import (
+    p_col,
+    correct_p_col,
+    total_col,
+    index_col,
+    a_col,
+    b_col,
+    c_col,
+    d_col,
+    risk_ratio_col,
+    up_ci_col,
+    low_ci_col,
+    sig_col,
+    corr_col,
+)
 
 
 def label_sig(val, label="*", cutoff=0.05):
@@ -149,7 +163,7 @@ def calc_rr(df, exp_cols, out_cols, correct_method="fdr_bh"):
 def calc_corr_stat(df, x_col, y_col, return_df=False, use_kt=False):
 
     if len(df) < 2:
-        pearson = np.nan
+        corr = np.nan
         p_val = np.nan
     else:
         df[x_col] = df[x_col].map(float)

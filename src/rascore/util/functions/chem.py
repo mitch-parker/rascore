@@ -35,11 +35,11 @@ from rdkit.Chem import (
 
 from tqdm import tqdm
 
-from .lst import *
-from .color import *
-from .download import *
-from .path import *
-from .url import *
+from .lst import type_lst
+from .color import get_rgb, change_hex_alpha, get_lst_colors
+from .download import download_file
+from .path import path_exists, get_lig_path, append_file_path, lig_str
+from .url import lig_expo_url
 
 
 def download_lig(lig, lig_dir=None, check=True):

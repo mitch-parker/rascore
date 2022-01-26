@@ -30,7 +30,7 @@ import json
 import pandas as pd
 import numpy as np
 
-from .table import *
+from .table import order_cols, order_rows, get_col_order
 
 rascore_str = "rascore"
 build_str = "build"

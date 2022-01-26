@@ -23,9 +23,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from ..functions import *
-from ..scripts import *
-from ..pipelines.classify_rascore import classify_rascore
+
+from ..pipelines import classify_rascore
 
 
 def classify_page():

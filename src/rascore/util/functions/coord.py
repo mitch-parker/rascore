@@ -43,9 +43,25 @@ from Bio.Data.SCOPData import protein_letters_3to1 as aa3to1
 
 import math
 
-from .seq import *
-from .table import *
-from .lst import *
+from .seq import pair_seq_aln
+from .table import (
+    fix_val,
+    replace_str,
+    extract_int,
+    extract_str,
+    make_dict,
+    is_int,
+    is_str,
+)
+from .lst import (
+    str_to_lst,
+    res_to_lst,
+    type_lst,
+    sort_lst,
+    lst_nums,
+    lst_unique,
+    lst_inter,
+)
 
 
 aa_lst = [

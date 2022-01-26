@@ -28,9 +28,40 @@ import numpy as np
 import math
 import itertools
 
-from .lst import *
-from .col import *
-from .table import *
+from .lst import move_end_lst
+from .col import (
+    cluster_col,
+    pdb_code_col,
+    cf_col,
+    nn_dist_col,
+    constr_dist_col,
+    entropy_col,
+    common_col,
+    occup_col,
+    rama_col,
+    rotamer_col,
+    bb_seq_col,
+    sc_seq_col,
+    iso_col,
+    dist_col_lst,
+    interf_area_col,
+    pocket_volume_col,
+    pocket_score_col,
+    mean_col,
+    max_col,
+)
+from .table import (
+    build_count_table,
+    merge_tables,
+    mask_equal,
+    build_count_dict,
+    build_col_count_dict,
+    lst_col,
+    lst_by_freq,
+    get_val_index_lst,
+    mask_matrix,
+    get_col_most_common,
+)
 
 
 def is_noise(val):

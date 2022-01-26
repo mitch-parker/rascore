@@ -26,7 +26,6 @@ SOFTWARE.
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.ticker as mticker
-import seaborn as sns
 from statannot import add_stat_annotation
 
 import warnings
@@ -144,6 +143,9 @@ def make_facet_plot(
     tick_mult=0.75,
     all_ticks=False,
 ):
+
+    import seaborn as sns
+
     df = plot_df.copy(deep=True)
 
     df_col_lst = list(df.columns)

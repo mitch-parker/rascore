@@ -27,7 +27,22 @@ import pandas as pd
 from tqdm import tqdm
 import concurrent.futures
 
-from ..functions import *
+from ..functions.seq import calc_seq_id, load_record_lst, get_record_seq
+from ..functions.lst import lst_to_str, res_to_lst, lst_nums, str_to_lst
+from ..functions.coord import load_coord, get_resname, has_resid
+from ..functions.col import (
+    core_path_col,
+    modelid_col,
+    chainid_col,
+    seq_col,
+    mut_status_col,
+    mut_pos_col,
+    uniprot_id_col,
+)
+from ..functions.table import get_df_at_index, fix_val
+from ..functions.path import save_table, get_seq_path
+from ..functions.url import uniprot_url
+from ..functions.download import download_file
 
 
 def build_mut_df(df, index, uniprot_dict, resid_lst=None, coord_path_col=None):

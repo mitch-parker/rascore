@@ -28,7 +28,21 @@ import numpy as np
 from tqdm import tqdm
 import concurrent.futures
 
-from ..functions import *
+from ..functions.lst import type_lst
+from ..functions.coord import load_cif_dict, search_cif_dict
+from ..functions.path import save_table
+from ..functions.table import merge_tables
+from ..functions.col import (
+    len_a_col,
+    len_b_col,
+    len_c_col,
+    ang_a_col,
+    ang_b_col,
+    ang_g_col,
+    rcsb_path_col,
+    space_col,
+    cf_col,
+)
 
 len_col_lst = [len_a_col, len_b_col, len_c_col]
 ang_col_lst = [ang_a_col, ang_b_col, ang_g_col]

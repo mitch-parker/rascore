@@ -25,7 +25,7 @@ SOFTWARE.
 
 import math
 
-from .lst import *
+from .lst import lst_unique
 
 
 def calc_q_score(i_cont_lst, j_cont_lst, i_dist_lst, j_dist_lst):

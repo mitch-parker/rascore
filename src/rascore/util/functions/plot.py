@@ -24,16 +24,21 @@ SOFTWARE.
 """
 
 import pandas as pd
-from pandas.core.frame import DataFrame
 import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib_venn import venn2
 
-from .color import *
-from .lst import *
-from .path import *
-from .table import *
-from .col import *
+from .color import change_hex_alpha, get_lst_colors, gray_hex, black_hex
+from .path import append_file_path
+from .table import (
+    format_val,
+    make_dict,
+    lst_col,
+    build_label_dict,
+    mask_equal,
+    get_ncols,
+)
+from .col import pdb_id_col
 
 grid_hex = change_hex_alpha(gray_hex, 0.25)
 

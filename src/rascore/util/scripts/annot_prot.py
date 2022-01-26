@@ -25,7 +25,31 @@ SOFTWARE.
 
 from tqdm import tqdm
 
-from ..functions import *
+from ..functions.seq import load_record_dict, get_record_desc
+from ..functions.lst import lst_to_str, res_to_lst, str_to_lst, lst_unique
+from ..functions.coord import (
+    load_coord,
+    get_neighbors,
+    get_resnum,
+    get_chain_cont,
+    get_reschainid,
+    is_aa,
+)
+from ..functions.col import (
+    core_path_col,
+    modelid_col,
+    chainid_col,
+    pdb_code_col,
+    bound_prot_chainid_col,
+    bound_prot_col,
+    bound_prot_site_col,
+    bound_prot_pfam_col,
+    bound_prot_cont_col,
+    bound_prot_swiss_id_col,
+)
+from ..functions.table import fix_val
+from ..functions.path import save_table
+from ..functions.pdbaa import get_pdbaa_prot, get_pdbaa_swiss_id
 
 
 def annot_prot(

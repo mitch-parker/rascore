@@ -27,7 +27,33 @@ import pandas as pd
 from tqdm import tqdm
 import concurrent.futures
 
-from ..functions import *
+from ..functions.chem import is_lig_match, get_lig_simi
+from ..functions.lst import lst_unique, lst_to_str, res_to_lst, type_lst
+from ..functions.lig import lig_col_lst, lig_lst_dict
+from ..functions.coord import (
+    load_coord,
+    get_resname,
+    get_neighbors,
+    get_resnum,
+    get_residues,
+    get_reschainid,
+    get_residue_cont,
+    is_aa,
+    is_het,
+)
+from ..functions.col import (
+    core_path_col,
+    modelid_col,
+    chainid_col,
+    bio_lig_col,
+    pharm_lig_col,
+    pharm_lig_site_col,
+    pharm_lig_match_col,
+    bio_lig_cont_col,
+    pharm_lig_cont_col,
+)
+from ..functions.table import get_df_at_index, fix_val
+from ..functions.path import save_table
 
 
 def build_lig_df(
@@ -53,11 +79,11 @@ def build_lig_df(
     modelid = df.at[index, modelid_col]
     chainid = df.at[index, chainid_col]
 
-    lig_lst_dict = dict()
+    lig_dict = dict()
 
     for lig_col in lig_col_lst:
 
-        lig_lst_dict[lig_col] = list()
+        lig_dict[lig_col] = list()
 
     structure = load_coord(coord_path)
     neighbors = get_neighbors(structure[fix_val(modelid, return_int=True)][chainid])
@@ -91,16 +117,16 @@ def build_lig_df(
                 for lig_col in lig_col_lst:
                     if resname in lig_lst_dict[lig_col]:
                         lig_class = True
-                        if resname not in lig_lst_dict[lig_col]:
-                            lig_lst_dict[lig_col].append(resname)
+                        if resname not in lig_dict[lig_col]:
+                            lig_dict[lig_col].append(resname)
                             if lig_col == bio_lig_col:
                                 is_bio = True
                             if lig_col == pharm_lig_col:
                                 is_pharm = True
 
                 if not lig_class:
-                    if resname not in lig_lst_dict[pharm_lig_col]:
-                        lig_lst_dict[pharm_lig_col].append(resname)
+                    if resname not in lig_dict[pharm_lig_col]:
+                        lig_dict[pharm_lig_col].append(resname)
                         is_pharm = True
 
                 if is_bio:
@@ -149,7 +175,7 @@ def build_lig_df(
                             match_lst.append(match_status)
 
     for lig_col in lig_col_lst:
-        df.at[index, lig_col] = lst_to_str(lig_lst_dict[lig_col])
+        df.at[index, lig_col] = lst_to_str(lig_dict[lig_col])
 
     df.at[index, pharm_lig_site_col] = lst_to_str(lst_unique(site_lst), empty=none_site)
     df.at[index, pharm_lig_match_col] = lst_to_str(

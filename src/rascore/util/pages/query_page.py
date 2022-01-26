@@ -23,8 +23,30 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from ..functions import *
-from ..scripts import *
+import pandas as pd
+import streamlit as st
+
+from ..functions.gui import (
+    load_st_table,
+    rename_st_cols,
+    mask_st_table,
+    show_st_table,
+    download_st_df,
+    show_st_dataframe,
+)
+from ..functions.table import lst_col, fix_col
+from ..functions.col import (
+    rename_col_dict,
+    pdb_id_col,
+    sw1_col,
+    sw2_col,
+    mut_status_col,
+    prot_class_col,
+    pharm_class_col,
+    match_class_col,
+    pocket_class_col,
+    interf_class_col,
+)
 
 
 def query_page():

@@ -23,7 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from ..functions import *
+from ..functions import get_lst_colors
 
 rbd_pfam = "RBD"
 pi3k_pfam = "PI3K_RBD"

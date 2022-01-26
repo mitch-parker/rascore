@@ -130,7 +130,8 @@ def show_st_structure(
     width=700,
     height=500,
 ):
-    view = py3Dmol.view(query=f"pdb:{pdb_code}", width=width, height=height)
+
+    view = py3Dmol.view(query=f"pdb:{pdb_code.lower()}", width=width, height=height)
 
     view.setStyle(
         {

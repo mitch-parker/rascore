@@ -23,7 +23,28 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from ..functions import *
+import os
+from tqdm import tqdm
+
+from ..functions.path import (
+    get_file_path,
+    load_table,
+    get_file_name,
+    save_table,
+    save_json,
+    load_json,
+    rascore_str,
+    build_str,
+)
+from ..functions.file import (
+    entry_table_file,
+    interf_table_file,
+    pocket_table_file,
+    interf_json_file,
+    pocket_json_file,
+    dih_json_file,
+)
+from ..functions.col import path_col_lst
 
 
 def prep_table(file_name, build_path=None):

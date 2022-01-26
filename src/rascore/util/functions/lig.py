@@ -23,7 +23,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from .col import *
+from .col import (
+    bio_lig_col,
+    ion_lig_col,
+    pharm_lig_col,
+    chem_lig_col,
+    mod_lig_col,
+    mem_lig_col,
+)
+
 
 bio_lst = ["GNP", "GDP", "GTP", "GSP", "GCP", "ATP", "DBG", "AGN", "9GM", "CAG"]
 ion_lst = [

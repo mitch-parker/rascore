@@ -23,10 +23,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import warnings
+
+warnings.simplefilter(action="ignore", category=FutureWarning)
+
 import streamlit as st
 from PIL import Image
 
-from util.pages import *
+from util.functions.path import get_dir_name, get_file_path, util_str, data_str
+from util.pages import home_page, pdb_page, query_page, classify_page
 
 
 class MultiApp:

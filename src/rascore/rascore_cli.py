@@ -24,11 +24,26 @@ SOFTWARE.
 """
 
 import os
+import warnings
+
+warnings.simplefilter(action="ignore", category=FutureWarning)
+
 import argparse
 import sys
 import pyfiglet
 
-from util.pipelines import *
+from util.pipelines.prep_rascore import prep_rascore
+from util.pipelines.build_rascore import build_rascore
+from util.pipelines.classify_rascore import classify_rascore
+
+from util.functions.path import (
+    get_file_path,
+    get_dir_name,
+    copy_path,
+    util_str,
+    data_str,
+)
+from util.functions.file import entry_table_file
 
 
 def main(args):
@@ -51,6 +66,7 @@ def main(args):
         if build is not True:
             pdbaa_fasta_path = build
         prep_rascore(build_path=out)
+
         build_rascore(
             out_path=out,
             pdbaa_fasta_path=pdbaa_fasta_path,

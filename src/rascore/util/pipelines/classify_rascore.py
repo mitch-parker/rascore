@@ -23,9 +23,84 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from ..scripts import *
-from ..functions import *
-from ..constants import *
+import os
+import pandas as pd
+import tqdm
+
+from ..scripts import (
+    annot_lig,
+    prep_dih,
+    build_dih_matrix,
+    build_dih_table,
+    build_dist_table,
+    classify_matrix,
+    write_pymol_script,
+)
+from ..functions import (
+    load_matrix,
+    save_table,
+    get_file_name,
+    get_file_path,
+    mask_equal,
+    lst_to_str,
+    load_coord,
+    get_modelid,
+    get_chainid,
+    lst_col,
+    load_lst,
+    load_table,
+    type_lst,
+    get_neighbor_path,
+    merge_tables,
+    rascore_str,
+    classify_str,
+    cluster_str,
+    pipelines_str,
+    data_str,
+    core_path_col,
+    chainid_col,
+    modelid_col,
+    id_col,
+    pdb_id_col,
+    lig_col_lst,
+    pharm_class_col,
+    pharm_lig_site_col,
+    nuc_class_col,
+    bio_lig_col,
+    cluster_table_file,
+    dih_fit_matrix_file,
+    result_table_file,
+    sum_table_file,
+    classify_report_table_file,
+    pymol_pml_file,
+    pred_matrix_file,
+    loop_col,
+    cluster_col,
+    hb_status_col,
+)
+from ..constants import (
+    gtp_name,
+    pharm_site_dict,
+    pharm_match_dict,
+    sp2_name,
+    sp12_name,
+    none_pharm_name,
+    other_pharm_name,
+    nuc_class_dict,
+    loop_resid_dict,
+    nuc_class_lst,
+    nuc_class_dict,
+    sw1_name,
+    sw2_name,
+    sw1_gtp_name,
+    sw1_gtp_dir_name,
+    sw1_gtp_wat_name,
+    sw1_gtp_no_name,
+    sw1_gtp_dict,
+    conf_color_dict,
+    gtp_atomids,
+    sup_resids,
+)
 
 
 def classify_rascore(coord_paths, out_path=None, dih_dict=None, num_cpu=1):
@@ -37,11 +112,11 @@ def classify_rascore(coord_paths, out_path=None, dih_dict=None, num_cpu=1):
 
     coord_path_lst = type_lst(coord_paths)
 
-    if type(coord_path_lst[0]) == DataFrame:
+    if type(coord_path_lst[0]) == pd.DataFrame:
         df = coord_path_lst[0]
     else:
         df = pd.DataFrame()
-        if ".txt" in coord_path_lst[0]:
+        if ".pdb" not in coord_path_lst[0] and ".cif" not in coord_path_lst[0]:
             df = load_table(coord_path_lst[0])
             df_col_lst = list(df.columns)
             if core_path_col in df_col_lst and chainid_col in df_col_lst:

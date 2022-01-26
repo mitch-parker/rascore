@@ -26,7 +26,7 @@ SOFTWARE.
 import urllib.request
 import signal
 
-from .path import *
+from .path import append_file_path, delete_path, path_exists, unzip_file
 
 
 def alarm_handler(signum, frame):

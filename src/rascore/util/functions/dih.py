@@ -28,10 +28,21 @@ from collections import defaultdict
 from Bio.PDB import calc_dihedral
 
 
-from .table import *
-from .lst import *
-from .coord import *
-from .col import *
+from .table import extract_int, fix_val
+from .lst import lst_nums
+from .coord import resid_to_tuple, has_resid, has_atomid, get_atom_vect, calc_norm_dist, get_resname
+from .col import (
+    phi_col,
+    psi_col,
+    omega_col,
+    chi1_col,
+    chi2_col,
+    chi3_col,
+    chi4_col,
+    chi5_col,
+    altchi1_col,
+    altchi2_col,
+)
 
 bb_dict = {
     phi_col: [["C", "N", "CA", "C"], [-1, 0, 0, 0]],

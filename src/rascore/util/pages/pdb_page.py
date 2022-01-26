@@ -23,15 +23,53 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import pandas as pd
 import streamlit as st
 
-from ..constants import *
-from ..functions import *
-
-pdb_col_lst = [
+from ..constants.conf import sw1_color, sw2_color, sw1_name, sw2_name, loop_resid_dict
+from ..constants.pharm import (
+    sp2_name,
+    none_pharm_name,
+    other_pharm_name,
+    pharm_color_dict,
+)
+from ..constants.prot import other_prot_name, none_prot_name, prot_color_dict
+from ..functions.lig import lig_lst_dict
+from ..functions.table import extract_int, lst_col
+from ..functions.lst import str_to_lst
+from ..functions.gui import (
+    load_st_table,
+    show_st_table,
+    mask_st_table,
+    show_st_structure,
+)
+from ..functions.col import (
+    rename_col_dict,
+    pdb_code_col,
     chainid_col,
     bio_lig_col,
-]
+    ion_lig_col,
+    pharm_lig_col,
+    chem_lig_col,
+    mod_lig_col,
+    mem_lig_col,
+    gene_class_col,
+    method_col,
+    resolution_col,
+    r_factor_col,
+    space_col,
+    mut_status_col,
+    nuc_class_col,
+    prot_class_col,
+    pharm_class_col,
+    match_class_col,
+    pocket_class_col,
+    interf_class_col,
+    bound_prot_col,
+    bound_prot_chainid_col,
+    sw1_col,
+    sw2_col,
+)
 
 
 def pdb_page():
@@ -358,7 +396,7 @@ def pdb_page():
         )
 
     show_st_structure(
-        pdb_code.lower(),
+        pdb_code,
         style_lst=style_lst,
         surface_lst=surface_lst,
         label_lst=label_lst,

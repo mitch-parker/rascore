@@ -22,10 +22,27 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from ..functions import *
-from .nuc import *
-from .pharm import *
-from .prot import *
+from ..functions import (
+    hb_name,
+    wmhb_name,
+    no_hb_name,
+    cyan_hex,
+    purple_hex,
+    pink_hex,
+    gray_hex,
+    light_blue_hex,
+    light_orange_hex,
+    light_olive_hex,
+    light_red_hex,
+    light_purple_hex,
+    light_green_hex,
+    light_cyan_hex,
+    light_pink_hex,
+    light_brown_hex,
+)
+from .nuc import nf_name, gdp_name, gtp_name, nf_color, gdp_color, gtp_color
+from .pharm import sp2_name, sp12_name
+from .prot import gef_name, binder_name
 
 sw1_name = "SW1"
 sw2_name = "SW2"
