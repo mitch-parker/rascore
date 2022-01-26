@@ -23,30 +23,30 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from .search_pdbaa import *
+from .search_pdbaa import search_pdbaa
 
-from .prep_coord import *
-from .prep_dih import *
-from .prep_interf import *
-from .prep_pocket import *
+from .prep_coord import prep_coord
+from .prep_dih import prep_dih
+from .prep_interf import prep_interf
+from .prep_pocket import prep_pocket
 
-from .annot_cf import *
-from .annot_lig import *
-from .annot_mut import *
-from .annot_prot import *
+from .annot_cf import annot_cf
+from .annot_lig import annot_lig
+from .annot_mut import annot_mut
+from .annot_prot import annot_prot
 
-from .build_dih_table import *
-from .build_dih_matrix import *
+from .build_dih_table import build_dih_table
+from .build_dih_matrix import build_dih_matrix
 
-from .build_dist_table import *
+from .build_dist_table import build_dist_table
 
-from .build_interf_matrix import *
-from .build_interf_table import *
+from .build_interf_matrix import build_interf_matrix
+from .build_interf_table import build_interf_table
 
-from .build_pocket_table import *
-from .build_pocket_matrix import *
+from .build_pocket_table import build_pocket_table
+from .build_pocket_matrix import build_pocket_matrix
 
-from .classify_matrix import *
+from .classify_matrix import classify_matrix
 
-from .make_facet_plot import *
-from .write_pymol_script import *
+from .make_facet_plot import make_facet_plot
+from .write_pymol_script import write_pymol_script

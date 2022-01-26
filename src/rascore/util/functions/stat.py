@@ -30,23 +30,9 @@ import statsmodels.api as sm
 from statsmodels.sandbox.stats.multicomp import multipletests
 from scipy import stats
 
-from .lst import type_lst
-from .table import lst_col, mask_equal, mask_unequal
-from .col import (
-    total_col,
-    index_col,
-    p_col,
-    correct_p_col,
-    corr_col,
-    a_col,
-    b_col,
-    c_col,
-    d_col,
-    risk_ratio_col,
-    low_ci_col,
-    up_ci_col,
-    sig_col,
-)
+from .lst import *
+from .table import *
+from .col import *
 
 
 def label_sig(val, label="*", cutoff=0.05):

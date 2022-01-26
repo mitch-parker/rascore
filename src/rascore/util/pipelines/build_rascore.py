@@ -23,9 +23,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from .scripts import *
-from .functions import *
-from .constants import *
+from ..scripts import *
+from ..functions import *
+from ..constants import *
+
 from .classify_rascore import *
 
 
@@ -66,7 +67,8 @@ def update_prep(out_path=None, past_df=None, num_cpu=1):
 
         prep_coord(
             pdb_id_lst=pdb_id_lst,
-            renum_script_path=f"{get_dir_name(__file__)}/PDBrenum/PDBrenum.py",
+            renum_script_path=get_neighbor_path(__file__, pipelines_str, "PDBrenum")
+            + "/PDBrenum.py",
             coord_table_path=entry_table_path,
             core_dir=out_path,
             rcsb_dir=out_path,
@@ -530,7 +532,7 @@ def build_rascore(out_path=None, pdbaa_fasta_path=None, num_cpu=1):
         copy_path(
             get_file_path(
                 entry_table_file,
-                get_dir_path(dir_str=data_str, dir_path=get_dir_name(__file__)),
+                dir_path=get_neighbor_path(__file__, pipelines_str, data_str),
             ),
             entry_table_path,
         )
@@ -562,10 +564,7 @@ def build_rascore(out_path=None, pdbaa_fasta_path=None, num_cpu=1):
         entry_table_path,
         get_file_path(
             entry_table_file,
-            dir_path=get_dir_path(
-                dir_str=data_str,
-                dir_path=get_dir_name(__file__),
-            ),
+            dir_path=get_neighbor_path(__file__, pipelines_str, data_str),
         ),
     )
 

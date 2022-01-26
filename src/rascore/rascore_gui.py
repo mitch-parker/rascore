@@ -26,8 +26,7 @@ SOFTWARE.
 import streamlit as st
 from PIL import Image
 
-from rascore.util.functions import *
-from rascore.util.pages import *
+from util.pages import *
 
 
 class MultiApp:
@@ -50,17 +49,14 @@ app = MultiApp()
 
 img = Image.open(
     get_file_path(
-        "rascore_logo.png",
-        dir_path=get_dir_path(
-            dir_str=f"{util_str}/{data_str}", dir_path=get_dir_name(__file__)
-        ),
+        "rascore_logo.png", dir_path=f"{get_dir_name(__file__)}/{util_str}/{data_str}"
     )
 )
 st.image(img)
 
-app.add_app("Search for PDB Entry", pdb_page)
-app.add_app("Home", home_page)
 app.add_app("Query Database", query_page)
-app.add_app("Classify RAS Structure(s)", classify_page)
+app.add_app("Home Page", home_page)
+app.add_app("Search PDB", pdb_page)
+app.add_app("Classify Structures", classify_page)
 
 app.run()

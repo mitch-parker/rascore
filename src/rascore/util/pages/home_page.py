@@ -25,9 +25,6 @@ SOFTWARE.
 
 import streamlit as st
 
-from ..functions import *
-from ..scripts import *
-
 
 def home_page():
 
@@ -71,10 +68,10 @@ def home_page():
         To the left, there is a main menu for navigating to 
         each page in the *rascore* GUI application:
 
-        - Home
-        - Search for PDB Entry
+        - Home Page
+        - Search PDB
         - Query Database
-        - Classify RAS Structure(s)
+        - Classify Structures
         """
     )
     st.markdown("---")

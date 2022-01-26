@@ -25,15 +25,9 @@ SOFTWARE.
 
 from ..functions import *
 from ..scripts import *
-from ..classify_rascore import classify_rascore
+from ..pipelines.classify_rascore import classify_rascore
 
 
 def classify_page():
 
-    entry_table_path = get_file_path(
-        entry_table_file,
-        get_dir_path(
-            dir_str=data_str,
-            dir_path=get_dir_name(__file__),
-        ),
-    )
+    pass

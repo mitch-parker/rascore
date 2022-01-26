@@ -27,7 +27,6 @@ import streamlit as st
 
 from ..constants import *
 from ..functions import *
-from ..scripts import *
 
 pdb_col_lst = [
     chainid_col,
@@ -39,10 +38,10 @@ def pdb_page():
 
     df = load_st_table(__file__)
 
-    st.sidebar.markdown("## Page Selection")
+    st.sidebar.markdown("## PDB Selection")
 
     pdb_code = st.sidebar.selectbox(
-        "Select PDB Entry", [x.upper() for x in lst_col(df, pdb_code_col, unique=True)]
+        "Select Entry", [x.upper() for x in lst_col(df, pdb_code_col, unique=True)]
     )
     pdb_df = mask_st_table(df, {pdb_code_col: pdb_code.lower()})
 
@@ -57,7 +56,7 @@ def pdb_page():
     left_col, right_col = st.columns(2)
 
     left_col.markdown("#### General Information")
-    for col in [method_col, resolution_col, r_factor_col, cf_col]:
+    for col in [method_col, resolution_col, r_factor_col, space_col]:
         left_col.markdown(f"**{rename_col_dict[col]}:** {chainid_df.at[0,col]}")
 
     right_col.markdown("#### Molecular Annotations")
@@ -79,6 +78,9 @@ def pdb_page():
 
     show_st_table(annot_df, st_col=right_col)
 
+    for col in [bound_prot_col, bound_prot_chainid_col]:
+        right_col.markdown(f"**{rename_col_dict[col]}:** {chainid_df.at[0,col]}")
+
     sw1_conf = chainid_df.at[0, sw1_col]
     sw2_conf = chainid_df.at[0, sw2_col]
 
@@ -94,21 +96,19 @@ def pdb_page():
 
     left_view_col, right_view_col = st.columns(2)
 
-    left_view_col.markdown("#### Viewer Settings")
-
-    style_dict = {"Ribbon": "trace", "Cartoon": "oval"}
+    style_dict = {"Ribbon": "oval", "Trace": "trace"}
 
     cartoon_style = style_dict[
-        left_view_col.radio("Backbone Style", ["Ribbon", "Cartoon"])
+        right_view_col.radio("Cartoon Style", ["Ribbon", "Trace"])
     ]
 
-    surf_trans = left_view_col.slider(
+    surf_trans = right_view_col.slider(
         "Surface Transparency", min_value=0.0, max_value=1.0
     )
 
-    right_view_col.markdown("#### Bound Ligands")
+    left_view_col.markdown("#### Bound Ligand(s)")
 
-    check_dict = dict()
+    lig_check_dict = dict()
     for col in [
         bio_lig_col,
         ion_lig_col,
@@ -119,10 +119,22 @@ def pdb_page():
     ]:
         lig = chainid_df.at[0, col]
         if lig != "None":
-            check_dict[col] = right_view_col.checkbox(f"{rename_col_dict[col]}: {lig}")
+            lig_check_dict[col] = left_view_col.checkbox(
+                f"{rename_col_dict[col]}: {lig}"
+            )
 
-    if len(check_dict.keys()) == 0:
-        right_view_col.write("No bound ligands.")
+    if len(lig_check_dict.keys()) == 0:
+        left_view_col.write("No bound ligands.")
+
+    left_view_col.markdown("#### Mutation Site(s)")
+
+    mut_check_dict = dict()
+    for mut in str_to_lst(chainid_df.at[0, mut_status_col]):
+        if mut != "WT":
+            mut_check_dict[mut] = left_view_col.checkbox(mut)
+
+    if len(mut_check_dict.keys()) == 0:
+        left_view_col.write("Not Mutated.")
 
     style_lst = list()
     label_lst = list()
@@ -137,6 +149,27 @@ def pdb_page():
         ]
     )
 
+    for mut in list(mut_check_dict.keys()):
+        style_lst.append(
+            [
+                {"chain": chainid, "resi": [extract_int(mut)], "atom": "CA"},
+                {"sphere": {"color": "red", "radius": 0.8}},
+            ]
+        )
+        if mut in list(mut_check_dict.keys()):
+            if mut_check_dict[mut]:
+                label_lst.append(
+                    [
+                        mut,
+                        {
+                            "backgroundColor": "lightgray",
+                            "fontColor": "black",
+                            "backgroundOpacity": 0.5,
+                        },
+                        {"chain": chainid, "resi": [extract_int(mut)], "atom": "CA"},
+                    ]
+                )
+
     for lig_col, lig_lst in lig_lst_dict.items():
         lig_lst = str_to_lst(chainid_df.at[0, lig_col])
         if "None" not in lig_lst:
@@ -150,32 +183,33 @@ def pdb_page():
                 lig_color = "chartreuse"
                 lig_radius = 0.8
             for lig in lig_lst:
-                style_lst.append(
-                    [
-                        {
-                            "chain": chainid,
-                            "resn": [lig],
-                        },
-                        {lig_style: {lig_scheme: lig_color, "radius": lig_radius}},
-                    ]
-                )
-
-            if lig_col in list(check_dict.keys()):
-                if check_dict[lig_col]:
-                    label_lst.append(
+                if lig_col != pharm_lig_col:
+                    style_lst.append(
                         [
-                            lig,
-                            {
-                                "backgroundColor": "lightgray",
-                                "fontColor": "black",
-                                "backgroundOpacity": 0.5,
-                            },
                             {
                                 "chain": chainid,
                                 "resn": [lig],
                             },
+                            {lig_style: {lig_scheme: lig_color, "radius": lig_radius}},
                         ]
                     )
+
+                if lig_col in list(lig_check_dict.keys()):
+                    if lig_check_dict[lig_col]:
+                        label_lst.append(
+                            [
+                                lig,
+                                {
+                                    "backgroundColor": "lightgray",
+                                    "fontColor": "black",
+                                    "backgroundOpacity": 0.5,
+                                },
+                                {
+                                    "chain": chainid,
+                                    "resn": lig,
+                                },
+                            ]
+                        )
 
     pharm_class_lst = str_to_lst(chainid_df.at[0, pharm_class_col])
 

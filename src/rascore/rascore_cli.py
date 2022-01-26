@@ -28,7 +28,7 @@ import argparse
 import sys
 import pyfiglet
 
-from rascore.util import *
+from util.pipelines import *
 
 
 def main(args):
@@ -64,10 +64,7 @@ def main(args):
                 entry_table_path,
                 get_file_path(
                     entry_table_file,
-                    get_dir_path(
-                        dir_str=f"{util_str}/{data_str}",
-                        dir_path=get_dir_name(__file__),
-                    ),
+                    dir_path=f"{get_dir_name(__file__)}/{util_str}/{data_str}",
                 ),
             )
 

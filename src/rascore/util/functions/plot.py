@@ -29,15 +29,11 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib_venn import venn2
 
-from .color import get_lst_colors, gray_hex, black_hex, change_hex_alpha
-
-from .lst import format_val
-
-from .path import append_file_path
-
-from .table import mask_equal, lst_col, make_dict, build_label_dict, get_ncols
-
-from .col import pdb_id_col
+from .color import *
+from .lst import *
+from .path import *
+from .table import *
+from .col import *
 
 grid_hex = change_hex_alpha(gray_hex, 0.25)
 

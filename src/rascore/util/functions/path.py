@@ -30,7 +30,7 @@ import json
 import pandas as pd
 import numpy as np
 
-from .table import get_col_order, order_cols, order_rows
+from .table import *
 
 rascore_str = "rascore"
 build_str = "build"
@@ -38,6 +38,7 @@ classify_str = "classify"
 cluster_str = "cluster"
 
 util_str = "util"
+pipelines_str = "pipelines"
 data_str = "data"
 pages_str = "pages"
 
@@ -349,3 +350,12 @@ def get_pocket_path(pdb_id, pocket, dir_path=None):
         dir_path=dir_path,
         pre_str=False,
     )
+
+
+def get_neighbor_path(file_path, dir_str, neighbor_str):
+
+    dir_path = get_dir_name(file_path)
+    dir_path = dir_path.split(dir_str)[0]
+    dir_path += neighbor_str
+
+    return dir_path

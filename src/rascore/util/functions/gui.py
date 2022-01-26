@@ -27,30 +27,20 @@ import streamlit as st
 import py3Dmol
 from stmol import showmol
 
-from .file import entry_table_file
-from .table import mask_equal
-from .path import (
-    get_dir_name,
-    get_dir_path,
-    get_file_path,
-    load_table,
-    pages_str,
-    data_str,
-)
+from .file import *
+from .table import *
+from .path import *
 from .col import *
-from .lst import *
 
 
 def load_st_table(file_path):
 
-    dir_path = get_dir_name(file_path)
-    dir_path = dir_path.split(pages_str)[0]
-    dir_path += data_str
-
     return load_table(
         get_file_path(
             entry_table_file,
-            dir_path=get_dir_path(dir_path=dir_path),
+            dir_path=get_dir_path(
+                dir_path=get_neighbor_path(file_path, pages_str, data_str)
+            ),
         )
     )
 
@@ -60,8 +50,11 @@ def mask_st_table(df, col_dict):
 
     mask_df = df.copy()
 
-    for col in col_dict.keys():
-        mask_df = mask_equal(mask_df, col, col_dict[col])
+    for col in list(col_dict.keys()):
+        val = type_lst(col_dict[col])
+        if len(val) > 0:
+            if "All" not in val:
+                mask_df = mask_equal(mask_df, col, val)
 
     return mask_df
 
@@ -69,7 +62,7 @@ def mask_st_table(df, col_dict):
 def rename_st_cols(df, col_lst=None):
 
     if col_lst is None:
-        col_lst = list(rename_col_dict.keys())
+        col_lst = [x for x in list(rename_col_dict.keys()) if x in list(df.columns)]
 
     return df.loc[:, col_lst].rename(columns=rename_col_dict)
 
@@ -107,6 +100,22 @@ def show_st_table(df, st_col=None):
         st_col.table(df)
 
 
+@st.cache
+def encode_st_df(df):
+
+    return df.to_csv().encode("utf-8")
+
+
+def download_st_df(df, label, file_name):
+
+    st.download_button(
+        label=label,
+        data=encode_st_df(df),
+        file_name=file_name,
+        mime="text/csv",
+    )
+
+
 def show_st_structure(
     pdb_code,
     style_lst=None,
@@ -117,6 +126,7 @@ def show_st_structure(
     cartoon_radius=0.2,
     cartoon_color="lightgray",
     zoom=1,
+    spin_on=False,
     width=700,
     height=500,
 ):
@@ -153,5 +163,8 @@ def show_st_structure(
         view.zoomTo()
     else:
         view.zoomTo(zoom_dict)
+
+    view.spin(spin_on)
+
     view.zoom(zoom)
     showmol(view, height=height, width=width)

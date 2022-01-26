@@ -29,7 +29,7 @@ from Bio.Align import substitution_matrices
 from Bio.SeqRecord import SeqRecord
 from Bio.Align.Applications import ClustalOmegaCommandline
 
-from .path import delete_path
+from .path import *
 
 
 def load_record_lst(path):

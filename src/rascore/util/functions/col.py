@@ -25,6 +25,7 @@ SOFTWARE.
 
 sw1_col = "SW1"
 sw2_col = "SW2"
+
 id_col = "id"
 
 core_path_col = "core_path"
@@ -433,10 +434,9 @@ rename_col_dict = {
     pdb_id_col: "PDB ID",
     pdb_code_col: "PDB Code",
     chainid_col: "Chain",
-    cf_col: "Crystal Form",
-    gene_class_col: "Gene Name",
     sw1_col: "SW1 Conformation",
     sw2_col: "SW2 Conformation",
+    gene_class_col: "Gene Name",
     mut_status_col: "Mutation Status",
     nuc_class_col: "Nucleotide State",
     prot_class_col: "Bound Protein",
@@ -452,13 +452,12 @@ rename_col_dict = {
     chem_lig_col: "Chemical",
     mod_lig_col: "Modification",
     mem_lig_col: "Membrane",
+    space_col: "Space Group",
     method_col: "Experiment Method",
     resolution_col: "Resolution",
     r_factor_col: "R-Factor",
-    len_col: "Sequence Length",
     interf_area_col: "Interface Area",
-    pocket_site_col: "Pocket Volume",
-    pocket_volume_col: "Pocket Site",
+    pocket_volume_col: "Pocket Volume",
     pocket_score_col: "Pocket Score",
     phi_col: "Phi",
     psi_col: "Psi",

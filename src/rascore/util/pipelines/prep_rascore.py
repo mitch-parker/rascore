@@ -23,9 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from .scripts import *
-from .functions import *
-from .constants import *
+from ..functions import *
 
 
 def prep_table(file_name, build_path=None):
