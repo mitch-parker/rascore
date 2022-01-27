@@ -122,8 +122,8 @@ def query_page():
                 f"{sw1_name}_{pymol_pml_file}",
                 dir_path=get_neighbor_path(__file__, pages_str, data_str),
             )
-            with st.spinner(text="Creating SW1 PyMOL File"):
-                write_pymol_script(gene_df, sw1_pymol_path)
+            # with st.spinner(text="Creating SW1 PyMOL File"):
+            # write_pymol_script(gene_df, sw1_pymol_path)
 
         with right_query_col.form(key="SW2 Form"):
             sw2_file_name = st.text_input(label="SW2 PyMOL File Name")
@@ -134,8 +134,8 @@ def query_page():
                 f"{sw2_name}_{pymol_pml_file}",
                 dir_path=get_neighbor_path(__file__, pages_str, data_str),
             )
-            with st.spinner(text="Creating SW2 PyMOL File"):
-                write_pymol_script(gene_df, sw2_pymol_path)
+            # with st.spinner(text="Creating SW2 PyMOL File"):
+            # write_pymol_script(gene_df, sw2_pymol_path)
 
         st.markdown("#### Pivot Table")
 
