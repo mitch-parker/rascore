@@ -47,9 +47,8 @@ from .lst import type_lst
 def write_page_bottom():
 
     st.markdown("---")
-    st.write(
-        "Developed by Mitchell Parker and Roland Dunbrack (Last Updated 2022-01-27)."
-    )
+    st.write("Developed by Mitchell Parker and Roland Dunbrack")
+    st.write("Last Updated 2022-01-27")
     st.write("[Fox Chase Cancer Center](https://www.foxchase.org)")
     st.write("Copyright (c) 2022 Mitchell Isaac Parker")
 
