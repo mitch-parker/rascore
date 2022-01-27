@@ -56,6 +56,8 @@ def home_page():
         """
     )
 
+    st.markdown("---")
+
     st.markdown(
         """
         ### Summary

@@ -77,6 +77,8 @@ def pdb_page():
 
     st.markdown("# Search PDB")
 
+    st.markdown("---")
+
     df = load_st_table(__file__)
 
     st.sidebar.markdown("## PDB Selection")
@@ -92,7 +94,6 @@ def pdb_page():
     st.markdown(
         f"### PDB: [{pdb_code}](https://www.rcsb.org/structure/{pdb_code}) ({df.at[0,gene_class_col]}) - Chain {chainid}"
     )
-    st.markdown("---")
 
     left_col, right_col = st.columns(2)
 
@@ -437,6 +438,8 @@ def pdb_page():
                 {"stick": {"colorscheme": "Carbon", "radius": 0.2}},
             ]
         )
+
+    st.markdown("---")
 
     show_st_structure(
         pdb_code,

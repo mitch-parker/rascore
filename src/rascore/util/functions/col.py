@@ -437,7 +437,7 @@ rename_col_dict = {
     chainid_col: "Chain",
     sw1_col: "SW1 Conformation",
     sw2_col: "SW2 Conformation",
-    gene_class_col: "Gene Name",
+    gene_class_col: "RAS Isoform",
     mut_status_col: "Mutation Status",
     nuc_class_col: "Nucleotide State",
     prot_class_col: "Bound Protein",

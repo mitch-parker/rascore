@@ -52,6 +52,8 @@ def classify_page():
 
     st.markdown("# Classify Structure(s)")
 
+    st.markdown("---")
+
     st_file_lst = st.file_uploader(
         "Upload RAS Structure(s)", accept_multiple_files=True
     )
