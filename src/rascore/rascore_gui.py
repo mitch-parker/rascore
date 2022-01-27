@@ -29,10 +29,10 @@ warnings.simplefilter(action="ignore", category=FutureWarning)
 
 import streamlit as st
 
-from rascore.util.pages.home_page import home_page
-from rascore.util.pages.pdb_page import pdb_page
-from rascore.util.pages.query_page import query_page
-from rascore.util.pages.classify_page import classify_page
+from util.pages.home_page import home_page
+from util.pages.pdb_page import pdb_page
+from util.pages.query_page import query_page
+from util.pages.classify_page import classify_page
 
 
 class MultiApp:
