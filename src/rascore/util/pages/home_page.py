@@ -26,8 +26,8 @@ SOFTWARE.
 import streamlit as st
 from PIL import Image
 
-from rascore.util.functions.gui import write_page_bottom
-from rascore.util.functions.path import (
+from ..functions.gui import write_page_bottom
+from ..functions.path import (
     get_neighbor_path,
     get_file_path,
     pages_str,
