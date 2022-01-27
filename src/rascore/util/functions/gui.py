@@ -23,7 +23,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import os
+import pandas as pd
+import json
+import base64
+import uuid
+import re
 import streamlit as st
 import py3Dmol
 from stmol import showmol
@@ -35,7 +39,6 @@ from .path import (
     get_file_path,
     get_dir_path,
     get_neighbor_path,
-    delete_path,
     pages_str,
     data_str,
     functions_str,
@@ -44,7 +47,7 @@ from .col import rename_col_dict
 from .lst import type_lst
 
 
-def write_page_bottom():
+def write_st_end():
 
     st.markdown("---")
     st.write("Developed by Mitchell Parker and Roland Dunbrack")
@@ -132,20 +135,49 @@ def show_st_table(df, st_col=None):
         st_col.table(df)
 
 
-@st.cache
+def encode_st_text(text, file_name, link_text):
+
+    if isinstance(text, pd.DataFrame):
+        text = text.to_csv(sep="\t", index=False)
+
+    b64 = base64.b64encode(text.encode()).decode()
+
+    return (
+        f'<a href="data:file/txt;base64,{b64}" download="{file_name}">{link_text}</a>'
+    )
+
+
+def download_st_text(text, file_name, link_text, download_text, st_col=None):
+
+    if st_col is None:
+        if st.button(link_text):
+            st_text = encode_st_text(text, file_name, download_text)
+            st.markdown(st_text, unsafe_allow_html=True)
+    else:
+        if st_col.button(link_text):
+            st_text = encode_st_text(text, file_name, download_text)
+            st_col.markdown(st_text, unsafe_allow_html=True)
+
+
 def encode_st_df(df):
 
-    return df.to_csv().encode("utf-8")
+    return df.to_csv(sep="\t", index=False).encode("utf-8")
 
 
-def download_st_df(df, label, file_name):
+def download_st_df(df, file_name, download_text, st_col=None):
 
-    st.download_button(
-        label=label,
-        data=encode_st_df(df),
-        file_name=file_name,
-        mime="text/csv",
-    )
+    if st_col is None:
+        st.download_button(
+            label=download_text,
+            data=encode_st_df(df),
+            file_name=file_name,
+        )
+    else:
+        st_col.download_button(
+            label=download_text,
+            data=encode_st_df(df),
+            file_name=file_name,
+        )
 
 
 def show_st_structure(

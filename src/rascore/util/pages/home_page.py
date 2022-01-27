@@ -26,7 +26,7 @@ SOFTWARE.
 import streamlit as st
 from PIL import Image
 
-from ..functions.gui import write_page_bottom
+from ..functions.gui import write_st_end
 from ..functions.path import (
     get_neighbor_path,
     get_file_path,
@@ -128,4 +128,4 @@ def home_page():
         """
     )
 
-    write_page_bottom()
+    write_st_end()

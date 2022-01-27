@@ -42,6 +42,7 @@ from ..functions.gui import (
     show_st_table,
     mask_st_table,
     show_st_structure,
+    write_st_end,
 )
 from ..functions.col import (
     rename_col_dict,
@@ -447,5 +448,4 @@ def pdb_page():
         zoom_dict={"chain": chainid},
     )
 
-    st.markdown("---")
-    st.write("Copyright (c) 2022 Mitchell Isaac Parker")
+    write_st_end()

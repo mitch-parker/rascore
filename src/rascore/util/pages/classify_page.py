@@ -43,7 +43,7 @@ from ..functions.gui import (
     show_st_dataframe,
     download_st_df,
     rename_st_cols,
-    write_page_bottom,
+    write_st_end,
 )
 from ..pipelines.classify_rascore import classify_rascore
 
@@ -89,8 +89,7 @@ def classify_page():
 
                     show_st_dataframe(df)
 
-                    download_st_df(df, "Download Classification Table", out_file)
-
+                    download_st_df(df, out_file, "Download Classification Table")
                 except:
                     st.error("Error Analyzing Inputted Structure(s)")
 
@@ -98,4 +97,4 @@ def classify_page():
                 for coord_path in coord_path_lst:
                     delete_path(coord_path)
 
-    write_page_bottom()
+    write_st_end()
