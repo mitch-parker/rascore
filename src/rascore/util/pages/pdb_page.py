@@ -74,6 +74,8 @@ from ..functions.col import (
 
 def pdb_page():
 
+    st.markdown("# Search PDB")
+
     df = load_st_table(__file__)
 
     st.sidebar.markdown("## PDB Selection")

@@ -54,6 +54,8 @@ from ..functions.col import (
 
 def query_page():
 
+    st.markdown("# Query Database")
+
     df = load_st_table(__file__)
     df = rename_st_cols(df)
 
