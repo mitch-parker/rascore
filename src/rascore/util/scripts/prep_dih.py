@@ -25,10 +25,9 @@ SOFTWARE.
 
 from tqdm import tqdm
 import concurrent.futures
-from rascore.util.functions.path import save_json
 
-from rascore.util.functions.table import merge_dicts
-
+from ..functions.path import save_json
+from ..functions.table import merge_dicts
 from ..functions.dih import calc_bb_angle, calc_sc_angle
 from ..functions.coord import (
     load_coord,
