@@ -35,7 +35,7 @@ executing==0.8.2
 gitdb==4.0.9
 GitPython==3.1.26
 h5py @ file:///Users/runner/miniforge3/conda-bld/h5py_1637964023743/work
-idna==2.10
+idna @ file:///home/conda/feedstock_root/build_artifacts/idna_1642433548627/work
 importlib-resources==5.4.0
 ipykernel==6.7.0
 ipython==8.0.1
@@ -59,14 +59,14 @@ mmcif-pdbx==0+untagged.16.g90d39b2.dirty
 mygene==3.2.2
 mypy-extensions==0.4.3
 nbclient==0.5.10
-nbconvert==6.4.0
+nbconvert==6.4.1
 nbformat==5.1.3
 nest-asyncio==1.5.4
 notebook==6.4.8
-numpy==1.21.0
+numpy @ file:///Users/runner/miniforge3/conda-bld/numpy_1643009252997/work
 olefile @ file:///home/conda/feedstock_root/build_artifacts/olefile_1602866521163/work
 packaging==21.3
-pandas @ file:///Users/mitchellparker/Library/Caches/pypoetry/artifacts/ef/f3/02/fee7cca85e0081b5342c2e537d6f5ed6264c2749c11b23ab96d1f895dd/pandas-1.4.0-cp38-cp38-macosx_10_9_x86_64.whl
+pandas==1.4.0
 pandocfilters==1.5.0
 parso==0.8.3
 pathspec==0.9.0
@@ -80,7 +80,7 @@ pkginfo==1.8.2
 platformdirs==2.4.1
 Pmw==2.0.1
 prometheus-client==0.13.0
-prompt-toolkit==3.0.24
+prompt-toolkit==3.0.25
 propka @ file:///Users/runner/miniforge3/conda-bld/propka_1636253306190/work
 protobuf==3.19.3
 ptyprocess==0.7.0
@@ -104,9 +104,10 @@ pytz @ file:///home/conda/feedstock_root/build_artifacts/pytz_1633452062248/work
 pytz-deprecation-shim==0.1.0.post0
 pytzdata==2020.1
 pyzmq==22.3.0
+rascore==0.1.36
 rdkit-pypi==2021.9.4
 readme-renderer==32.0
-requests==2.25.1
+requests @ file:///home/conda/feedstock_root/build_artifacts/requests_1641580202195/work
 rfc3986==2.0.0
 scipy==1.6.2
 seaborn==0.11.1
@@ -115,10 +116,10 @@ six @ file:///home/conda/feedstock_root/build_artifacts/six_1620240208055/work
 smmap==5.0.0
 stack-data==0.1.4
 statannot==0.2.3
-statsmodels @ file:///Users/mitchellparker/Library/Caches/pypoetry/artifacts/b2/b4/fd/886b65652bc2b111ce868c13f09a364a278de3645622024c3e85c6417d/statsmodels-0.13.1-cp38-cp38-macosx_10_15_x86_64.whl
+statsmodels==0.13.1
 stmol==0.0.7
 streamlit==1.4.0
-terminado==0.12.1
+terminado==0.13.1
 testpath==0.5.0
 tinycss2==1.1.1
 toml==0.10.2

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "rascore"
-version = "0.1.35"
+version = "0.1.36"
 description = "A tool for analyzing the conformations of RAS structures"
 authors = ["mitch-parker <mitch.isaac.parker@gmail.com>"]
 license = "MIT License"
