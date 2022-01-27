@@ -23,7 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import cairosvg
+# import cairosvg
 
 from rdkit import Chem
 from rdkit.Chem import (
@@ -186,112 +186,112 @@ def get_lig_query_match(lig, query, lig_dir=None):
     return atom_lst, bond_lst
 
 
-def draw_lig_plot(
-    ligs,
-    plot_path,
-    lig_dir=None,
-    lig_labels=None,
-    highlight_querys=None,
-    highlight_alpha=0.75,
-    color_palette=None,
-    n_cols=None,
-    mol_pad=0.1,
-    plot_height=3,
-    plot_width=3,
-    font_size=2,
-):
+# def draw_lig_plot(
+#     ligs,
+#     plot_path,
+#     lig_dir=None,
+#     lig_labels=None,
+#     highlight_querys=None,
+#     highlight_alpha=0.75,
+#     color_palette=None,
+#     n_cols=None,
+#     mol_pad=0.1,
+#     plot_height=3,
+#     plot_width=3,
+#     font_size=2,
+# ):
 
-    lig_lst = type_lst(ligs)
-    highlight_query_lst = type_lst(highlight_querys)
+#     lig_lst = type_lst(ligs)
+#     highlight_query_lst = type_lst(highlight_querys)
 
-    if type(lig_labels) == dict:
-        label_lst = [lig_labels[x] for x in lig_lst]
-    else:
-        label_lst = type_lst(lig_labels)
-    if len(label_lst) != len(lig_lst):
-        label_lst = None
+#     if type(lig_labels) == dict:
+#         label_lst = [lig_labels[x] for x in lig_lst]
+#     else:
+#         label_lst = type_lst(lig_labels)
+#     if len(label_lst) != len(lig_lst):
+#         label_lst = None
 
-    mol_lst = [get_lig_mol(x, lig_dir=lig_dir) for x in lig_lst]
+#     mol_lst = [get_lig_mol(x, lig_dir=lig_dir) for x in lig_lst]
 
-    final_atom_lst = list()
-    final_bond_lst = list()
-    final_atom_color_lst = list()
-    final_bond_color_lst = list()
+#     final_atom_lst = list()
+#     final_bond_lst = list()
+#     final_atom_color_lst = list()
+#     final_bond_color_lst = list()
 
-    if highlight_querys is not None:
-        if type(color_palette) == dict:
-            color_dict = color_palette
-            for key, val in color_dict.items():
-                color_dict[key] = get_rgb(change_hex_alpha(val, highlight_alpha))
-        else:
-            color_dict = get_lst_colors(
-                highlight_query_lst,
-                palette=color_palette,
-                return_rgb=True,
-                return_dict=True,
-                alpha=highlight_alpha,
-            )
+#     if highlight_querys is not None:
+#         if type(color_palette) == dict:
+#             color_dict = color_palette
+#             for key, val in color_dict.items():
+#                 color_dict[key] = get_rgb(change_hex_alpha(val, highlight_alpha))
+#         else:
+#             color_dict = get_lst_colors(
+#                 highlight_query_lst,
+#                 palette=color_palette,
+#                 return_rgb=True,
+#                 return_dict=True,
+#                 alpha=highlight_alpha,
+#             )
 
-    for mol in mol_lst:
+#     for mol in mol_lst:
 
-        mol_atom_lst = list()
-        mol_bond_lst = list()
-        mol_atom_color_dict = dict()
-        mol_bond_color_dict = dict()
+#         mol_atom_lst = list()
+#         mol_bond_lst = list()
+#         mol_atom_color_dict = dict()
+#         mol_bond_color_dict = dict()
 
-        if highlight_querys is not None:
-            for i, highlight_query in enumerate(highlight_query_lst):
+#         if highlight_querys is not None:
+#             for i, highlight_query in enumerate(highlight_query_lst):
 
-                atom_lst, bond_lst = get_lig_query_match(mol, highlight_query)
+#                 atom_lst, bond_lst = get_lig_query_match(mol, highlight_query)
 
-                if len(atom_lst) > 0:
+#                 if len(atom_lst) > 0:
 
-                    mol_atom_lst += atom_lst
-                    mol_bond_lst += bond_lst
+#                     mol_atom_lst += atom_lst
+#                     mol_bond_lst += bond_lst
 
-                    for atom in atom_lst:
-                        mol_atom_color_dict[atom] = color_dict[highlight_query]
+#                     for atom in atom_lst:
+#                         mol_atom_color_dict[atom] = color_dict[highlight_query]
 
-                    for bond in bond_lst:
-                        mol_bond_color_dict[bond] = color_dict[highlight_query]
+#                     for bond in bond_lst:
+#                         mol_bond_color_dict[bond] = color_dict[highlight_query]
 
-        final_atom_lst.append(mol_atom_lst)
-        final_bond_lst.append(mol_bond_lst)
-        final_atom_color_lst.append(mol_atom_color_dict)
-        final_bond_color_lst.append(mol_bond_color_dict)
+#         final_atom_lst.append(mol_atom_lst)
+#         final_bond_lst.append(mol_bond_lst)
+#         final_atom_color_lst.append(mol_atom_color_dict)
+#         final_bond_color_lst.append(mol_bond_color_dict)
 
-    total_mols = len(mol_lst)
-    if n_cols is None:
-        n_cols = total_mols
-    plot_size = (plot_width * 72, plot_height * 72)
-    n_rows = total_mols // n_cols
-    if total_mols % n_cols:
-        n_rows += 1
+#     total_mols = len(mol_lst)
+#     if n_cols is None:
+#         n_cols = total_mols
+#     plot_size = (plot_width * 72, plot_height * 72)
+#     n_rows = total_mols // n_cols
+#     if total_mols % n_cols:
+#         n_rows += 1
 
-    total_size = (n_cols * plot_size[0], n_rows * plot_size[1])
-    draw = Draw.rdMolDraw2D.MolDraw2DSVG(
-        total_size[0], total_size[1], plot_size[0], plot_size[1]
-    )
+#     total_size = (n_cols * plot_size[0], n_rows * plot_size[1])
+#     draw = Draw.rdMolDraw2D.MolDraw2DSVG(
+#         total_size[0], total_size[1], plot_size[0], plot_size[1]
+#     )
 
-    if n_cols is None:
-        n_cols = len(mol_lst)
+#     if n_cols is None:
+#         n_cols = len(mol_lst)
 
-    draw.drawOptions().legendFontSize = font_size
-    draw.drawOptions().padding = mol_pad
-    draw.SetFontSize(1)
-    draw.SetLineWidth(1)
-    draw.DrawMolecules(
-        mol_lst,
-        legends=label_lst,
-        highlightAtoms=final_atom_lst,
-        highlightBonds=final_bond_lst,
-        highlightAtomColors=final_atom_color_lst,
-        highlightBondColors=final_bond_color_lst,
-    )
-    draw.FinishDrawing()
-    img = draw.GetDrawingText()
-    append_file_path(plot_path)
-    cairosvg.svg2pdf(bytestring=img.encode("utf-8"), write_to=plot_path)
+#     draw.drawOptions().legendFontSize = font_size
+#     draw.drawOptions().padding = mol_pad
+#     draw.SetFontSize(1)
+#     draw.SetLineWidth(1)
+#     draw.DrawMolecules(
+#         mol_lst,
+#         legends=label_lst,
+#         highlightAtoms=final_atom_lst,
+#         highlightBonds=final_bond_lst,
+#         highlightAtomColors=final_atom_color_lst,
+#         highlightBondColors=final_bond_color_lst,
+#     )
+#     draw.FinishDrawing()
+#     img = draw.GetDrawingText()
+#     append_file_path(plot_path)
+#     cairosvg.svg2pdf(bytestring=img.encode("utf-8"), write_to=plot_path)
 
 
 def show_pymol_lig(
