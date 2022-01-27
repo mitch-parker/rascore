@@ -30,8 +30,11 @@ warnings.simplefilter(action="ignore", category=FutureWarning)
 import streamlit as st
 from PIL import Image
 
-from util.functions.path import get_dir_name, get_file_path, util_str, data_str
-from util.pages import home_page, pdb_page, query_page, classify_page
+from rascore.util.functions.path import get_dir_name, get_file_path, util_str, data_str
+from rascore.util.pages.home_page import home_page
+from rascore.util.pages.pdb_page import pdb_page
+from rascore.util.pages.query_page import query_page
+from rascore.util.pages.classify_page import classify_page
 
 
 class MultiApp:

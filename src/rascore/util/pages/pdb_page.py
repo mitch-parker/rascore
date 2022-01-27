@@ -155,11 +155,13 @@ def pdb_page():
         mod_lig_col,
         mem_lig_col,
     ]:
-        lig = chainid_df.at[0, col]
-        if lig != "None":
-            lig_check_dict[col] = left_view_col.checkbox(
-                f"{rename_col_dict[col]}: {lig}"
-            )
+        lig_lst = str_to_lst(chainid_df.at[0, col])
+        if "None" not in lig_lst:
+            lig_check_dict[col] = dict()
+            for lig in lig_lst:
+                lig_check_dict[col][lig] = left_view_col.checkbox(
+                    f"{rename_col_dict[col]}: {lig}"
+                )
 
     if len(lig_check_dict.keys()) == 0:
         left_view_col.write("No bound ligands.")
@@ -177,13 +179,30 @@ def pdb_page():
     style_lst = list()
     label_lst = list()
 
+    rotate_view = right_view_col.checkbox("Rotate Structure")
+
+    opacity = 0
+    if len(pdb_df) > 1:
+        all_chains = right_view_col.checkbox("Show All Chains")
+
+        if all_chains:
+            opacity = 0.5
+
     style_lst.append(
         [
             {
                 "chain": chainid,
                 "invert": True,
             },
-            {"cartoon": {"opacity": 0}},
+            {
+                "cartoon": {
+                    "color": "white",
+                    "style": cartoon_style,
+                    "thickness": 0.2,
+                    "opacity": 1,
+                    "opacity": opacity,
+                }
+            },
         ]
     )
 
@@ -222,18 +241,39 @@ def pdb_page():
                 lig_radius = 0.8
             for lig in lig_lst:
                 if lig_col != pharm_lig_col:
-                    style_lst.append(
-                        [
-                            {
-                                "chain": chainid,
-                                "resn": [lig],
-                            },
-                            {lig_style: {lig_scheme: lig_color, "radius": lig_radius}},
-                        ]
-                    )
+                    if lig_col == mem_lig_col:
+                        style_lst.append(
+                            [
+                                {
+                                    "resn": [lig],
+                                },
+                                {
+                                    lig_style: {
+                                        lig_scheme: lig_color,
+                                        "radius": lig_radius,
+                                    }
+                                },
+                            ]
+                        )
+
+                    else:
+                        style_lst.append(
+                            [
+                                {
+                                    "chain": chainid,
+                                    "resn": [lig],
+                                },
+                                {
+                                    lig_style: {
+                                        lig_scheme: lig_color,
+                                        "radius": lig_radius,
+                                    }
+                                },
+                            ]
+                        )
 
                 if lig_col in list(lig_check_dict.keys()):
-                    if lig_check_dict[lig_col]:
+                    if lig_check_dict[lig_col][lig]:
                         label_lst.append(
                             [
                                 lig,
@@ -401,6 +441,7 @@ def pdb_page():
         surface_lst=surface_lst,
         label_lst=label_lst,
         cartoon_style=cartoon_style,
+        spin_on=rotate_view,
         zoom_dict={"chain": chainid},
     )
 

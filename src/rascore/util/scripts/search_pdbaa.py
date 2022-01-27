@@ -26,7 +26,32 @@ SOFTWARE.
 import pandas as pd
 from tqdm import tqdm
 
-from ..functions import *
+from ..functions.coord import get_pdb_id
+from ..functions.pdbaa import (
+    get_pdbaa_swiss_id,
+    get_pdbaa_chainid,
+    get_pdbaa_method,
+    get_pdbaa_pdb_code,
+    get_pdbaa_prot,
+    get_pdbaa_r_factor,
+    get_pdbaa_resolution,
+)
+from ..functions.table import lst_col
+from ..functions.seq import load_record_dict, get_record_desc, get_record_seq
+from ..functions.col import (
+    pdb_id_col,
+    pdb_code_col,
+    chainid_col,
+    swiss_id_col,
+    prot_col,
+    method_col,
+    resolution_col,
+    r_factor_col,
+    seq_col,
+    len_col,
+    swiss_id_col,
+)
+from ..functions.path import save_table
 
 
 def search_pdbaa(

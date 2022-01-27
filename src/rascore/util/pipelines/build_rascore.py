@@ -26,7 +26,7 @@ SOFTWARE.
 import os
 import pandas as pd
 from tqdm import tqdm
-import datetime
+from datetime import datetime
 
 from ..pipelines.classify_rascore import classify_rascore
 

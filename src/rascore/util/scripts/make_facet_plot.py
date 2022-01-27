@@ -27,12 +27,31 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.ticker as mticker
 from statannot import add_stat_annotation
+import seaborn as sns
 
 import warnings
 
 warnings.filterwarnings("ignore", module="seaborn")
 
-from ..functions import *
+from ..functions.lst import type_lst, format_nested_lst
+from ..functions.color import change_hex_alpha, get_lst_colors, gray_hex
+from ..functions.col import (
+    reformat_col_lst,
+    resid_col,
+    bb_col_lst,
+    sc_col_lst,
+    phi_col,
+    psi_col,
+)
+from ..functions.table import (
+    reformat_val_table,
+    lst_col,
+    mask_unequal,
+    title_str,
+    get_ncols,
+)
+from ..functions.plot import prep_plot_col
+from ..functions.path import append_file_path
 
 grid_hex = change_hex_alpha(gray_hex, 0.25)
 
@@ -143,8 +162,6 @@ def make_facet_plot(
     tick_mult=0.75,
     all_ticks=False,
 ):
-
-    import seaborn as sns
 
     df = plot_df.copy(deep=True)
 

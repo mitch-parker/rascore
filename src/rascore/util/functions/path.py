@@ -41,6 +41,7 @@ util_str = "util"
 pipelines_str = "pipelines"
 data_str = "data"
 pages_str = "pages"
+functions_str = "functions"
 
 pdbaa_str = "pdbaa"
 core_str = "core"

@@ -27,7 +27,11 @@ import numpy as np
 from tqdm import tqdm
 import itertools
 
-from ..functions import *
+from ..functions.table import order_rows
+from ..functions.interf import calc_q_score
+from ..functions.col import interf_cont_col, cb_dist_col
+from ..functions.lst import str_to_lst
+from ..functions.path import save_matrix
 
 
 def calc_interf_dist(i, j, i_df, j_df):

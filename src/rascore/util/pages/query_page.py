@@ -54,8 +54,6 @@ def query_page():
     df = load_st_table(__file__)
     df = rename_st_cols(df)
 
-    print(df.columns)
-
     st.sidebar.markdown("## Query Selection")
 
     annot_lst = [
@@ -77,15 +75,17 @@ def query_page():
             ["All"] + lst_col(df, rename_col_dict[annot], unique=True),
         )
 
-    st.markdown("#### Pivot Table")
-
-    left_col, right_col = st.columns(2)
-
     mask_df = mask_st_table(df, mask_dict)
 
-    row_lst = left_col.multiselect("Rows", [rename_col_dict[x] for x in annot_lst])
+    st.markdown("#### Pivot Table")
 
-    col_lst = right_col.multiselect(
+    left_pivot_col, right_pivot_col = st.columns(2)
+
+    row_lst = left_pivot_col.multiselect(
+        "Rows", [rename_col_dict[x] for x in annot_lst]
+    )
+
+    col_lst = right_pivot_col.multiselect(
         "Columns",
         [rename_col_dict[x] for x in annot_lst if rename_col_dict[x] not in row_lst],
     )
@@ -114,7 +114,8 @@ def query_page():
 
         show_st_table(pivot_df)
 
-        download_st_df(pivot_df, "Download Pivot Table", "rascore_pivot.csv")
+        pivot_file_name = st.text_input(label="Pivot File Name")
+        download_st_df(pivot_df, "Download Pivot Table", pivot_file_name)
 
         st.markdown("---")
 
@@ -122,4 +123,12 @@ def query_page():
 
         show_st_dataframe(mask_df)
 
-        download_st_df(mask_df, "Download Entries Table", "rascore_entries.csv")
+        entries_file_name = st.text_input(label="Entries File Name")
+        download_st_df(mask_df, "Download Entries Table", entries_file_name)
+
+        # st.markdown("#### Download PyMOL Scripts")
+
+        # left_pymol_col, right_pymol_col = st.columns(2)
+
+        # sw1_pymol_file_name = left_pymol_col.text_input(label="SW1 PyMOL File Name")
+        # sw2_pymol_file_name = right_pymol_col.text_input(label="SW2 PyMOL File Name")

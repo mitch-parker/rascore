@@ -25,8 +25,24 @@ SOFTWARE.
 
 from tqdm import tqdm
 import concurrent.futures
+from rascore.util.functions.path import save_json
 
-from ..functions import *
+from rascore.util.functions.table import merge_dicts
+
+from ..functions.dih import calc_bb_angle, calc_sc_angle
+from ..functions.coord import (
+    load_coord,
+    get_modelid,
+    get_chainid,
+    get_resid,
+    get_resname,
+    get_resid_str,
+    is_aa,
+)
+from ..functions.col import resname_col, bb_col_lst, sc_col_lst
+from ..functions.lst import type_lst
+from ..functions.table import merge_dicts
+from ..functions.path import save_json
 
 
 def build_dih_dict(coord_path):

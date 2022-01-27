@@ -32,18 +32,14 @@ import argparse
 import sys
 import pyfiglet
 
-from util.pipelines.prep_rascore import prep_rascore
-from util.pipelines.build_rascore import build_rascore
-from util.pipelines.classify_rascore import classify_rascore
-
-from util.functions.path import (
+from rascore.util.functions.path import (
     get_file_path,
     get_dir_name,
     copy_path,
     util_str,
     data_str,
 )
-from util.functions.file import entry_table_file
+from rascore.util.functions.file import entry_table_file
 
 
 def main(args):
@@ -56,12 +52,19 @@ def main(args):
     cpu = args.cpu
 
     if classify is not None:
+
+        from rascore.util.pipelines.classify_rascore import classify_rascore
+
         classify_rascore(
             coord_paths=classify,
             out_path=out,
             num_cpu=cpu,
         )
     elif build is not None:
+
+        from rascore.util.pipelines.prep_rascore import prep_rascore
+        from rascore.util.pipelines.build_rascore import build_rascore
+
         pdbaa_fasta_path = None
         if build is not True:
             pdbaa_fasta_path = build
@@ -74,6 +77,9 @@ def main(args):
         )
     elif gui is not None:
         if gui is not True:
+
+            from rascore.util.pipelines.prep_rascore import prep_rascore
+
             prep_rascore(build_path=gui)
             entry_table_path = get_file_path(entry_table_file, dir_path=gui)
             copy_path(

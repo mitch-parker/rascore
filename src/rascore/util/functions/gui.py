@@ -23,14 +23,37 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import os
 import streamlit as st
 import py3Dmol
 from stmol import showmol
 
-from .file import *
-from .table import *
-from .path import *
-from .col import *
+from .file import entry_table_file
+from .table import mask_equal
+from .path import (
+    load_table,
+    get_file_path,
+    get_dir_path,
+    get_neighbor_path,
+    delete_path,
+    pages_str,
+    data_str,
+    functions_str,
+)
+from .col import rename_col_dict
+from .lst import type_lst
+
+
+def get_st_file_path(st_file):
+
+    return get_file_path(
+        st_file.name, dir_path=get_neighbor_path(__file__, functions_str, data_str)
+    )
+
+
+def save_st_file(st_file):
+    with open(get_st_file_path(st_file), "wb") as file:
+        file.write(st_file.getbuffer())
 
 
 def load_st_table(file_path):
@@ -142,8 +165,6 @@ def show_st_structure(
             }
         }
     )
-
-    view.setViewStyle({"style": "outline", "color": "black", "width": 0.05})
 
     if surface_lst is not None:
         for surface in surface_lst:

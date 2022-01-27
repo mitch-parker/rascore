@@ -26,7 +26,36 @@ SOFTWARE.
 import pandas as pd
 from tqdm import tqdm
 
-from ..functions import *
+from ..functions.lst import str_to_lst, lst_to_str, sort_lst, res_to_lst
+from ..functions.table import extract_int, fix_val, get_df_at_index, fix_col
+from ..functions.coord import (
+    load_coord,
+    get_neighbors,
+    has_resid,
+    resid_to_tuple,
+    get_resname,
+    get_residue_cont,
+    get_reschainid,
+    get_resnum,
+    is_aa,
+    calc_atom_dist,
+)
+from ..functions.col import (
+    interf_path_col,
+    atomid_cont_col,
+    renum_path_col,
+    modelid_col,
+    chainid_col,
+    interf_area_col,
+    iso_col,
+    interf_col,
+    interf_cont_col,
+    cb_dist_col,
+    interf_id_col,
+    pdb_id_col,
+)
+from ..functions.interf import calc_q_score
+from ..functions.path import save_table
 
 
 def calc_interf_cont_dist(

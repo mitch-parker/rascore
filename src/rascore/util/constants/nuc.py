@@ -23,7 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from ..functions import blue_hex, orange_hex, green_hex
+from ..functions.color import blue_hex, orange_hex, green_hex
 
 nf_name = "0P"
 gdp_name = "2P"

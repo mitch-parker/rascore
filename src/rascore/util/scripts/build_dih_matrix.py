@@ -28,7 +28,10 @@ from tqdm import tqdm
 import itertools
 import math
 
-from ..functions import *
+from ..functions.lst import type_lst
+from ..functions.table import extract_int, get_col_val_lst, get_val_col, order_rows
+from ..functions.col import phi_col, psi_col, dih_col_lst
+from ..functions.path import save_matrix
 
 
 def calc_flip_dist(norm_dist, resid_dict, index_dict, norm_dict, flip_dict, mean=False):

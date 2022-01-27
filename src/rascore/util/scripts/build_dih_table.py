@@ -23,6 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import imp
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -31,7 +32,37 @@ import pandas as pd
 from tqdm import tqdm
 import concurrent.futures
 
-from ..functions import *
+from ..functions.lst import lst_to_str, str_to_lst, res_to_lst
+from ..functions.coord import build_add_resid_lst, resname_to_letter
+from ..functions.col import (
+    core_path_col,
+    modelid_col,
+    chainid_col,
+    phi_col,
+    psi_col,
+    omega_col,
+    rama_col,
+    rotamer_col,
+    sc_col_lst,
+    complete_col,
+    resname_col,
+    dih_col_lst,
+    bb_seq_col,
+    bb_len_col,
+    bb_resid_col,
+    sc_len_col,
+    sc_resid_col,
+    sc_seq_col,
+)
+from ..functions.dih import get_rama_type, get_rot_type
+from ..functions.table import (
+    get_df_at_index,
+    fix_val,
+    get_val_col,
+    get_col_val_lst,
+    get_val_col_lst,
+)
+from ..functions.path import save_table
 
 
 def get_index_dih(

@@ -27,7 +27,18 @@ import pandas as pd
 import numpy as np
 from tqdm import tqdm
 
-from ..functions import *
+from ..functions.col import (
+    core_path_col,
+    pocket_volume_col,
+    pocket_score_col,
+    pocket_cont_col,
+    pocket_col,
+    pocket_id_col,
+    pdb_id_col,
+)
+from ..functions.table import get_df_at_index, fix_col
+from ..functions.lst import str_to_lst, calc_jaccard, calc_simpson
+from ..functions.path import save_table
 
 
 def get_index_pocket(

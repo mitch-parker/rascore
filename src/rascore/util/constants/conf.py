@@ -22,10 +22,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from ..functions import (
-    hb_name,
-    wmhb_name,
-    no_hb_name,
+
+from ..functions.coord import hb_name, wmhb_name, no_hb_name
+from ..functions.color import (
     cyan_hex,
     purple_hex,
     pink_hex,

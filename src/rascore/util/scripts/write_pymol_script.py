@@ -23,7 +23,36 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from ..functions import *
+from ..functions.color import get_rgb, get_lst_colors
+from ..functions.lig import lig_col_lst
+from ..functions.col import pdb_id_col, pocket_lig_col
+from ..functions.lst import type_lst, lst_to_str, str_to_lst
+from ..functions.table import lst_col
+from ..functions.col import (
+    core_path_col,
+    pdb_code_col,
+    modelid_col,
+    chainid_col,
+    bound_prot_chainid_col,
+    bound_interf_chainid_col,
+    interf_col,
+    pocket_col,
+    bio_lig_col,
+    ion_lig_col,
+    pharm_lig_col,
+    chem_lig_col,
+)
+from ..functions.path import (
+    append_file_path,
+    modify_coord_path,
+    get_file_name,
+    get_eds_map_path,
+    get_eds_diff_path,
+    map_str,
+    diff_str,
+)
+from ..functions.download import download_file
+from ..functions.url import eds_url
 
 polymer_color = "gray80"
 
@@ -60,7 +89,10 @@ def load_obj(pymol_file, path, obj, chainids=None):
 
     chainid_lst = type_lst(chainids)
 
-    load_cmd = f"load {path}, {obj}"
+    if ".pdb" in path or ".cif" in path:
+        load_cmd = f"load {path}, {obj}"
+    elif len(path) == 4:
+        load_cmd = f"fetch {path}, {obj}"
 
     if chainid_lst is not None:
         chainids = lst_to_str(chainid_lst, join_txt="+")
@@ -280,6 +312,9 @@ def write_pymol_script(
     if pdb_id_col in df_col_lst:
         label_pdb = True
 
+    if coord_path_col == pdb_code_col:
+        add_h = False
+
     if group_col is None:
         group_lst = index_lst
     else:
@@ -361,7 +396,10 @@ def write_pymol_script(
         obj_lst = list()
 
         if label_pdb:
-            obj_lst.append(df.at[index, pdb_id_col])
+            if coord_path_col == pdb_code_col:
+                obj_lst.append(df.at[index, chainid_col])
+            else:
+                obj_lst.append(df.at[index, pdb_id_col])
             if add_modelid:
                 obj_lst.append(modelid)
             if interf_col in df_col_lst:
@@ -675,7 +713,10 @@ def write_pymol_script(
             obj_lst = list()
 
             if label_pdb:
-                obj_lst.append(df.at[index, pdb_id_col])
+                if coord_path_col == pdb_code_col:
+                    obj_lst.append(df.at[index, chainid_col])
+                else:
+                    obj_lst.append(df.at[index, pdb_id_col])
                 if add_modelid:
                     obj_lst.append(modelid)
                 if interf_col in df_col_lst:

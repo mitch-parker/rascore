@@ -27,7 +27,10 @@ import numpy as np
 from tqdm import tqdm
 import itertools
 
-from ..functions import *
+from ..functions.table import order_rows
+from ..functions.lst import str_to_lst, calc_simpson, calc_jaccard
+from ..functions.col import pocket_cont_col
+from ..functions.path import save_matrix
 
 
 def build_pocket_matrix(fit_df, pocket_matrix_path, pred_df=None, use_simpson=False):

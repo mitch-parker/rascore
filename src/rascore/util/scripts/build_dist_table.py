@@ -26,7 +26,23 @@ SOFTWARE.
 import pandas as pd
 from tqdm import tqdm
 
-from ..functions import *
+from ..functions.coord import load_coord, calc_atom_dist, wmhb_name, no_hb_name
+from ..functions.lst import type_lst, lst_nums, lst_to_str
+from ..functions.col import (
+    get_dist_col,
+    core_path_col,
+    modelid_col,
+    chainid_col,
+    vect_1_col,
+    vect_2_col,
+    hb_status_col,
+    hb_angle_1_col,
+    hb_angle_2_col,
+    wmhb_angle_col,
+    outlier_col,
+)
+from ..functions.table import get_df_at_index
+from ..functions.path import modify_coord_path, save_table
 
 
 def get_index_dist(

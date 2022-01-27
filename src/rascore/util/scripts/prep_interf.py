@@ -27,7 +27,35 @@ from tqdm import tqdm
 import concurrent.futures
 import pymol2
 
-from ..functions import *
+from ..functions.table import merge_dicts
+from ..functions.path import (
+    get_file_name,
+    get_interf_path,
+    get_dir_path,
+    delete_path,
+    append_path,
+    save_json,
+    interf_str,
+)
+from ..functions.lst import (
+    lst_to_str,
+    sort_lst,
+    lst_unique,
+    type_lst,
+    calc_simpson,
+    calc_jaccard,
+)
+from ..functions.col import (
+    interf_path_col,
+    bound_interf_chainid_col,
+    interf_area_col,
+    cb_cont_col,
+    atomid_cont_col,
+    total_cb_cont_col,
+    total_atomid_cont_col,
+    iso_col,
+)
+
 
 byres_str = "byres"
 within_str = "within"

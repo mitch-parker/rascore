@@ -26,7 +26,24 @@ SOFTWARE.
 import pandas as pd
 from tqdm import tqdm
 
-from ..functions import *
+from ..functions.cluster import (
+    build_cutoff_dict,
+    calc_dist_stat,
+    order_clusters,
+    build_sum_table,
+)
+from ..functions.table import lst_col, get_val_index_lst, build_col_count_dict
+from ..functions.col import (
+    cluster_col,
+    total_classified_nn_col,
+    total_classified_constr_col,
+    nn_dist_col,
+    constr_dist_col,
+    nn_cutoff_col,
+    constr_cutoff_col,
+    total_col,
+)
+from ..functions.path import save_table
 
 
 def classify_matrix(
