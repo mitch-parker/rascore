@@ -28,9 +28,7 @@ import warnings
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
 import streamlit as st
-from PIL import Image
 
-from rascore.util.functions.path import get_dir_name, get_file_path, util_str, data_str
 from rascore.util.pages.home_page import home_page
 from rascore.util.pages.pdb_page import pdb_page
 from rascore.util.pages.query_page import query_page
@@ -54,13 +52,6 @@ class MultiApp:
 
 
 app = MultiApp()
-
-img = Image.open(
-    get_file_path(
-        "rascore_logo.png", dir_path=f"{get_dir_name(__file__)}/{util_str}/{data_str}"
-    )
-)
-st.image(img)
 
 app.add_app("Home Page", home_page)
 app.add_app("Search PDB", pdb_page)

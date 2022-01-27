@@ -33,7 +33,9 @@ from ..functions.gui import (
     show_st_table,
     download_st_df,
     show_st_dataframe,
+    write_page_bottom,
 )
+from ..constants.gene import gene_class_lst
 from ..functions.table import lst_col, fix_col
 from ..functions.col import (
     rename_col_dict,
@@ -46,6 +48,7 @@ from ..functions.col import (
     match_class_col,
     pocket_class_col,
     interf_class_col,
+    gene_class_col,
 )
 
 
@@ -80,6 +83,14 @@ def query_page():
     st.markdown("#### Pivot Table")
 
     left_pivot_col, right_pivot_col = st.columns(2)
+
+    gene_lst = lst_col(mask_df, gene_class_col)
+
+    radio_lst = [f"All: {len(gene_lst)}"]
+    for gene in gene_class_lst:
+        radio_lst.append(f"{gene}: {len([x for x in gene_lst if x == gene])}")
+
+    left_pivot_col.radio("Total Structures", radio_lst)
 
     row_lst = left_pivot_col.multiselect(
         "Rows", [rename_col_dict[x] for x in annot_lst]
@@ -132,3 +143,5 @@ def query_page():
 
         # sw1_pymol_file_name = left_pymol_col.text_input(label="SW1 PyMOL File Name")
         # sw2_pymol_file_name = right_pymol_col.text_input(label="SW2 PyMOL File Name")
+
+        write_page_bottom()

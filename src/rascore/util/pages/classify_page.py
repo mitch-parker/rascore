@@ -25,13 +25,12 @@ SOFTWARE.
 
 import streamlit as st
 
-from rascore.util.functions.path import get_dir_path
-
 from ..functions.path import (
     delete_path,
     get_file_path,
     get_neighbor_path,
     load_table,
+    get_dir_path,
     pages_str,
     data_str,
     rascore_str,
@@ -44,11 +43,14 @@ from ..functions.gui import (
     show_st_dataframe,
     download_st_df,
     rename_st_cols,
+    write_page_bottom,
 )
 from ..pipelines.classify_rascore import classify_rascore
 
 
 def classify_page():
+
+    st.markdown("# Classify Structure(s)")
 
     st_file_lst = st.file_uploader(
         "Upload RAS Structure(s)", accept_multiple_files=True
@@ -60,20 +62,19 @@ def classify_page():
 
     if submit_files:
         if len(st_file_lst) > 0:
+            with st.spinner(text="Classifying Structure(s)"):
 
-            try:
-                with st.spinner(text="Classifying Structure(s)"):
+                for st_file in st_file_lst:
+                    save_st_file(st_file)
 
-                    for st_file in st_file_lst:
-                        save_st_file(st_file)
+                coord_path_lst = [get_st_file_path(x) for x in st_file_lst]
 
-                    coord_path_lst = [get_st_file_path(x) for x in st_file_lst]
+                classify_path = get_dir_path(
+                    dir_str=f"{rascore_str}_{classify_str}",
+                    dir_path=get_neighbor_path(__file__, pages_str, data_str),
+                )
 
-                    classify_path = get_dir_path(
-                        dir_str=f"{rascore_str}_{classify_str}",
-                        dir_path=get_neighbor_path(__file__, pages_str, data_str),
-                    )
-
+                try:
                     classify_rascore(coord_path_lst, out_path=classify_path)
 
                     st.success("Classified Structure(s)")
@@ -90,9 +91,11 @@ def classify_page():
 
                     download_st_df(df, "Download Classification Table", out_file)
 
-                    delete_path(classify_path)
-                    for coord_path in coord_path_lst:
-                        delete_path(coord_path)
+                except:
+                    st.error("Error Analyzing Inputted Structure(s)")
 
-            except:
-                st.error("Error Analyzing Inputted Structure(s)")
+                delete_path(classify_path)
+                for coord_path in coord_path_lst:
+                    delete_path(coord_path)
+
+    write_page_bottom()

@@ -24,9 +24,26 @@ SOFTWARE.
 """
 
 import streamlit as st
+from PIL import Image
+
+from rascore.util.functions.gui import write_page_bottom
+from rascore.util.functions.path import (
+    get_neighbor_path,
+    get_file_path,
+    pages_str,
+    data_str,
+)
 
 
 def home_page():
+
+    img = Image.open(
+        get_file_path(
+            "rascore_logo.png",
+            dir_path=get_neighbor_path(__file__, pages_str, data_str),
+        )
+    )
+    st.image(img)
 
     st.sidebar.markdown("## External Links")
 
@@ -108,7 +125,7 @@ def home_page():
         """
         ### License
         MIT License
-
-        Copyright (c) 2022 Mitchell Isaac Parker
         """
     )
+
+    write_page_bottom()
