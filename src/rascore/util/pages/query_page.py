@@ -86,6 +86,8 @@ def query_page():
 
     left_pivot_col, right_pivot_col = st.columns(2)
 
+    print(mask_df.columns)
+
     gene_lst = lst_col(mask_df, gene_class_col)
 
     radio_lst = [f"All: {len(gene_lst)}"]
