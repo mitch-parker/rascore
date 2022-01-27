@@ -24,10 +24,10 @@ SOFTWARE.
 """
 
 # import cairosvg
+# from rdkit.Chem import Draw
 
 from rdkit import Chem
 from rdkit.Chem import (
-    Draw,
     rdFMCS,
     AllChem,
     PyMol,
