@@ -26,8 +26,6 @@ SOFTWARE.
 import pandas as pd
 import streamlit as st
 
-from rascore.util.functions.path import get_file_path, get_neighbor_path
-
 from ..scripts.write_pymol_script import write_pymol_script
 
 from ..functions.gui import (
@@ -55,7 +53,7 @@ from ..functions.col import (
     interf_class_col,
     gene_class_col,
 )
-from ..functions.path import pages_str, data_str
+from ..functions.path import get_file_path, get_neighbor_path, pages_str, data_str
 from ..constants.conf import sw1_name, sw2_name, sw1_resids, sw2_resids, conf_color_dict
 from ..functions.file import pymol_pml_file
 
