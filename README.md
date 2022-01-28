@@ -3,6 +3,7 @@
 <a href="https://github.com/mitch-parker/rascore" title="Go to GitHub repo"><img src="https://img.shields.io/static/v1?label=mitch-parker&message=rascore&color=%23e78ac3&logo=github" alt="mitch-parker - rascore"></a>
 <a href="https://github.com/mitch-parker/rascore"><img src="https://img.shields.io/github/stars/mitch-parker/rascore?style=social" alt="stars - rascore"></a>
 <a href="https://github.com/mitch-parker/rascore"><img src="https://img.shields.io/github/forks/mitch-parker/rascore?style=social" alt="forks - rascore"></a>
+<a href="https://github.com/mitch-parker/rascore/releases/"><img src="https://img.shields.io/github/release/mitch-parker/rascore?include_prereleases=&sort=semver&color=e78ac3" alt="GitHub release"></a>
 <a href="#license"><img src="https://img.shields.io/badge/License-MIT-e78ac3" alt="License"></a>
 
 
