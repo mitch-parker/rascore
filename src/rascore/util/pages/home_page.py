@@ -26,7 +26,12 @@ SOFTWARE.
 import streamlit as st
 from PIL import Image
 
-from ..functions.gui import write_st_end
+from ..functions.gui import (
+    write_st_end,
+    create_st_button,
+    mitch_twitter,
+    roland_twitter,
+)
 from ..functions.path import (
     get_neighbor_path,
     get_file_path,
@@ -45,16 +50,49 @@ def home_page():
     )
     st.image(img)
 
-    st.sidebar.markdown("## External Links")
-
-    st.sidebar.markdown(
-        f"""
-        - [BioArxiv Aricle](LINK)
-        - [GitHub Page](https://github.com/mitch-parker/rascore)
-        - [Dunbrack Lab](https://dunbrack.fccc.edu/retro/)
-        - [RCSB Protein Data Bank](https://www.rcsb.org)
+    st.markdown(
         """
+        <a href="https://github.com/mitch-parker/rascore" title="Go to GitHub repo"><img src="https://img.shields.io/static/v1?label=mitch-parker&message=rascore&color=%23e78ac3&logo=github" alt="mitch-parker - rascore"></a>
+        <a href="https://github.com/mitch-parker/rascore"><img src="https://img.shields.io/github/stars/mitch-parker/rascore?style=social" alt="stars - rascore"></a>
+        <a href="https://github.com/mitch-parker/rascore"><img src="https://img.shields.io/github/forks/mitch-parker/rascore?style=social" alt="forks - rascore"></a>
+        """,
+        unsafe_allow_html=True,
     )
+
+    st.sidebar.markdown("## Database Links")
+
+    database_link_dict = {
+        "GitHub Page": "https://github.com/mitch-parker/rascore",
+        "RCSB Protein Data Bank": "https://www.rcsb.org",
+    }
+
+    for link_text, link_url in database_link_dict.items():
+        create_st_button(link_text, link_url, st_col=st.sidebar)
+
+    st.sidebar.markdown("## Software Links")
+
+    software_link_dict = {
+        "BioPython": "https://biopython.org",
+        "RDKit": "https://www.rdkit.org",
+        "PDBrenum": "http://dunbrack.fccc.edu/PDBrenum/",
+        "Fpocket": "https://bioserv.rpbs.univ-paris-diderot.fr/services/fpocket/",
+        "PyMOL": "https://pymol.org/2/",
+        "3Dmol": "https://3dmol.csb.pitt.edu",
+        "Streamlit": "https://streamlit.io",
+    }
+
+    left_link_col, middle_link_col, right_link_col = st.sidebar.columns(3)
+
+    i = 0
+    link_col_dict = {0: left_link_col, 1: middle_link_col, 2: right_link_col}
+    for link_text, link_url in software_link_dict.items():
+
+        st_col = link_col_dict[i]
+        i += 1
+        if i == len(link_col_dict.keys()):
+            i = 0
+
+        create_st_button(link_text, link_url, st_col=st_col)
 
     st.markdown("---")
 
@@ -96,20 +134,21 @@ def home_page():
     st.markdown("---")
 
     st.markdown(
-        """
+        f"""
         ### Authors
         Please feel free to contact us with any issues, comments, or questions.
 
-        ##### Mitchell Parker
+        ##### Mitchell Parker [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/bukotsunikki.svg?style=social&label=Follow%20%40Mitch_P)](https://twitter.com/Mitch_P)
 
         - Email: <mitch.isaac.parker@gmail.com>
         - GitHub: https://github.com/mitch-parker
 
-        ##### Roland Dunbrack
+        ##### Roland Dunbrack [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/bukotsunikki.svg?style=social&label=Follow%20%40RolandDunbrack)](https://twitter.com/RolandDunbrack)
 
         - Email: <roland.dunbrack@gmail.com>
         - GitHub: https://github.com/DunbrackLab
-        """
+        """,
+        unsafe_allow_html=True,
     )
 
     st.markdown("---")

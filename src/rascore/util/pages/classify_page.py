@@ -59,7 +59,9 @@ def classify_page():
     )
 
     with st.form(key="Classify Form"):
-        out_file = st.text_input(label="Classify File Name")
+        out_file = st.text_input(
+            label="Classify File Name", value="rascore_classify.tsv"
+        )
         submit_files = st.form_submit_button(label="Classify Structure(s)")
 
     if submit_files:

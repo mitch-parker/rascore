@@ -84,11 +84,11 @@ def pdb_page():
     st.sidebar.markdown("## PDB Selection")
 
     pdb_code = st.sidebar.selectbox(
-        "Select Entry", [x.upper() for x in lst_col(df, pdb_code_col, unique=True)]
+        "Entry", [x.upper() for x in lst_col(df, pdb_code_col, unique=True)]
     )
     pdb_df = mask_st_table(df, {pdb_code_col: pdb_code.lower()})
 
-    chainid = st.sidebar.selectbox("Select Chain", lst_col(pdb_df, chainid_col))
+    chainid = st.sidebar.selectbox("Chain", lst_col(pdb_df, chainid_col))
     chainid_df = mask_st_table(pdb_df, {chainid_col: chainid})
 
     st.markdown(
@@ -190,7 +190,7 @@ def pdb_page():
         all_chains = right_view_col.checkbox("Show All Chains")
 
         if all_chains:
-            opacity = 0.5
+            opacity = 0.75
 
     style_lst.append(
         [

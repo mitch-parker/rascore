@@ -397,7 +397,8 @@ def write_pymol_script(
 
         if label_pdb:
             if coord_path_col == pdb_code_col:
-                obj_lst.append(df.at[index, chainid_col])
+                obj_lst.append(df.at[index, pdb_code_col])
+                obj_lst.append(chainid)
             else:
                 obj_lst.append(df.at[index, pdb_id_col])
             if add_modelid:
@@ -714,7 +715,8 @@ def write_pymol_script(
 
             if label_pdb:
                 if coord_path_col == pdb_code_col:
-                    obj_lst.append(df.at[index, chainid_col])
+                    obj_lst.append(df.at[index, pdb_code_col])
+                    obj_lst.append(chainid)
                 else:
                     obj_lst.append(df.at[index, pdb_id_col])
                 if add_modelid:

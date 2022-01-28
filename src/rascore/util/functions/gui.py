@@ -23,9 +23,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import pandas as pd
-import json
-import base64
 import uuid
 import re
 import streamlit as st
@@ -47,13 +44,19 @@ from .col import rename_col_dict
 from .lst import type_lst
 
 
+mitch_twitter = '<a href="https://twitter.com/Mitch_P?ref_src=twsrc%5Etfw" class="twitter-follow-button" data-show-count="false">Follow @Mitch_P</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
+roland_twitter = '<a href="https://twitter.com/RolandDunbrack?ref_src=twsrc%5Etfw" class="twitter-follow-button" data-show-count="false">Follow @RolandDunbrack</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
+
+
 def write_st_end():
 
     st.markdown("---")
-    st.write("Developed by Mitchell Parker and Roland Dunbrack")
-    st.write("[Fox Chase Cancer Center](https://www.foxchase.org)")
-    st.write("Last Updated 2022-01-27")
-    st.write("Copyright (c) 2022 Mitchell Isaac Parker")
+    st.markdown("Developed by Mitchell Parker and Roland Dunbrack")
+    st.markdown(
+        "[Dunbrack Lab](https://dunbrack.fccc.edu/retro/) - [Fox Chase Cancer Center](https://www.foxchase.org)"
+    )
+    st.markdown("Last Updated 2022-01-27")
+    st.markdown("Copyright (c) 2022 Mitchell Isaac Parker")
 
 
 def get_st_file_path(st_file):
@@ -135,28 +138,52 @@ def show_st_table(df, st_col=None):
         st_col.table(df)
 
 
-def encode_st_text(text, file_name, link_text):
+def create_st_button(link_text, link_url, hover_color="#e78ac3", st_col=None):
 
-    if isinstance(text, pd.DataFrame):
-        text = text.to_csv(sep="\t", index=False)
+    button_uuid = str(uuid.uuid4()).replace("-", "")
+    button_id = re.sub("\d+", "", button_uuid)
 
-    b64 = base64.b64encode(text.encode()).decode()
+    button_css = f"""
+        <style>
+            #{button_id} {{
+                background-color: rgb(255, 255, 255);
+                color: rgb(38, 39, 48);
+                padding: 0.25em 0.38em;
+                position: relative;
+                text-decoration: none;
+                border-radius: 4px;
+                border-width: 1px;
+                border-style: solid;
+                border-color: rgb(230, 234, 241);
+                border-image: initial;
 
-    return (
-        f'<a href="data:file/txt;base64,{b64}" download="{file_name}">{link_text}</a>'
-    )
+            }}
+            #{button_id}:hover {{
+                border-color: {hover_color};
+                color: {hover_color};
+            }}
+            #{button_id}:active {{
+                box-shadow: none;
+                background-color: {hover_color};
+                color: white;
+                }}
+        </style> """
 
-
-def download_st_text(text, file_name, link_text, download_text, st_col=None):
+    html_str = f'<a href="{link_url}" id="{button_id}";>{link_text}</a><br></br>'
 
     if st_col is None:
-        if st.button(link_text):
-            st_text = encode_st_text(text, file_name, download_text)
-            st.markdown(st_text, unsafe_allow_html=True)
+        st.markdown(button_css + html_str, unsafe_allow_html=True)
     else:
-        if st_col.button(link_text):
-            st_text = encode_st_text(text, file_name, download_text)
-            st_col.markdown(st_text, unsafe_allow_html=True)
+        st_col.markdown(button_css + html_str, unsafe_allow_html=True)
+
+
+def download_st_file(file_path, file_name, download_text, st_col=None):
+
+    with open(file_path, "rb") as file:
+        if st_col is None:
+            st.download_button(download_text, file, file_name=file_name)
+        else:
+            st_col.download_button(download_text, file, file_name=file_name)
 
 
 def encode_st_df(df):
