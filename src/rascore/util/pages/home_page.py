@@ -59,6 +59,14 @@ def home_page():
         unsafe_allow_html=True,
     )
 
+    st.markdown(
+        """
+        <script async defer src="https://buttons.github.io/buttons.js"></script>
+        <a class="github-button" href="https://github.com/mitch-parker" aria-label="Follow @mitch-parker on GitHub">Follow @mitch-parker</a> 
+        """,
+        unsafe_allow_html=True,
+    )
+
     st.sidebar.markdown("## Database Links")
 
     database_link_dict = {
