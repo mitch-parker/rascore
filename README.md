@@ -10,10 +10,6 @@
 <a href="#license"><img src="https://img.shields.io/badge/License-MIT-e78ac3" alt="License"></a>
 <a href="https://github.com/mitch-parker/rascore/issues"><img src="https://img.shields.io/github/issues/mitch-parker/rascore" alt="issues - rascore"></a>
 
-</div>
-
-[![Made with Python](https://img.shields.io/badge/Python-==3.8-blue?logo=python&logoColor=white)](https://python.org "Go to Python homepage")
-
 # Summary
 
 *rascore* is a tool for analyzing RAS structures (KRAS, NRAS, and HRAS) by the conformations of their catalytic switch 1 (SW1) and switch 2 (SW2) loops. In addition, *rascore* can be used to search and query an updatable database of all available RAS structures in the Protein Data Bank with their SW1 and SW2 loops conformationally classified and their molecular contents annotated (e.g., mutation status, nucleotide state, bound proteins, small molecule inhibitors, etc.). 
