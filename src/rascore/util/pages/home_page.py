@@ -29,8 +29,6 @@ from PIL import Image
 from ..functions.gui import (
     write_st_end,
     create_st_button,
-    mitch_twitter,
-    roland_twitter,
 )
 from ..functions.path import (
     get_neighbor_path,
@@ -49,23 +47,6 @@ def home_page():
         )
     )
     st.image(img)
-
-    st.markdown(
-        """
-        <a href="https://github.com/mitch-parker/rascore" title="Go to GitHub repo"><img src="https://img.shields.io/static/v1?label=mitch-parker&message=rascore&color=%23e78ac3&logo=github" alt="mitch-parker - rascore"></a>
-        <a href="https://github.com/mitch-parker/rascore"><img src="https://img.shields.io/github/stars/mitch-parker/rascore?style=social" alt="stars - rascore"></a>
-        <a href="https://github.com/mitch-parker/rascore"><img src="https://img.shields.io/github/forks/mitch-parker/rascore?style=social" alt="forks - rascore"></a>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    st.markdown(
-        """
-        <script async defer src="https://buttons.github.io/buttons.js"></script>
-        <a class="github-button" href="https://github.com/mitch-parker" aria-label="Follow @mitch-parker on GitHub">Follow @mitch-parker</a> 
-        """,
-        unsafe_allow_html=True,
-    )
 
     st.sidebar.markdown("## Database Links")
 
