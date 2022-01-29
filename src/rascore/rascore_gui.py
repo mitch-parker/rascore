@@ -30,7 +30,7 @@ warnings.simplefilter(action="ignore", category=FutureWarning)
 import streamlit as st
 from PIL import Image
 
-from util.functions.path import get_file_path, util_str, data_str
+from util.functions.path import get_file_path, get_dir_name, util_str, data_str
 
 from util.pages.home_page import home_page
 from util.pages.pdb_page import pdb_page
@@ -48,7 +48,10 @@ class MultiApp:
     def run(self):
 
         img = Image.open(
-            get_file_path("rascore_logo.png", dir_path=f"{util_str}/{data_str}"),
+            get_file_path(
+                "rascore_logo.png",
+                dir_path=f"{get_dir_name(__file__)}/{util_str}/{data_str}",
+            ),
         )
 
         st.set_page_config(page_title="rascore", page_icon=img)
