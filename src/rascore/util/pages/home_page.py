@@ -67,6 +67,12 @@ def home_page():
         "Fpocket": "https://bioserv.rpbs.univ-paris-diderot.fr/services/fpocket/",
         "PyMOL": "https://pymol.org/2/",
         "3Dmol": "https://3dmol.csb.pitt.edu",
+        "Pandas": "https://pandas.pydata.org",
+        "NumPy": "https://numpy.org",
+        "SciPy": "https://scipy.org",
+        "Sklearn": "https://scikit-learn.org/stable/",
+        "Matplotlib": "https://matplotlib.org",
+        "Seaborn": "https://seaborn.pydata.org",
         "Streamlit": "https://streamlit.io",
     }
 
