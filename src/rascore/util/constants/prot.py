@@ -28,15 +28,17 @@ from ..functions.color import get_lst_colors
 rbd_pfam = "RBD"
 pi3k_pfam = "PI3K_RBD"
 ra_pfam = "RA"
-ra_gef_pfam = "RA,RasGEF"
+ra_gef_pfam = "RA-RasGEF"
 gef_pfam = "RasGEF"
 gap_pfam = "RasGAP"
 
 effector_name = "Effector"
 gef_name = "GEF"
 gap_name = "GAP"
+nano_name = "Nanodisc"
 binder_name = "Binder"
 other_prot_name = "Other"
+mult_prot_name = "Multiple"
 none_prot_name = "None"
 
 gef_cdc_name = "CDC25"
@@ -46,6 +48,7 @@ prot_class_dict = {
     effector_name: [rbd_pfam, pi3k_pfam, ra_pfam, ra_gef_pfam],
     gef_name: [gef_pfam],
     gap_name: [gap_pfam],
+    nano_name: [nano_name],
     binder_name: [binder_name],
     other_prot_name: [other_prot_name],
     none_prot_name: [none_prot_name],
@@ -79,31 +82,32 @@ prot_color_dict[f"{gef_name}.{gef_rem_name}"] = prot_color_dict[gef_name]
 
 
 prot_pfam_dict = {
+    "APOA1_HUMAN": "Nanodisc",
     "RASF1_HUMAN": "RA",
     "RADIL_HUMAN": "RA",
     "RAPH1_HUMAN": "RA",
     "RASF1_CAEEL": "RA",
     "SPRI_DROME": "RA",
     "RASF5_HUMAN": "RA",
-    "RPGF2_MOUSE": "RA,RasGEF",
-    "RPGF6_HUMAN": "RA,RasGEF",
+    "RPGF2_MOUSE": "RA-RasGEF",
+    "RPGF6_HUMAN": "RA-RasGEF",
     "RASF5_MOUSE": "RA",
-    "RPGF2_BOVIN": "RA,RasGEF",
+    "RPGF2_BOVIN": "RA-RasGEF",
     "SNX27_MOUSE": "RA",
-    "PLCE1_HUMAN": "RA,RasGEF",
-    "PLCE1_MOUSE": "RA,RasGEF",
+    "PLCE1_HUMAN": "RA-RasGEF",
+    "PLCE1_MOUSE": "RA-RasGEF",
     "SNX27_HUMAN": "RA",
     "MYO9B_MOUSE": "RA",
     "SNX27_RAT": "RA",
     "RASF2_MOUSE": "RA",
     "RAIN_HUMAN": "RA",
-    "RPGF2_RAT": "RA,RasGEF",
+    "RPGF2_RAT": "RA-RasGEF",
     "MYO10_BOVIN": "RA",
     "MYO9B_HUMAN": "RA",
     "MY9AA_DANRE": "RA",
     "RAIN_MOUSE": "RA",
     "RIN2_HUMAN": "RA",
-    "RPGF2_CANLF": "RA,RasGEF",
+    "RPGF2_CANLF": "RA-RasGEF",
     "RASF2_HUMAN": "RA",
     "MST50_MAGO7": "RA",
     "PKHH3_HUMAN": "RA",
@@ -114,40 +118,40 @@ prot_pfam_dict = {
     "STE4_SCHPO": "RA",
     "RASF4_RAT": "RA",
     "RASF1_MOUSE": "RA",
-    "RGL2_MOUSE": "RA,RasGEF",
+    "RGL2_MOUSE": "RA-RasGEF",
     "SNX27_BOVIN": "RA",
-    "RGL2_HUMAN": "RA,RasGEF",
+    "RGL2_HUMAN": "RA-RasGEF",
     "RASF5_RAT": "RA",
     "RASF7_MOUSE": "RA",
-    "RPGF_CAEEL": "RA,RasGEF",
+    "RPGF_CAEEL": "RA-RasGEF",
     "RASF6_HUMAN": "RA",
-    "RGL1_DANRE": "RA,RasGEF",
+    "RGL1_DANRE": "RA-RasGEF",
     "RHG20_HUMAN": "RA",
-    "RGL3_MOUSE": "RA,RasGEF",
+    "RGL3_MOUSE": "RA-RasGEF",
     "PKHH3_RAT": "RA",
     "RASF2_RAT": "RA",
     "RASF6_MOUSE": "RA",
-    "RGL1_HUMAN": "RA,RasGEF",
-    "RGL3_HUMAN": "RA,RasGEF",
+    "RGL1_HUMAN": "RA-RasGEF",
+    "RGL3_HUMAN": "RA-RasGEF",
     "Y7875_DICDI": "RA",
     "RASF4_MOUSE": "RA",
     "RASF8_HUMAN": "RA",
     "RASF6_RAT": "RA",
     "RASF7_HUMAN": "RA",
-    "PLCE1_RAT": "RA,RasGEF",
+    "PLCE1_RAT": "RA-RasGEF",
     "RHG20_MOUSE": "RA",
-    "RGL2_CANLF": "RA,RasGEF",
+    "RGL2_CANLF": "RA-RasGEF",
     "MYO9A_RAT": "RA",
     "MYO9B_RAT": "RA",
     "RIN1_HUMAN": "RA",
-    "PLCE1_CAEEL": "RA,RasGEF",
-    "RGL1_MOUSE": "RA,RasGEF",
-    "RPGF2_HUMAN": "RA,RasGEF",
+    "PLCE1_CAEEL": "RA-RasGEF",
+    "RGL1_MOUSE": "RA-RasGEF",
+    "RPGF2_HUMAN": "RA-RasGEF",
     "RADIL_MOUSE": "RA",
     "RIN2_MOUSE": "RA",
     "RASF3_MOUSE": "RA",
     "AB1IP_XENLA": "RA",
-    "GNDS_RAT": "RA,RasGEF",
+    "GNDS_RAT": "RA-RasGEF",
     "GRB7_RAT": "RA",
     "AB1IP_MOUSE": "RA",
     "AB1IP_HUMAN": "RA",
@@ -162,7 +166,7 @@ prot_pfam_dict = {
     "GRB10_PIG": "RA",
     "ARAP3_MOUSE": "RA",
     "AB1IP_DANRE": "RA",
-    "GNDS_HUMAN": "RA,RasGEF",
+    "GNDS_HUMAN": "RA-RasGEF",
     "ARAP3_HUMAN": "RA",
     "GRB14_HUMAN": "RA",
     "AFAD_RAT": "RA",
@@ -176,7 +180,7 @@ prot_pfam_dict = {
     "GRB14_RAT": "RA",
     "GRB10_HUMAN": "RA",
     "MYO9A_HUMAN": "RA",
-    "GNDS_MOUSE": "RA,RasGEF",
+    "GNDS_MOUSE": "RA-RasGEF",
     "MYO10_HUMAN": "RA",
     "GRB7_MOUSE": "RA",
     "MY9AB_DANRE": "RA",

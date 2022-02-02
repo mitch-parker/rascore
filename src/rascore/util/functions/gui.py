@@ -23,6 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import pandas as pd
 import uuid
 import re
 import streamlit as st
@@ -40,7 +41,7 @@ from .path import (
     data_str,
     functions_str,
 )
-from .col import rename_col_dict
+from .col import rename_col_dict, date_col
 from .lst import type_lst
 
 
@@ -50,12 +51,22 @@ roland_twitter = '<a href="https://twitter.com/RolandDunbrack?ref_src=twsrc%5Etf
 
 def write_st_end():
 
+    df = load_table(
+        get_file_path(
+            entry_table_file,
+            dir_path=get_neighbor_path(__file__, functions_str, data_str),
+        )
+    )
+
+    df[date_col] = pd.to_datetime(df[date_col])
+    df[date_col] = df[date_col].dt.strftime("%Y-%m")
+
     st.markdown("---")
     st.markdown("Developed by Mitchell Parker and Roland Dunbrack")
     st.markdown(
         "[Dunbrack Lab](https://dunbrack.fccc.edu/retro/) - [Fox Chase Cancer Center](https://www.foxchase.org)"
     )
-    st.markdown("Last Updated 2022-01-27")
+    st.markdown(f"Last Updated {df[date_col].max()}")
     st.markdown("Copyright (c) 2022 Mitchell Isaac Parker")
 
 
@@ -71,11 +82,14 @@ def save_st_file(st_file):
         file.write(st_file.getbuffer())
 
 
-def load_st_table(file_path):
+def load_st_table(file_path, file_name=None):
+
+    if file_name is None:
+        file_name = entry_table_file
 
     return load_table(
         get_file_path(
-            entry_table_file,
+            file_name,
             dir_path=get_dir_path(
                 dir_path=get_neighbor_path(file_path, pages_str, data_str)
             ),
@@ -83,7 +97,6 @@ def load_st_table(file_path):
     )
 
 
-@st.cache
 def mask_st_table(df, col_dict):
 
     mask_df = df.copy()

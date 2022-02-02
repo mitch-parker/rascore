@@ -1,16 +1,16 @@
 def long_usage_messenger():
-    return '''
+    return """
 PDB.py
 optional arguments:
 -h, --help            show this help message and exit
 
--rftf text_file_with_PDB.txt, --renumber_from_text_file text_file_with_PDB.txt
+-rftf text_file_with_PDB.tsv, --renumber_from_text_file text_file_with_PDB.tsv
 This option will download and renumber specified files
-usage $ python3 PDB.py -rftf text_file_with_PDB_in_it.txt -mmCIF
-usage $ python3 PDB.py -rftf text_file_with_PDB_in_it.txt -PDB
-usage $ python3 PDB.py -rftf text_file_with_PDB_in_it.txt -mmCIF_assembly
-usage $ python3 PDB.py -rftf text_file_with_PDB_in_it.txt -PDB_assembly
-usage $ python3 PDB.py -rftf text_file_with_PDB_in_it.txt -all
+usage $ python3 PDB.py -rftf text_file_with_PDB_in_it.tsv -mmCIF
+usage $ python3 PDB.py -rftf text_file_with_PDB_in_it.tsv -PDB
+usage $ python3 PDB.py -rftf text_file_with_PDB_in_it.tsv -mmCIF_assembly
+usage $ python3 PDB.py -rftf text_file_with_PDB_in_it.tsv -PDB_assembly
+usage $ python3 PDB.py -rftf text_file_with_PDB_in_it.tsv -all
 
 -rfla [6dbp 3v03 2jit ...], --renumber_from_list_of_arguments [6dbp 3v03 2jit ...]
 This option will download and renumber specified files
@@ -20,14 +20,14 @@ usage $ python3 PDB.py -rfla 6dbp 3v03 2jit -mmCIF_assembly
 usage $ python3 PDB.py -rfla 6dbp 3v03 2jit -PDB_assembly
 usage $ python3 PDB.py -rfla 6dbp 3v03 2jit -all
 
--dftf text_file_with_PDB.txt, --download_from_text_file text_file_with_PDB.txt
+-dftf text_file_with_PDB.tsv, --download_from_text_file text_file_with_PDB.tsv
 This option will read given input file parse by space
 or tab or comma or new line and download it example 
-usage $ python3 PDB.py -dftf text_file_with_PDB_in_it.txt -mmCIF
-usage $ python3 PDB.py -dftf text_file_with_PDB_in_it.txt -PDB
-usage $ python3 PDB.py -dftf text_file_with_PDB_in_it.txt -mmCIF_assembly
-usage $ python3 PDB.py -dftf text_file_with_PDB_in_it.txt -PDB_assembly
-usage $ python3 PDB.py -dftf text_file_with_PDB_in_it.txt -all
+usage $ python3 PDB.py -dftf text_file_with_PDB_in_it.tsv -mmCIF
+usage $ python3 PDB.py -dftf text_file_with_PDB_in_it.tsv -PDB
+usage $ python3 PDB.py -dftf text_file_with_PDB_in_it.tsv -mmCIF_assembly
+usage $ python3 PDB.py -dftf text_file_with_PDB_in_it.tsv -PDB_assembly
+usage $ python3 PDB.py -dftf text_file_with_PDB_in_it.tsv -all
 
 -dfla [6dbp 3v03 2jit ...], --download_from_list_of_arguments 6dbp 3v03 2jit ...]
 This option will read given list of arguments separated by space. 
@@ -138,4 +138,4 @@ Roland Dunbrack's Lab
 Fox Chase Cancer Center
 Philadelphia, PA
 2020
-        '''
+        """

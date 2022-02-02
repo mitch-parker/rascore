@@ -39,6 +39,7 @@ from ..constants.pharm import (
     pharm_site_dict,
     sp2_name,
     sp12_name,
+    mult_pharm_name,
     none_pharm_name,
     other_pharm_name,
 )
@@ -49,6 +50,8 @@ from ..constants.prot import (
     prot_class_dict,
     gef_rem_name,
     gef_cdc_name,
+    nano_name,
+    mult_prot_name,
 )
 from ..constants.pml import sup_pdb_code, sup_chainid
 
@@ -84,6 +87,7 @@ from ..functions.path import (
     load_table,
     get_neighbor_path,
     delete_path,
+    get_file_name,
     pipelines_str,
     data_str,
     classify_str,
@@ -122,7 +126,6 @@ from ..functions.col import (
     pharm_lig_site_col,
     pharm_lig_col,
     pharm_lig_match_col,
-    pharm_lig_cont_col,
     match_class_col,
     gene_class_col,
     prot_class_col,
@@ -142,6 +145,7 @@ from ..functions.col import (
     pocket_status_col,
     pocket_site_col,
     pocket_id_col,
+    pocket_cont_col,
 )
 
 
@@ -191,7 +195,6 @@ def update_prep(out_path=None, past_df=None, num_cpu=1):
             renum_dir=out_path,
             sifts_json_path=sifts_json_path,
             data=df,
-            lig_resids="3-164",
             update_coords=False,
             num_cpu=num_cpu,
         )
@@ -237,7 +240,13 @@ def update_annot(pdbaa_fasta_path, out_path=None, past_df=None, num_cpu=1):
             len(
                 [
                     x
-                    for x in [mut_class_col, pharm_class_col, prot_class_col, cf_col]
+                    for x in [
+                        mut_class_col,
+                        pharm_class_col,
+                        match_class_col,
+                        prot_class_col,
+                        cf_col,
+                    ]
                     if x not in list(past_df.columns)
                 ]
             )
@@ -276,23 +285,20 @@ def update_annot(pdbaa_fasta_path, out_path=None, past_df=None, num_cpu=1):
         )
 
         for index in list(df.index.values):
-            pharm_class = df.at[index, pharm_lig_site_col]
-            if pharm_class not in [sp2_name, sp12_name, none_pharm_name]:
-                pharm_class = other_pharm_name
+            pharm_class = other_pharm_name
+            pharm_site = df.at[index, pharm_lig_site_col]
+            if "|" in pharm_site:
+                pharm_class = mult_pharm_name
+            elif pharm_site in [sp2_name, sp12_name, none_pharm_name]:
+                pharm_class = pharm_site
             df.at[index, pharm_class_col] = pharm_class
 
         for index in list(df.index.values):
-
-            pharm_site = df.at[index, pharm_lig_site_col]
-            match_class = df.at[index, pharm_lig_match_col]
-
-            if pharm_site in [sp2_name, sp12_name]:
-                match_class = f"{pharm_site}.{match_class}"
-            elif pharm_site == none_pharm_name:
-                match_class = none_pharm_name
+            pharm_match = df.at[index, pharm_lig_match_col]
+            if "|" in pharm_match:
+                match_class = mult_pharm_name
             else:
-                match_class = other_pharm_name
-
+                match_class = pharm_match
             df.at[index, match_class_col] = match_class
 
         df[gene_class_col] = df[prot_col].map(gene_class_dict)
@@ -305,17 +311,23 @@ def update_annot(pdbaa_fasta_path, out_path=None, past_df=None, num_cpu=1):
         )
 
         for index in list(df.index.values):
-            prot_class = df.at[index, bound_prot_pfam_col]
-            for prot_name, pfam_lst in prot_class_dict.items():
-                if prot_class in pfam_lst:
-                    prot_class = prot_name
-            if prot_class == gef_name:
-                nuc_class = df.at[index, nuc_class_col]
-                prot_class += "."
-                if nuc_class == gtp_name:
-                    prot_class += gef_rem_name
+            prot_pfam = df.at[index, bound_prot_pfam_col]
+            if "|" in prot_pfam:
+                if nano_name in prot_pfam:
+                    prot_class = nano_name
                 else:
-                    prot_class += gef_cdc_name
+                    prot_class = mult_prot_name
+            else:
+                for prot_name, pfam_lst in prot_class_dict.items():
+                    if prot_pfam in pfam_lst:
+                        prot_class = prot_name
+                if prot_class == gef_name:
+                    nuc_class = df.at[index, nuc_class_col]
+                    prot_class += "."
+                    if nuc_class == gtp_name:
+                        prot_class += gef_rem_name
+                    else:
+                        prot_class += gef_cdc_name
             df.at[index, prot_class_col] = prot_class
 
         if (
@@ -433,7 +445,6 @@ def update_pocket(out_path=None, past_df=None, num_cpu=1):
     else:
         coord_path_lst = [x.replace(".cif", ".pdb") for x in lst_col(df, core_path_col)]
 
-        pharm_dict = dict()
         chainid_dict = dict()
         for coord_path in coord_path_lst:
             chainid_dict[coord_path] = list()
@@ -441,13 +452,10 @@ def update_pocket(out_path=None, past_df=None, num_cpu=1):
             coord_path = df.at[index, core_path_col].replace(".cif", ".pdb")
             chainid = df.at[index, chainid_col]
             chainid_dict[coord_path].append(chainid)
-            if df.at[index, pharm_lig_site_col] in [sp2_name, sp12_name]:
-                pharm_dict[coord_path] = df.at[index, pharm_lig_col]
 
         pocket_dict = prep_pocket(
             coord_paths=coord_path_lst,
             pocket_dir=out_path,
-            pharm_dict=pharm_dict,
             chainid_dict=chainid_dict,
             num_cpu=num_cpu,
         )
@@ -475,9 +483,11 @@ def update_pocket(out_path=None, past_df=None, num_cpu=1):
             bound_df = mask_equal(temp_df, pharm_class_col, pharm_name)
             bound_df = mask_equal(bound_df, pocket_status_col, pocket_bound_name)
 
-            search_cont_lst = lst_col(
-                mask_equal(bound_df, pharm_class_col, pharm_name), pharm_lig_cont_col
-            )
+            bound_df[pocket_type_col] = pharm_name
+            bound_df[pocket_site_col] = pharm_name
+            pocket_df = pd.concat([pocket_df, bound_df], sort=False)
+
+            search_cont_lst = lst_col(bound_df, pocket_cont_col)
             search_cont_lst = [str_to_lst(x) for x in search_cont_lst]
 
             unbound_df = build_pocket_table(
@@ -488,13 +498,12 @@ def update_pocket(out_path=None, past_df=None, num_cpu=1):
                 use_simpson=True,
             )
 
-            unbound_df = mask_equal(unbound_df, pocket_status_col, pocket_unbound_name)
-
-            bound_df[pocket_site_col] = pharm_name
-            unbound_df[pocket_site_col] = pharm_name
-
-            pocket_df = pd.concat([pocket_df, bound_df], sort=False)
-            pocket_df = pd.concat([pocket_df, unbound_df], sort=False)
+            if len(unbound_df) > 0:
+                unbound_df = mask_equal(
+                    unbound_df, pocket_status_col, pocket_unbound_name
+                )
+                unbound_df[pocket_site_col] = pharm_name
+                pocket_df = pd.concat([pocket_df, unbound_df], sort=False)
 
         other_df = mask_unequal(
             temp_df, pocket_id_col, lst_col(pocket_df, pocket_id_col)
@@ -509,6 +518,7 @@ def update_pocket(out_path=None, past_df=None, num_cpu=1):
         save_table(pocket_table_path, pocket_df)
 
         pocket_df = load_table(pocket_table_path)
+
         annot_df = mask_equal(pocket_df, pocket_site_col, [sp2_name, sp12_name])
 
         for index in tqdm(
@@ -523,17 +533,16 @@ def update_pocket(out_path=None, past_df=None, num_cpu=1):
             pocket_status_lst = lst_col(pdb_df, pocket_status_col, unique=True)
 
             if len(pocket_site_lst) > 1:
-                if other_pharm_name in pocket_site_lst:
-                    pocket_site_lst.remove(other_pharm_name)
+                pocket_site_lst = [mult_pharm_name]
 
             if len(pocket_site_lst) == 0:
                 pharm_class = df.at[index, pharm_class_col]
-                if pharm_class in [sp2_name, sp12_name, other_pharm_name]:
-                    pocket_site_lst = [pharm_class]
-                    pocket_status_lst = [pocket_bound_name]
-                else:
+                if pharm_class == none_pharm_name:
                     pocket_site_lst = [other_pharm_name]
                     pocket_status_lst = [pocket_unbound_name]
+                else:
+                    pocket_site_lst = [pharm_class]
+                    pocket_status_lst = [pocket_bound_name]
 
             pocket_site = lst_to_str(pocket_site_lst, join_txt="|")
             pocket_status = lst_to_str(pocket_status_lst)
@@ -574,12 +583,12 @@ def update_classify(out_path=None, past_df=None, num_cpu=1):
             num_cpu=num_cpu,
         )
 
-    result_df = load_table(get_file_path(result_table_file, dir_path=classify_path))
+        result_df = load_table(get_file_path(result_table_file, dir_path=classify_path))
 
-    for loop_name in list(loop_resid_dict.keys()):
-        df[loop_name] = df[pdb_id_col].map(
-            make_dict(lst_col(result_df, pdb_id_col), lst_col(result_df, loop_name))
-        )
+        for loop_name in list(loop_resid_dict.keys()):
+            df[loop_name] = df[pdb_id_col].map(
+                make_dict(lst_col(result_df, pdb_id_col), lst_col(result_df, loop_name))
+            )
 
     if past_df is not None:
         if sw1_name in list(past_df.columns) and sw2_name in list(past_df.columns):
@@ -595,6 +604,9 @@ def build_rascore(out_path=None, pdbaa_fasta_path=None, num_cpu=1):
         out_path = f"{os.getcwd()}/{rascore_str}_{build_str}"
 
     entry_table_path = get_file_path(entry_table_file, dir_path=out_path)
+    pocket_table_path = get_file_path(pocket_table_file, dir_path=out_path)
+    interf_table_path = get_file_path(interf_table_file, dir_path=out_path)
+    dih_json_path = get_file_path(dih_json_file, dir_path=out_path)
 
     if pdbaa_fasta_path is None:
         curr_date = datetime.today().strftime("%Y-%m-%d")
@@ -675,12 +687,18 @@ def build_rascore(out_path=None, pdbaa_fasta_path=None, num_cpu=1):
 
     save_table(entry_table_path, df)
 
-    copy_path(
+    for file_path in [
         entry_table_path,
-        get_file_path(
-            entry_table_file,
-            dir_path=get_neighbor_path(__file__, pipelines_str, data_str),
-        ),
-    )
+        pocket_table_path,
+        interf_table_path,
+        dih_json_path,
+    ]:
+        copy_path(
+            file_path,
+            get_file_path(
+                get_file_name(file_path),
+                dir_path=get_neighbor_path(__file__, pipelines_str, data_str),
+            ),
+        )
 
     print("Rascore update complete!")

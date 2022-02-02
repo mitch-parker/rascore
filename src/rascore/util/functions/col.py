@@ -35,7 +35,7 @@ rcsb_assembly_path_col = "rcsb_assembly_path"
 renum_assembly_path_col = "renum_assembly_path"
 sifts_path_col = "sifts_path"
 edia_path_col = "edia_path"
-interf_path_col = "interf_path"
+interf_path_col = "interface_path"
 pocket_path_col = "pocket_path"
 
 modelid_col = "modelid"
@@ -56,6 +56,8 @@ r_factor_col = "r_factor"
 seq_col = "sequence"
 len_col = "length"
 range_col = "range"
+date_col = "deposit_data"
+pmid_col = "pmid"
 
 len_a_col = "length_a"
 len_b_col = "length_b"
@@ -115,10 +117,6 @@ pharm_lig_match_col = "pharmarmacological_ligand_match"
 
 bound_prot_pfam_col = "bound_protein_pfam"
 bound_prot_site_col = "bound_protein_site"
-
-bio_lig_cont_col = "biological_ligand_contacts"
-pharm_lig_cont_col = "pharmacological_ligand_contacts"
-bound_prot_cont_col = "bound_protein_contacts"
 
 bound_prot_chainid_col = "bound_protein_chainid"
 bound_interf_chainid_col = "bound_interf_chainid"
@@ -329,6 +327,8 @@ order_col_lst = [
     space_col,
     len_col,
     range_col,
+    date_col,
+    pmid_col,
     index_col,
     p_col,
     correct_p_col,
@@ -390,9 +390,6 @@ order_col_lst = [
     pharm_lig_match_col,
     bound_prot_pfam_col,
     bound_prot_site_col,
-    bio_lig_cont_col,
-    pharm_lig_cont_col,
-    bound_prot_cont_col,
     bound_prot_chainid_col,
     bound_interf_chainid_col,
     bio_lig_col,
@@ -441,22 +438,24 @@ rename_col_dict = {
     mut_status_col: "Mutation Status",
     nuc_class_col: "Nucleotide State",
     prot_class_col: "Bound Protein",
-    pharm_class_col: "Drug Site",
-    match_class_col: "Drug Chemistry",
+    pharm_class_col: "Inhibitor Site",
+    match_class_col: "Inhibitor Chemistry",
     pocket_class_col: "Pocket Site",
     interf_class_col: "Homodimer Status",
     bound_prot_col: "Bound Protein Name",
     bound_prot_chainid_col: "Bound Protein Chain",
     bio_lig_col: "Nucleotide",
     ion_lig_col: "Ion",
-    pharm_lig_col: "Drug",
+    pharm_lig_col: "Inhibitor",
     chem_lig_col: "Chemical",
     mod_lig_col: "Modification",
     mem_lig_col: "Membrane",
+    pocket_lig_col: "Pocket",
     space_col: "Space Group",
     method_col: "Experiment Method",
     resolution_col: "Resolution",
     r_factor_col: "R-Factor",
+    date_col:'Deposit Date',
     interf_area_col: "Interface Area",
     pocket_volume_col: "Pocket Volume",
     pocket_score_col: "Pocket Score",

@@ -306,12 +306,13 @@ def build_interf_table(
             sort=False,
         )
 
-    interf_df = interf_df.reset_index(drop=True)
+    if len(interf_df) > 0:
+        interf_df = interf_df.reset_index(drop=True)
 
-    interf_df[interf_col] = interf_df[interf_col].map(str)
-    interf_df = fix_col(interf_df, interf_col)
+        interf_df[interf_col] = interf_df[interf_col].map(str)
+        interf_df = fix_col(interf_df, interf_col)
 
-    interf_df[interf_id_col] = interf_df[pdb_id_col] + interf_df[interf_col]
+        interf_df[interf_id_col] = interf_df[pdb_id_col] + interf_df[interf_col]
 
     if interf_table_path is not None:
         save_table(interf_table_path, interf_df)

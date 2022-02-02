@@ -28,7 +28,7 @@ from tqdm import tqdm
 import concurrent.futures
 
 from ..functions.chem import is_lig_match, get_lig_simi
-from ..functions.lst import lst_unique, lst_to_str, res_to_lst, type_lst
+from ..functions.lst import lst_unique, lst_to_str, res_to_lst, type_lst, sort_lst
 from ..functions.lig import lig_col_lst, lig_lst_dict
 from ..functions.coord import (
     load_coord,
@@ -45,12 +45,9 @@ from ..functions.col import (
     core_path_col,
     modelid_col,
     chainid_col,
-    bio_lig_col,
     pharm_lig_col,
     pharm_lig_site_col,
     pharm_lig_match_col,
-    bio_lig_cont_col,
-    pharm_lig_cont_col,
 )
 from ..functions.table import get_df_at_index, fix_val
 from ..functions.path import save_table
@@ -88,8 +85,6 @@ def build_lig_df(
     structure = load_coord(coord_path)
     neighbors = get_neighbors(structure[fix_val(modelid, return_int=True)][chainid])
 
-    bio_cont_lst = list()
-    pharm_cont_lst = list()
     site_lst = list()
     match_lst = list()
 
@@ -112,53 +107,37 @@ def build_lig_df(
             if len(cont_lst) > 0:
                 resname = get_resname(residue)
                 lig_class = False
-                is_bio = False
                 is_pharm = False
                 for lig_col in lig_col_lst:
                     if resname in lig_lst_dict[lig_col]:
+                        lig_dict[lig_col].append(resname)
                         lig_class = True
-                        if resname not in lig_dict[lig_col]:
-                            lig_dict[lig_col].append(resname)
-                            if lig_col == bio_lig_col:
-                                is_bio = True
-                            if lig_col == pharm_lig_col:
-                                is_pharm = True
+                        if lig_col == pharm_lig_col:
+                            is_pharm = True
 
                 if not lig_class:
-                    if resname not in lig_dict[pharm_lig_col]:
-                        lig_dict[pharm_lig_col].append(resname)
-                        is_pharm = True
-
-                if is_bio:
-                    bio_cont_lst += cont_lst
+                    lig_dict[pharm_lig_col].append(resname)
+                    is_pharm = True
 
                 if is_pharm:
-                    pharm_cont_lst += cont_lst
-
                     if site_dict is not None:
-
                         max_cont = 0
-                        site_status = other_site
+                        pharm_site = other_site
                         for site_name, site_cont_lst in site_dict.items():
-                            site_cont = len(
-                                [x for x in site_cont_lst if x in pharm_cont_lst]
-                            )
+                            site_cont = len([x for x in site_cont_lst if x in cont_lst])
                             if site_cont > max_cont:
-                                site_status = site_name
+                                pharm_site = site_name
                                 max_cont = site_cont
-                        site_lst.append(site_status)
+                        site_lst.append(pharm_site)
 
                     if match_dict is not None:
-                        if site_status in list(match_dict.keys()):
-                            match_status = other_match
+                        if pharm_site in list(match_dict.keys()):
+                            pharm_match = other_match
                             match_name_lst = list()
                             match_simi_lst = list()
-                            for match_name, query_lst in match_dict[
-                                site_status
-                            ].items():
+                            for match_name, query_lst in match_dict[pharm_site].items():
                                 is_match = is_lig_match(
-                                    resname,
-                                    query_lst,
+                                    resname, query_lst, lig_dir=lig_dir
                                 )
                                 if is_match:
                                     for query in query_lst:
@@ -169,22 +148,22 @@ def build_lig_df(
                                             )
                                         )
                             if len(match_name_lst) > 0:
-                                match_status = match_name_lst[
+                                pharm_match = match_name_lst[
                                     match_simi_lst.index(max(match_simi_lst))
                                 ]
-                            match_lst.append(match_status)
+                            pharm_match = f"{pharm_site}.{pharm_match}"
+                        else:
+                            pharm_match = other_site
+                        match_lst.append(pharm_match)
 
     for lig_col in lig_col_lst:
-        df.at[index, lig_col] = lst_to_str(lig_dict[lig_col])
+        df.at[index, lig_col] = lst_to_str(sort_lst(lst_unique(lig_dict[lig_col])))
 
-    df.at[index, pharm_lig_site_col] = lst_to_str(lst_unique(site_lst), empty=none_site)
-    df.at[index, pharm_lig_match_col] = lst_to_str(
-        lst_unique(match_lst), empty=none_match
+    df.at[index, pharm_lig_site_col] = lst_to_str(
+        sort_lst(lst_unique(site_lst)), join_txt="|", empty=none_site
     )
-    df.at[index, bio_lig_cont_col] = lst_to_str(lst_unique(bio_cont_lst))
-
-    df.at[index, pharm_lig_cont_col] = lst_to_str(
-        lst_unique(pharm_cont_lst), empty=none_match
+    df.at[index, pharm_lig_match_col] = lst_to_str(
+        sort_lst(lst_unique(match_lst)), join_txt="|", empty=none_match
     )
 
     return df

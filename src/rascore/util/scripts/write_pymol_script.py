@@ -24,7 +24,6 @@ SOFTWARE.
 """
 
 from ..functions.color import get_rgb, get_lst_colors
-from ..functions.lig import lig_col_lst
 from ..functions.col import pdb_id_col, pocket_lig_col
 from ..functions.lst import type_lst, lst_to_str, str_to_lst
 from ..functions.table import lst_col
@@ -41,6 +40,8 @@ from ..functions.col import (
     ion_lig_col,
     pharm_lig_col,
     chem_lig_col,
+    mod_lig_col,
+    mem_lig_col,
 )
 from ..functions.path import (
     append_file_path,
@@ -56,18 +57,30 @@ from ..functions.url import eds_url
 
 polymer_color = "gray80"
 
-bio_color = "gray90"
-ion_color = "chartreuse"
-pharm_color = "salmon"
-chem_color = "cyan"
-prot_color = "slate"
-pocket_color = "grey50"
+bio_color = "white"
+ion_color = "green"
+pharm_color = "cyan"
+chem_color = "magenta"
+mod_color = "yellow"
+mem_color = "salmon"
+pocket_color = "orange"
+prot_color = "purple"
+
 hb_color = "tv_yellow"
 wmhb_color = "tv_blue"
 
 symbol_lst = [" ", "/", "_"]
 
-pymol_lig_col_lst = lig_col_lst + [pocket_lig_col]
+pymol_color_dict = {
+    bio_lig_col: bio_color,
+    ion_lig_col: ion_color,
+    pharm_lig_col: pharm_color,
+    chem_lig_col: chem_color,
+    mod_lig_col: mod_color,
+    mem_lig_col: mem_color,
+    pocket_lig_col: pocket_color,
+    bound_prot_chainid_col: prot_color,
+}
 
 
 def init_pymol(pymol_file, color_dict=None):
@@ -153,7 +166,7 @@ def color_sticks(pymol_file, stick_sele, stick_color=None, color_atomic=True):
         pymol_file.write(f"color atomic, {stick_sele} and (not elem C)\n")
 
 
-def show_lig(
+def show_lig_structure(
     pymol_file,
     lig_col,
     lig_dict,
@@ -256,12 +269,13 @@ def write_pymol_script(
     show_ion=None,
     show_pharm=None,
     show_chem=None,
-    show_prot=None,
+    show_mod=None,
+    show_mem=None,
     show_pocket=None,
+    show_prot=None,
     color_palette=None,
     color_group=True,
     color_chainbow=False,
-    coord_path_col=None,
     prot_chainid_col=None,
     set_view=None,
     eds_dir=None,
@@ -280,7 +294,19 @@ def write_pymol_script(
     show_wmhb=True,
     show_angle=False,
     add_h=False,
+    coord_path_col=None,
+    fetch_path=None,
 ):
+
+    show_lig_dict = {
+        bio_lig_col: show_bio,
+        ion_lig_col: show_ion,
+        pharm_lig_col: show_pharm,
+        chem_lig_col: show_chem,
+        mod_lig_col: show_mod,
+        mem_lig_col: show_mem,
+        pocket_lig_col: show_pocket,
+    }
 
     df = pymol_df.reset_index(drop=True)
 
@@ -354,14 +380,18 @@ def write_pymol_script(
 
     pymol_file = open(pymol_pml_path, "w")
 
+    if fetch_path is not None:
+        pymol_file.write(f"set fetch_path, {fetch_path}\n")
+
     init_pymol(pymol_file, color_dict=color_dict)
 
-    bio_color_str = set_color(pymol_file, show_bio, bio_color, "bio_color")
-    ion_color_str = set_color(pymol_file, show_ion, ion_color, "ion_color")
-    pharm_color_str = set_color(pymol_file, show_pharm, pharm_color, "pharm_color")
-    chem_color_str = set_color(pymol_file, show_chem, chem_color, "chem_color")
+    show_color_dict = dict()
+    for col, show in show_lig_dict.items():
+        show_color_dict[col] = set_color(
+            pymol_file, show, pymol_color_dict[col], f"{col}_color"
+        )
+
     prot_color_str = set_color(pymol_file, show_prot, prot_color, "prot_color")
-    pocket_color_str = set_color(pymol_file, show_pocket, pocket_color, "pocket_color")
 
     if type(show_hb) == list:
         hb_color_lst = list()
@@ -373,16 +403,17 @@ def write_pymol_script(
         for i, color in enumerate(show_wmhb):
             wmhb_color_lst.append(set_color(pymol_file, color, wmhb_color, f"{i}_wmhb"))
 
+    show_lig_lst = list(show_lig_dict.keys())
     lig_dict = dict()
 
     if group_col is None:
-        for lig_col in pymol_lig_col_lst:
-            lig_dict[lig_col] = list()
+        for col in show_lig_lst:
+            lig_dict[col] = list()
     else:
         for group in group_lst:
             lig_dict[group] = dict()
-            for lig_col in pymol_lig_col_lst:
-                lig_dict[group][lig_col] = list()
+            for col in show_lig_lst:
+                lig_dict[group][col] = list()
 
     for index in index_lst:
 
@@ -420,18 +451,18 @@ def write_pymol_script(
         if group_col is not None:
             group_dict[str(group)].append([obj, coord_path, chainid])
 
-        for lig_col in pymol_lig_col_lst:
-            if lig_col in df_col_lst:
-                ligs = df.at[index, lig_col]
+        for col in show_lig_lst:
+            if col in df_col_lst:
+                ligs = df.at[index, col]
                 if ligs != "None":
                     for lig in str_to_lst(ligs):
                         if lig != "GLY":
                             if group_col is None:
-                                if lig not in lig_dict[lig_col]:
-                                    lig_dict[lig_col].append(lig)
+                                if lig not in lig_dict[col]:
+                                    lig_dict[col].append(lig)
                             else:
-                                if lig not in lig_dict[group][lig_col]:
-                                    lig_dict[group][lig_col].append(lig)
+                                if lig not in lig_dict[group][col]:
+                                    lig_dict[group][col].append(lig)
 
         chainid_lst = type_lst(chainid)
         if show_prot is not None and show_prot != False:
@@ -539,104 +570,37 @@ def write_pymol_script(
                 pymol_file.write(f"group {loop_sele}, *_{loop_sele}\n")
 
     if group_col is None:
-        show_lig(
-            pymol_file,
-            bio_lig_col,
-            lig_dict,
-            show_bio,
-            bio_color_str,
-            spheres=False,
-        )
-        show_lig(
-            pymol_file,
-            ion_lig_col,
-            lig_dict,
-            show_ion,
-            ion_color_str,
-            spheres=True,
-        )
-        show_lig(
-            pymol_file,
-            pharm_lig_col,
-            lig_dict,
-            show_pharm,
-            pharm_color_str,
-            spheres=False,
-        )
-        show_lig(
-            pymol_file,
-            chem_lig_col,
-            lig_dict,
-            show_chem,
-            chem_color_str,
-            spheres=False,
-        )
-        show_lig(
-            pymol_file,
-            pocket_lig_col,
-            lig_dict,
-            show_pocket,
-            pocket_color_str,
-            spheres=True,
-        )
+        for col, show in show_lig_dict.items():
+            spheres = False
+            if col == ion_lig_col:
+                spheres = True
+            show_lig_structure(
+                pymol_file,
+                col,
+                lig_dict,
+                show,
+                show_color_dict[col],
+                spheres=spheres,
+            )
     else:
         for group in group_lst:
-            show_lig(
-                pymol_file,
-                bio_lig_col,
-                lig_dict,
-                show_bio,
-                bio_color_str,
-                spheres=False,
-                group=group,
-            )
-            show_lig(
-                pymol_file,
-                ion_lig_col,
-                lig_dict,
-                show_ion,
-                ion_color_str,
-                spheres=True,
-                group=group,
-            )
-            show_lig(
-                pymol_file,
-                pharm_lig_col,
-                lig_dict,
-                show_pharm,
-                pharm_color_str,
-                spheres=False,
-                group=group,
-            )
-            show_lig(
-                pymol_file,
-                chem_lig_col,
-                lig_dict,
-                show_chem,
-                chem_color_str,
-                spheres=False,
-                group=group,
-            )
-            show_lig(
-                pymol_file,
-                pocket_lig_col,
-                lig_dict,
-                show_pocket,
-                pocket_color_str,
-                spheres=True,
-                group=group,
-            )
+            for col, show in show_lig_dict.items():
+                spheres = False
+                if col == ion_lig_col:
+                    spheres = True
+                show_lig_structure(
+                    pymol_file,
+                    col,
+                    lig_dict,
+                    show,
+                    show_color_dict[col],
+                    spheres=spheres,
+                    group=group,
+                )
 
-        if show_bio is not None and show_bio != False:
-            pymol_file.write(f"group {bio_lig_col}, *_{bio_lig_col}\n")
-        if show_ion is not None and show_ion != False:
-            pymol_file.write(f"group {ion_lig_col}, *_{ion_lig_col}\n")
-        if show_pharm is not None and show_pharm != False:
-            pymol_file.write(f"group {pharm_lig_col}, *_{pharm_lig_col}\n")
-        if show_chem is not None and show_chem != False:
-            pymol_file.write(f"group {chem_lig_col}, *_{chem_lig_col}\n")
-        if show_pocket is not None and show_pocket != False:
-            pymol_file.write(f"group {pocket_lig_col}, *_{pocket_lig_col}\n")
+        for col, show in show_lig_dict.items():
+            if show is not None and show != False:
+                pymol_file.write(f"group {col}, *_{col}\n")
 
     if show_prot is not None and show_prot != False:
         if prot_chainid_col != bound_interf_chainid_col:

@@ -27,6 +27,8 @@ import os
 import pandas as pd
 from tqdm import tqdm
 
+from rascore.util.functions.cluster import build_sum_table
+
 from ..scripts.annot_lig import annot_lig
 from ..scripts.prep_dih import prep_dih
 from ..scripts.build_dih_matrix import build_dih_matrix
@@ -41,6 +43,7 @@ from ..functions.table import (
     lst_col,
     type_lst,
     merge_tables,
+    make_dict,
     core_path_col,
     chainid_col,
     modelid_col,
@@ -68,7 +71,6 @@ from ..functions.col import (
     pharm_lig_site_col,
     nuc_class_col,
     bio_lig_col,
-    loop_col,
     cluster_col,
     hb_status_col,
 )
@@ -77,7 +79,6 @@ from ..functions.file import (
     dih_fit_matrix_file,
     result_table_file,
     sum_table_file,
-    classify_report_table_file,
     pymol_pml_file,
     pred_matrix_file,
 )
@@ -107,60 +108,69 @@ from ..constants.conf import (
     sw1_gtp_dict,
     conf_color_dict,
 )
-from ..constants.pml import sup_resids
+from ..constants.pml import sup_resids, show_resids
 
 
-def classify_rascore(coord_paths, out_path=None, dih_dict=None, num_cpu=1):
+def classify_rascore(file_paths, out_path=None, dih_dict=None, num_cpu=1):
 
     if out_path is None:
         out_path = f"{os.getcwd()}/{rascore_str}_{classify_str}"
 
     cluster_path = f"{get_neighbor_path(__file__,pipelines_str,data_str)}/{rascore_str}_{cluster_str}"
 
-    coord_path_lst = type_lst(coord_paths)
+    file_path_lst = type_lst(file_paths)
 
-    if type(coord_path_lst[0]) == pd.DataFrame:
-        df = coord_path_lst[0]
-    else:
-        df = pd.DataFrame()
-        if ".pdb" not in coord_path_lst[0] and ".cif" not in coord_path_lst[0]:
-            df = load_table(coord_path_lst[0])
-            df_col_lst = list(df.columns)
-            if core_path_col in df_col_lst and chainid_col in df_col_lst:
-                if modelid_col not in df_col_lst:
-                    df[modelid_col] = 0
-            else:
-                if core_path_col in df_col_lst and chainid_col not in df_col_lst:
-                    coord_path_lst = lst_col(df, core_path_col)
+    df = pd.DataFrame()
+    for file_path in tqdm(
+        file_path_lst,
+        desc="Loading Files",
+        position=0,
+        leave=True,
+    ):
+        if type(file_path) == pd.DataFrame:
+            temp_df = file_path.copy(deep=True)
+            temp_df_col_lst = list(temp_df.columns)
+            if modelid_col not in temp_df_col_lst:
+                temp_df[modelid_col] = 0
+        else:
+            temp_df = pd.DataFrame()
+            load_path_lst = list()
+
+            if ".pdb" not in file_path and ".cif" not in file_path:
+                temp_df = load_table(file_path)
+                temp_df_col_lst = list(temp_df.columns)
+                if core_path_col in temp_df_col_lst and chainid_col in temp_df_col_lst:
+                    if modelid_col not in temp_df_col_lst:
+                        temp_df[modelid_col] = 0
                 else:
-                    coord_path_lst = load_lst(coord_path_lst[0])
-                df = pd.DataFrame()
+                    load_path_lst = load_lst(file_path)
+                    temp_df = pd.DataFrame()
+            else:
+                load_path_lst = list([file_path])
 
-        if len(df) == 0:
+            if len(temp_df) == 0 and len(load_path_lst) > 0:
+                i = 0
+                for load_path in tqdm(
+                    load_path_lst,
+                    desc="Loading Files",
+                    position=1,
+                    leave=True,
+                ):
+                    structure = load_coord(load_path)
+                    for model in structure:
+                        modelid = get_modelid(model)
+                        for chain in model:
+                            chainid = get_chainid(chain)
+                            temp_df.at[i, core_path_col] = load_path
+                            temp_df.at[i, modelid_col] = modelid
+                            temp_df.at[i, chainid_col] = chainid
+                            i += 1
 
-            i = 0
-            for coord_path in tqdm(
-                coord_path_lst,
-                desc="Loading coordinates",
-                position=0,
-                leave=True,
-            ):
-                structure = load_coord(coord_path)
-                for model in structure:
-                    modelid = get_modelid(model)
-                    for chain in model:
-                        chainid = get_chainid(chain)
-                        df.at[i, core_path_col] = coord_path
-                        df.at[i, modelid_col] = modelid
-                        df.at[i, chainid_col] = chainid
-                        i += 1
+        df = pd.concat([df, temp_df], sort=False)
 
     if len(df) > 0:
-        df_col_lst = list(df.columns)
 
-        if id_col not in df_col_lst and pdb_id_col not in df_col_lst:
-            for index in list(df.index.values):
-                df.at[index, id_col] = get_file_name(df.at[index, core_path_col])
+        df_col_lst = list(df.columns)
 
         missing_col_lst = [
             x for x in [core_path_col, modelid_col, chainid_col] if x not in df_col_lst
@@ -169,6 +179,12 @@ def classify_rascore(coord_paths, out_path=None, dih_dict=None, num_cpu=1):
             print(f"Input table missing columns: {lst_to_str(missing_col_lst)}")
 
         else:
+            coord_path_lst = lst_col(df, core_path_col)
+
+            if id_col not in df_col_lst and pdb_id_col not in df_col_lst:
+                for index in list(df.index.values):
+                    df.at[index, id_col] = get_file_name(df.at[index, core_path_col])
+
             if len([x for x in lig_col_lst if x not in df_col_lst]) > 0:
                 df = annot_lig(
                     df=df,
@@ -188,7 +204,7 @@ def classify_rascore(coord_paths, out_path=None, dih_dict=None, num_cpu=1):
                 df[nuc_class_col] = df[bio_lig_col].map(nuc_class_dict).fillna(gtp_name)
 
             if dih_dict is None:
-                dih_dict = prep_dih(coord_paths, num_cpu=num_cpu)
+                dih_dict = prep_dih(coord_path_lst, num_cpu=num_cpu)
 
             for loop_name, loop_resids in loop_resid_dict.items():
 
@@ -197,7 +213,6 @@ def classify_rascore(coord_paths, out_path=None, dih_dict=None, num_cpu=1):
 
                 loop_result_df = pd.DataFrame()
                 loop_sum_df = pd.DataFrame()
-                loop_classify_report_df = pd.DataFrame()
 
                 for nuc_class in nuc_class_lst:
 
@@ -227,12 +242,6 @@ def classify_rascore(coord_paths, out_path=None, dih_dict=None, num_cpu=1):
 
                     sum_table_path = get_file_path(
                         sum_table_file,
-                        dir_str=loop_nuc_name,
-                        dir_path=classify_loop_path,
-                    )
-
-                    classify_report_table_path = get_file_path(
-                        classify_report_table_file,
                         dir_str=loop_nuc_name,
                         dir_path=classify_loop_path,
                     )
@@ -275,32 +284,22 @@ def classify_rascore(coord_paths, out_path=None, dih_dict=None, num_cpu=1):
                             fit_matrix=fit_matrix,
                             pred_matrix=pred_matrix,
                             result_table_path=result_table_path,
-                            sum_table_path=sum_table_path,
-                            report_table_path=classify_report_table_path,
                             max_nn_dist=0.45,
                             only_save_pred=True,
                             reorder_class=False,
                         )
 
                         result_df = load_table(result_table_path)
-                        sum_df = load_table(sum_table_path)
-                        classify_report_df = load_table(classify_report_table_path)
 
-                        result_df[loop_col] = loop_name
-                        sum_df[loop_col] = loop_name
-                        classify_report_df[loop_col] = loop_name
+                        sum_df = build_sum_table(result_df)
 
-                        result_df[nuc_class_col] = nuc_class
-                        sum_df[nuc_class_col] = nuc_class
-                        classify_report_df[nuc_class_col] = nuc_class
+                        save_table(result_table_path, result_df)
+                        save_table(sum_table_path, sum_df)
 
                         loop_result_df = pd.concat(
                             [loop_result_df, result_df], sort=False
                         )
                         loop_sum_df = pd.concat([loop_sum_df, sum_df], sort=False)
-                        loop_classify_report_df = pd.concat(
-                            [loop_classify_report_df, classify_report_df], sort=False
-                        )
 
                 loop_result_table_path = get_file_path(
                     result_table_file, dir_str=loop_name, dir_path=out_path
@@ -308,15 +307,37 @@ def classify_rascore(coord_paths, out_path=None, dih_dict=None, num_cpu=1):
                 loop_sum_table_path = get_file_path(
                     sum_table_file, dir_str=loop_name, dir_path=out_path
                 )
-                loop_classify_report_table_path = get_file_path(
-                    classify_report_table_file,
-                    dir_str=loop_name,
-                    dir_path=out_path,
-                )
+
+                if pdb_id_col in list(loop_result_df.columns):
+
+                    cluster_result_df = load_table(
+                        get_file_path(
+                            result_table_file,
+                            dir_str=loop_name,
+                            dir_path=cluster_path,
+                        )
+                    )
+
+                    cluster_dict = make_dict(
+                        lst_col(cluster_result_df, pdb_id_col),
+                        lst_col(cluster_result_df, cluster_col),
+                    )
+
+                    result_dict = make_dict(
+                        lst_col(loop_result_df, pdb_id_col),
+                        lst_col(loop_result_df, cluster_col),
+                    )
+
+                    for pdb_id, cluster in cluster_dict.items():
+                        if pdb_id in list(result_dict.keys()):
+                            result_dict[pdb_id] = cluster
+
+                    loop_result_df[cluster_col] = loop_result_df[pdb_id_col].map(
+                        result_dict
+                    )
 
                 save_table(loop_result_table_path, loop_result_df)
                 save_table(loop_sum_table_path, loop_sum_df)
-                save_table(loop_classify_report_table_path, loop_classify_report_df)
 
                 loop_result_df = loop_result_df.rename(columns={cluster_col: loop_name})
 
@@ -385,7 +406,7 @@ def classify_rascore(coord_paths, out_path=None, dih_dict=None, num_cpu=1):
                     color_palette=conf_color_dict[loop_name],
                     sup_group=True,
                     sup_resids=sup_resids,
-                    show_resids="1-166",
+                    show_resids=show_resids,
                 )
 
     print("Rascore classification complete!")

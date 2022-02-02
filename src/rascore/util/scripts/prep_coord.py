@@ -50,8 +50,6 @@ from ..functions.coord import (
     is_aa,
     is_het,
     is_wat,
-    join_seq_lst,
-    get_seq_lst,
     get_residue_cont,
 )
 from ..functions.path import (
@@ -73,26 +71,41 @@ from ..functions.path import (
     rcsb_assembly_str,
     renum_assembly_str,
 )
+from ..functions.lig import lig_lst_dict
 from ..functions.lst import lst_to_str, res_to_str, type_lst, lst_unique, res_to_lst
 from ..functions.table import get_str_num, merge_dicts, merge_tables
 from ..functions.col import (
+    pdb_id_col,
+    pdb_code_col,
+    chainid_col,
     modelid_col,
     bound_lig_col,
     bound_prot_chainid_col,
     range_col,
-    pdb_code_col,
-    chainid_col,
+    date_col,
+    pmid_col,
+    core_path_col,
     rcsb_path_col,
     renum_path_col,
     sifts_path_col,
     rcsb_assembly_path_col,
     renum_assembly_path_col,
-    core_path_col,
-    pdb_id_col,
+    bio_lig_col,
+    ion_lig_col,
+    chem_lig_col,
+    mod_lig_col,
+    mem_lig_col,
+    pharm_lig_col,
 )
 
-max_cb_dist = 12.0
-max_atomid_dist = 5.0
+max_prot_cb_dist = 12.0
+max_prot_atomid_dist = 5.0
+min_prot_cb_cont = 12
+min_prot_cb_atomid_cont = 1
+min_prot_atomid_cont = 5
+
+max_lig_resid_dist = 4
+min_lig_resid_cont = 5
 
 
 class ChainSelect(Select):
@@ -283,16 +296,17 @@ def build_sele_dict(
     structure,
     curr_chainid,
     chainid_lst,
-    max_lig_dist=4,
-    min_lig_cont=5,
-    prot_resid_lst=None,
-    lig_resid_lst=None,
-    bound_lig_lst=None,
+    resid_cont_dict=None,
     bound_chainid_lst=None,
 ):
 
     sele_dict = dict()
     sele_df = pd.DataFrame()
+
+    is_mem = False
+
+    bound_lig_lst = list()
+    bound_prot_chainid_lst = list()
 
     for model in structure:
 
@@ -305,8 +319,6 @@ def build_sele_dict(
         neighbors = get_neighbors(curr_chain)
 
         resnum_lst = list()
-        bound_residue_dict = dict()
-        bound_chain_dict = dict()
 
         for chain in model:
 
@@ -314,14 +326,88 @@ def build_sele_dict(
 
             sele_dict[modelid][chainid] = dict()
 
-            if chainid not in chainid_lst:
+            for residue in chain:
 
+                resid = get_resid(residue)
+                sele = 0
+
+                if is_aa(residue):
+
+                    if chainid == curr_chainid:
+                        resnum = get_resnum(residue)
+                        if resnum < 50000:
+                            resnum_lst.append(resnum)
+                        sele = 1
+
+                elif is_het(residue):
+
+                    resname = get_resname(residue)
+
+                    is_pharm = True
+                    for lig_col, lig_lst in lig_lst_dict.items():
+                        if resname in lig_lst:
+                            is_pharm = False
+                            break
+                    if is_pharm:
+                        lig_col = pharm_lig_col
+
+                    if lig_col == mem_lig_col:
+                        sele = 1
+                        is_mem = True
+                    elif chainid == curr_chainid and lig_col in [
+                        bio_lig_col,
+                        ion_lig_col,
+                        chem_lig_col,
+                        mod_lig_col,
+                    ]:
+                        sele = 1
+                    elif lig_col == pharm_lig_col:
+                        resid_residue_cont = lst_unique(
+                            [
+                                get_resnum(x)
+                                for x in get_residue_cont(
+                                    neighbors,
+                                    residue,
+                                    max_dist=max_lig_resid_dist,
+                                    level="R",
+                                )
+                                if is_aa(x) and get_reschainid(x) == chainid
+                            ]
+                        )
+
+                        if resid_cont_dict is not None:
+                            if lig_col in list(resid_cont_dict.keys()):
+                                resid_residue_cont = [
+                                    x
+                                    for x in resid_residue_cont
+                                    if get_resnum(x) in resid_cont_dict[lig_col]
+                                ]
+
+                        resid_residue_cont = len(resid_residue_cont)
+
+                        if resid_residue_cont >= min_lig_resid_cont:
+                            sele = 1
+
+                    if sele == 1:
+                        bound_lig_lst.append(resname)
+
+                elif is_wat(residue):
+                    if chainid == curr_chainid:
+                        sele = 1
+
+                sele_dict[modelid][chainid][resid] = sele
+
+            if chainid not in chainid_lst:
                 sele = 0
 
                 check_chainid = True
                 if bound_chainid_lst is not None:
                     if chainid not in bound_chainid_lst:
                         check_chainid = False
+
+                if is_mem:
+                    sele = 1
+                    check_chainid = False
 
                 if check_chainid:
 
@@ -330,11 +416,10 @@ def build_sele_dict(
                         for x in get_chain_cont(
                             neighbors,
                             chain,
-                            max_dist=max_atomid_dist,
+                            max_dist=max_prot_atomid_dist,
                         )
                         if is_aa(x.get_parent())
                         and get_reschainid(x.get_parent()) == curr_chainid
-                        and get_resnum(x.get_parent()) < 50000
                     ]
 
                     cb_chain_cont = [
@@ -342,128 +427,44 @@ def build_sele_dict(
                         for x in get_chain_cont(
                             neighbors,
                             chain,
-                            max_dist=max_cb_dist,
+                            max_dist=max_prot_cb_dist,
                         )
                         if is_aa(x.get_parent())
                         and get_reschainid(x.get_parent()) == curr_chainid
-                        and get_resnum(x.get_parent()) < 50000
                         and get_atomid(x) == "CB"
                     ]
 
-                    if prot_resid_lst is not None:
-                        atomid_chain_cont = [
-                            x
-                            for x in atomid_chain_cont
-                            if get_resnum(x.get_parent()) in prot_resid_lst
-                        ]
-                        cb_chain_cont = [
-                            x
-                            for x in cb_chain_cont
-                            if get_resnum(x.get_parent()) in prot_resid_lst
-                        ]
+                    if resid_cont_dict is not None:
+                        if bound_prot_chainid_col in list(resid_cont_dict.keys()):
+                            atomid_chain_cont = [
+                                x
+                                for x in atomid_chain_cont
+                                if get_resnum(x.get_parent())
+                                in resid_cont_dict[bound_prot_chainid_col]
+                            ]
+                            cb_chain_cont = [
+                                x
+                                for x in cb_chain_cont
+                                if get_resnum(x.get_parent())
+                                in resid_cont_dict[bound_prot_chainid_col]
+                            ]
 
                     atomid_chain_cont = len(atomid_chain_cont)
                     cb_chain_cont = len(cb_chain_cont)
 
-                    chain_seq = join_seq_lst(get_seq_lst(chain))
-
                     if (
-                        cb_chain_cont >= 10 and atomid_chain_cont >= 1
-                    ) or atomid_chain_cont >= 5:
+                        cb_chain_cont >= min_prot_cb_cont
+                        and atomid_chain_cont >= min_prot_cb_atomid_cont
+                    ) or atomid_chain_cont >= min_prot_atomid_cont:
 
-                        if chain_seq not in list(bound_chain_dict.keys()):
-                            bound_chain_dict[chain_seq] = dict()
-                        bound_chain_dict[chain_seq][chainid] = cb_chain_cont
+                        sele = 1
+
+                if sele == 1:
+                    bound_prot_chainid_lst.append(chainid)
 
                 for residue in chain:
                     resid = get_resid(residue)
                     sele_dict[modelid][chainid][resid] = sele
-            else:
-                for residue in chain:
-
-                    resid = get_resid(residue)
-                    sele = 0
-
-                    if is_aa(residue):
-
-                        if chainid == curr_chainid:
-                            resnum = get_resnum(residue)
-                            if resnum < 50000:
-                                resnum_lst.append(resnum)
-                            sele = 1
-
-                    elif is_het(residue):
-
-                        atomid_residue_cont = [
-                            x
-                            for x in get_residue_cont(
-                                neighbors,
-                                residue,
-                                max_dist=max_lig_dist,
-                            )
-                            if (
-                                is_het(x.get_parent())
-                                and get_reschainid(x.get_parent()) == curr_chainid
-                            )
-                            or (
-                                is_aa(x.get_parent())
-                                and get_reschainid(x.get_parent()) == curr_chainid
-                                and get_resnum(x.get_parent()) < 50000
-                            )
-                        ]
-
-                        if lig_resid_lst is not None:
-                            atomid_residue_cont = [
-                                x
-                                for x in atomid_residue_cont
-                                if is_het(x.get_parent())
-                                or (
-                                    is_aa(x.get_parent())
-                                    and get_resnum(x.get_parent()) in lig_resid_lst
-                                )
-                            ]
-
-                        atomid_residue_cont = len(atomid_residue_cont)
-
-                        if atomid_residue_cont >= min_lig_cont:
-                            resname = get_resname(residue)
-                            if resname not in list(bound_residue_dict.keys()):
-                                bound_residue_dict[resname] = dict()
-                            bound_residue_dict[resname][
-                                (chainid, resid)
-                            ] = atomid_residue_cont
-
-                    elif is_wat(residue):
-                        if chainid == curr_chainid:
-                            sele = 1
-
-                    sele_dict[modelid][chainid][resid] = sele
-
-        bound_prot_chainid_lst = list()
-        for chain_seq in list(bound_chain_dict.keys()):
-            bound_chain_lst = list(bound_chain_dict[chain_seq].keys())
-            bound_chain_cont_lst = [
-                bound_chain_dict[chain_seq][x] for x in bound_chain_lst
-            ]
-            bound_chain = bound_chain_lst[
-                bound_chain_cont_lst.index(max(bound_chain_cont_lst))
-            ]
-            bound_prot_chainid_lst.append(bound_chain)
-            for residue in model[bound_chain]:
-                resid = get_resid(residue)
-                sele_dict[modelid][bound_chain][resid] = 1
-
-        bound_lig_lst = list()
-        for resname in list(bound_residue_dict.keys()):
-            bound_residue_lst = list(bound_residue_dict[resname].keys())
-            bound_residue_cont_lst = [
-                bound_residue_dict[resname][x] for x in bound_residue_lst
-            ]
-            bound_residue = bound_residue_lst[
-                bound_residue_cont_lst.index(max(bound_residue_cont_lst))
-            ]
-            bound_lig_lst.append(resname)
-            sele_dict[modelid][bound_residue[0]][bound_residue[1]] = 1
 
         sele_df.at[modelid, modelid_col] = modelid
         sele_df.at[modelid, bound_lig_col] = lst_to_str(bound_lig_lst)
@@ -480,10 +481,7 @@ def isolate_chains(
     rcsb_dir=None,
     sifts_dir=None,
     renum_dir=None,
-    max_lig_dist=4,
-    min_lig_cont=5,
-    prot_resid_lst=None,
-    lig_resid_lst=None,
+    resid_cont_dict=None,
     add_h=False,
     add_h_his=False,
     bound_chainid_dict=None,
@@ -498,144 +496,143 @@ def isolate_chains(
     chainid_lst = pdb_dict[pdb_code]
 
     structure = load_coord(renum_path)
+    renum_dict = load_cif_dict(renum_path)
+
+    deposit_date = renum_dict["_pdbx_database_status.recvd_initial_deposition_date"][0]
 
     if not all_models:
         structure = type_lst(structure[0])
 
     chain_df = pd.DataFrame()
 
-    with pymol2.PyMOL() as pymol:
-        cmd = pymol.cmd
+    for chainid in chainid_lst:
 
-        for chainid in chainid_lst:
+        bound_chainid_lst = None
+        if bound_chainid_dict is not None:
+            pdb_id = f"{pdb_code}{chainid}"
+            if pdb_id in list(bound_chainid_dict.keys()):
+                bound_chainid_lst = bound_chainid_dict[pdb_id]
 
-            bound_chainid_lst = None
-            if bound_chainid_dict is not None:
-                pdb_id = f"{pdb_code}{chainid}"
-                if pdb_id in (bound_chainid_dict.keys()):
-                    bound_chainid_lst = bound_chainid_dict[pdb_id]
+        rcsb_assembly_path = "None"
+        renum_assembly_path = "None"
 
-            rcsb_assembly_path = "None"
-            renum_assembly_path = "None"
+        if bound_chainid_lst is None:
 
-            if bound_chainid_lst is None:
-
-                renum_assembly_dir = get_dir_path(
-                    dir_str=renum_assembly_str, dir_path=renum_dir
-                )
-                rcsb_assembly_dir = get_dir_path(
-                    dir_str=rcsb_assembly_str, dir_path=rcsb_dir
-                )
-
-                for renum_assembly_file in search_dir(renum_assembly_dir, pdb_code):
-
-                    renum_assembly_path = f"{renum_assembly_dir}/{renum_assembly_file}"
-                    rcsb_assembly_path = f"{rcsb_assembly_dir}/{renum_assembly_file.replace('_renum.cif','.cif.gz')}"
-
-                    assembly_dict = load_cif_dict(renum_assembly_path)
-
-                    assembly_chainid_lst = lst_unique(
-                        assembly_dict["_pdbe_chain_remapping.orig_auth_asym_id"]
-                    )
-
-                    if chainid in assembly_chainid_lst:
-                        if (
-                            len(
-                                [
-                                    x
-                                    for x in assembly_chainid_lst
-                                    if x in chainid_lst and x != chainid
-                                ]
-                            )
-                            == 0
-                        ):
-                            bound_chainid_lst = [
-                                x for x in assembly_chainid_lst if x != chainid
-                            ]
-
-            sele_dict, sele_df = build_sele_dict(
-                structure,
-                chainid,
-                chainid_lst,
-                max_lig_dist=max_lig_dist,
-                min_lig_cont=min_lig_cont,
-                prot_resid_lst=prot_resid_lst,
-                lig_resid_lst=lig_resid_lst,
-                bound_chainid_lst=bound_chainid_lst,
+            renum_assembly_dir = get_dir_path(
+                dir_str=renum_assembly_str, dir_path=renum_dir
+            )
+            rcsb_assembly_dir = get_dir_path(
+                dir_str=rcsb_assembly_str, dir_path=rcsb_dir
             )
 
-            sele_df[pdb_code_col] = pdb_code
-            sele_df[chainid_col] = chainid
-            sele_df[rcsb_path_col] = rcsb_path
-            sele_df[renum_path_col] = renum_path
-            sele_df[sifts_path_col] = sifts_path
-            sele_df[rcsb_assembly_path_col] = rcsb_assembly_path
-            sele_df[renum_assembly_path_col] = renum_assembly_path
+            for renum_assembly_file in search_dir(renum_assembly_dir, pdb_code):
 
-            for modelid in list(sele_dict.keys()):
+                renum_assembly_path = f"{renum_assembly_dir}/{renum_assembly_file}"
+                rcsb_assembly_path = f"{rcsb_assembly_dir}/{renum_assembly_file.replace('_renum.cif','.cif.gz')}"
 
-                modelid_str = modelid
-                if not all_models:
-                    modelid_str = None
+                assembly_dict = load_cif_dict(renum_assembly_path)
 
-                cif_path = get_core_path(
-                    pdb_code, chainid, modelid=modelid_str, dir_path=core_dir
+                assembly_chainid_lst = lst_unique(
+                    assembly_dict["_pdbe_chain_remapping.orig_auth_asym_id"]
                 )
-                pdb_path = get_core_path(
+
+                if chainid in assembly_chainid_lst:
+                    if (
+                        len(
+                            [
+                                x
+                                for x in assembly_chainid_lst
+                                if x in chainid_lst and x != chainid
+                            ]
+                        )
+                        == 0
+                    ):
+                        bound_chainid_lst = [
+                            x for x in assembly_chainid_lst if x != chainid
+                        ]
+
+        sele_dict, sele_df = build_sele_dict(
+            structure,
+            chainid,
+            chainid_lst,
+            resid_cont_dict=resid_cont_dict,
+            bound_chainid_lst=bound_chainid_lst,
+        )
+
+        sele_df[pdb_code_col] = pdb_code
+        sele_df[chainid_col] = chainid
+        sele_df[rcsb_path_col] = rcsb_path
+        sele_df[renum_path_col] = renum_path
+        sele_df[sifts_path_col] = sifts_path
+        sele_df[rcsb_assembly_path_col] = rcsb_assembly_path
+        sele_df[renum_assembly_path_col] = renum_assembly_path
+
+        for modelid in list(sele_dict.keys()):
+
+            modelid_str = modelid
+            if not all_models:
+                modelid_str = None
+
+            cif_path = get_core_path(
+                pdb_code, chainid, modelid=modelid_str, dir_path=core_dir
+            )
+            pdb_path = get_core_path(
+                pdb_code,
+                chainid,
+                modelid=modelid_str,
+                return_pdb=True,
+                dir_path=core_dir,
+            )
+
+            update_cif = True
+            if not update_coords:
+                if path_exists(cif_path):
+                    update_cif = False
+
+            update_pdb = True
+            if not update_coords:
+                if path_exists(cif_path):
+                    update_pdb = False
+
+            sele_df.at[int(modelid), core_path_col] = cif_path
+
+            if update_cif:
+                chain_sele = ChainSelect(sele_dict[modelid])
+                save_coord(cif_path, structure[int(modelid)], sele=chain_sele)
+
+            if update_pdb:
+                pymol_obj = f"{pdb_code}{chainid}"
+
+                if all_models:
+                    pymol_obj += str(modelid)
+
+                with pymol2.PyMOL() as pymol:
+                    cmd = pymol.cmd
+                    cmd.load(cif_path, pymol_obj)
+                    cmd.save(pdb_path, pymol_obj)
+
+            if add_h:
+                pdb_h_path = get_core_path(
                     pdb_code,
                     chainid,
                     modelid=modelid_str,
                     return_pdb=True,
+                    add_h=True,
                     dir_path=core_dir,
                 )
 
-                update_cif = True
+                update_pdb_h = True
                 if not update_coords:
-                    if path_exists(cif_path):
-                        update_cif = False
+                    if path_exists(pdb_h_path):
+                        update_pdb_h = False
 
-                update_pdb = True
-                if not update_coords:
-                    if path_exists(cif_path):
-                        update_pdb = False
+                if update_pdb_h:
+                    cmd_lst = ["reduce", pdb_path, ">", pdb_h_path, "-NOHETh"]
 
-                sele_df.at[int(modelid), core_path_col] = cif_path
+                    if add_h_his:
+                        cmd_lst.append("-HIS")
 
-                if update_cif:
-                    chain_sele = ChainSelect(sele_dict[modelid])
-                    save_coord(cif_path, structure[int(modelid)], sele=chain_sele)
-
-                if update_pdb:
-                    pymol_obj = f"{pdb_code}{chainid}"
-
-                    if all_models:
-                        pymol_obj += str(modelid)
-
-                    cmd.load(cif_path, pymol_obj)
-                    cmd.save(pdb_path, pymol_obj)
-
-                if add_h:
-                    pdb_h_path = get_core_path(
-                        pdb_code,
-                        chainid,
-                        modelid=modelid_str,
-                        return_pdb=True,
-                        add_h=True,
-                        dir_path=core_dir,
-                    )
-
-                    update_pdb_h = True
-                    if not update_coords:
-                        if path_exists(pdb_h_path):
-                            update_pdb_h = False
-
-                    if update_pdb_h:
-                        cmd_lst = ["reduce", pdb_path, ">", pdb_h_path, "-NOHETh"]
-
-                        if add_h_his:
-                            cmd_lst.append("-HIS")
-
-                        os.system(lst_to_str(cmd_lst, join_txt=" "))
+                    os.system(lst_to_str(cmd_lst, join_txt=" "))
 
             sele_df[pdb_id_col] = sele_df[pdb_code_col].map(str) + sele_df[
                 chainid_col
@@ -645,6 +642,8 @@ def isolate_chains(
                 sele_df[pdb_id_col] += sele_df[modelid_col].map(str)
 
             sele_df[modelid_col] = 0
+
+            sele_df[date_col] = deposit_date
 
             chain_df = pd.concat([chain_df, sele_df], sort=False)
 
@@ -657,10 +656,7 @@ def run_pdb_chain(
     rcsb_dir=None,
     sifts_dir=None,
     renum_dir=None,
-    max_lig_dist=4,
-    min_lig_cont=5,
-    prot_resids=None,
-    lig_resids=None,
+    resid_cont_dict=None,
     add_h=False,
     add_h_his=False,
     bound_chainid_dict=None,
@@ -675,8 +671,9 @@ def run_pdb_chain(
 
     pdb_dict = build_pdb_dict(pdb_id_lst)
 
-    prot_resid_lst = res_to_lst(prot_resids)
-    lig_resid_lst = res_to_lst(lig_resids)
+    if resid_cont_dict is not None:
+        for key, val in resid_cont_dict.items():
+            resid_cont_dict[key] = res_to_lst(val)
 
     df = pd.DataFrame()
 
@@ -697,10 +694,7 @@ def run_pdb_chain(
                         rcsb_dir=rcsb_dir,
                         sifts_dir=sifts_dir,
                         renum_dir=renum_dir,
-                        max_lig_dist=max_lig_dist,
-                        min_lig_cont=min_lig_cont,
-                        prot_resid_lst=prot_resid_lst,
-                        lig_resid_lst=lig_resid_lst,
+                        resid_cont_dict=resid_cont_dict,
                         add_h=add_h,
                         add_h_his=add_h_his,
                         bound_chainid_dict=bound_chainid_dict,
@@ -721,10 +715,7 @@ def run_pdb_chain(
                     rcsb_dir=rcsb_dir,
                     sifts_dir=sifts_dir,
                     renum_dir=renum_dir,
-                    max_lig_dist=max_lig_dist,
-                    min_lig_cont=min_lig_cont,
-                    prot_resid_lst=prot_resid_lst,
-                    lig_resid_lst=lig_resid_lst,
+                    resid_cont_dict=resid_cont_dict,
                     add_h=add_h,
                     add_h_his=add_h_his,
                     bound_chainid_dict=bound_chainid_dict,
@@ -759,10 +750,7 @@ def prep_coord(
     sifts_dir=None,
     renum_dir=None,
     sifts_json_path=None,
-    max_lig_dist=4,
-    min_lig_cont=5,
-    prot_resids=None,
-    lig_resids=None,
+    resid_cont_dict=None,
     add_h=False,
     add_h_his=False,
     bound_chainid_dict=None,
@@ -782,8 +770,8 @@ def prep_coord(
         num_cpu=num_cpu,
     )
 
-    delete_path("log_corrected.txt")
-    delete_path("log_translator.txt")
+    delete_path("log_corrected.tsv")
+    delete_path("log_translator.tsv")
 
     sifts_path_lst = [
         get_sifts_path(pdb_code, dir_path=sifts_dir) for pdb_code in pdb_code_lst
@@ -797,10 +785,7 @@ def prep_coord(
         rcsb_dir=rcsb_dir,
         sifts_dir=sifts_dir,
         renum_dir=renum_dir,
-        max_lig_dist=max_lig_dist,
-        min_lig_cont=min_lig_cont,
-        prot_resids=prot_resids,
-        lig_resids=lig_resids,
+        resid_cont_dict=resid_cont_dict,
         add_h=add_h,
         add_h_his=add_h_his,
         bound_chainid_dict=bound_chainid_dict,
@@ -812,7 +797,14 @@ def prep_coord(
     if data is not None:
         df_col_lst = list(data.columns)
 
-        for col in [pdb_id_col, bound_lig_col, bound_prot_chainid_col]:
+        for col in [
+            pdb_id_col,
+            bound_lig_col,
+            bound_prot_chainid_col,
+            range_col,
+            date_col,
+            pmid_col,
+        ]:
             if col in df_col_lst:
                 del data[col]
 

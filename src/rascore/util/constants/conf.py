@@ -43,6 +43,10 @@ from .nuc import nf_name, gdp_name, gtp_name, nf_color, gdp_color, gtp_color
 from .pharm import sp2_name, sp12_name
 from .prot import gef_name, binder_name
 
+y32_name = "Y32"
+q61_name = "Q61"
+y71_name = "Y71"
+
 sw1_name = "SW1"
 sw2_name = "SW2"
 

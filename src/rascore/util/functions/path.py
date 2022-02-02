@@ -36,6 +36,7 @@ rascore_str = "rascore"
 build_str = "build"
 classify_str = "classify"
 cluster_str = "cluster"
+plot_str = "plot"
 
 util_str = "util"
 pipelines_str = "pipelines"

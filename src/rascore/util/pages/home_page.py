@@ -51,6 +51,7 @@ def home_page():
     st.sidebar.markdown("## Database Links")
 
     database_link_dict = {
+        "bioArxiv Paper": "LINK",
         "GitHub Page": "https://github.com/mitch-parker/rascore",
         "RCSB Protein Data Bank": "https://www.rcsb.org",
     }
@@ -105,7 +106,7 @@ def home_page():
         proteins, small molecule inhibitors, etc.). 
 
         Details of our RAS conformational classification are 
-        provided on [BioArxiv](LINK) in the manuscript: **An expanded 
+        provided on [bioArxiv](LINK) in the manuscript: **An expanded 
         classification of active, inactive and druggable RAS 
         conformations.** We hope that researchers will use 
         *rascore* to gain novel insights into RAS biology and 

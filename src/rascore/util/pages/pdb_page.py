@@ -70,6 +70,7 @@ from ..functions.col import (
     bound_prot_chainid_col,
     sw1_col,
     sw2_col,
+    date_col,
 )
 
 
@@ -98,7 +99,7 @@ def pdb_page():
     left_col, right_col = st.columns(2)
 
     left_col.markdown("#### General Information")
-    for col in [method_col, resolution_col, r_factor_col, space_col]:
+    for col in [method_col, resolution_col, r_factor_col, space_col, date_col]:
         left_col.markdown(f"**{rename_col_dict[col]}:** {chainid_df.at[0,col]}")
 
     right_col.markdown("#### Molecular Annotations")

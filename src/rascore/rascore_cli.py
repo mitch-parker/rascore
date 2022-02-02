@@ -46,6 +46,8 @@ def main(args):
 
     classify = args.classify
     build = args.build
+    # cluster = args.cluster
+    # plot = args.plot
     gui = args.gui
 
     out = args.out
@@ -56,7 +58,7 @@ def main(args):
         from rascore.util.pipelines.classify_rascore import classify_rascore
 
         classify_rascore(
-            coord_paths=classify,
+            file_paths=classify,
             out_path=out,
             num_cpu=cpu,
         )
@@ -75,6 +77,22 @@ def main(args):
             pdbaa_fasta_path=pdbaa_fasta_path,
             num_cpu=cpu,
         )
+
+    # elif cluster is not None:
+    #     from rascore.util.pipelines.prep_rascore import prep_rascore
+    #     from rascore.util.pipelines.cluster_rascore import cluster_rascore
+
+    #     prep_rascore(build_path=cluster)
+    #     cluster_rascore(cluster, out_path=out, num_cpu=cpu)
+
+    # elif plot is not None:
+
+    #     from rascore.util.pipelines.prep_rascore import prep_rascore
+    #     from rascore.util.pipelines.plot_rascore import plot_rascore
+
+    #     prep_rascore(build_path=plot)
+    #     plot_rascore(plot, out_path=out, num_cpu=cpu)
+
     elif gui is not None:
         if gui is not True:
 
@@ -129,6 +147,20 @@ def cli(args=None):
         required=False,
         help="build or update rascore database from the Protein Data Bank (output files saved to rascore_build in current working directory unless an output directory path is specified)",
     )
+    # group.add_argument(
+    #     "-cluster",
+    #     "--cluster",
+    #     type=str,
+    #     required=False,
+    #     help="path to rascore database directory (output files saved to rascore_cluster in current working directory unless an output directory path is specified)",
+    # )
+    # group.add_argument(
+    #     "-plot",
+    #     "--plot",
+    #     type=str,
+    #     required=False,
+    #     help="path to rascore database directory (output files saved to rascore_plot in current working directory unless an output directory path is specified)",
+    # )
     group.add_argument(
         "-gui",
         "--gui",

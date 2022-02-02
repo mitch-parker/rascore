@@ -26,7 +26,7 @@ SOFTWARE.
 from tqdm import tqdm
 
 from ..functions.seq import load_record_dict, get_record_desc
-from ..functions.lst import lst_to_str, res_to_lst, str_to_lst, lst_unique
+from ..functions.lst import lst_to_str, res_to_lst, str_to_lst, lst_unique, sort_lst
 from ..functions.coord import (
     load_coord,
     get_neighbors,
@@ -44,7 +44,6 @@ from ..functions.col import (
     bound_prot_col,
     bound_prot_site_col,
     bound_prot_pfam_col,
-    bound_prot_cont_col,
     bound_prot_swiss_id_col,
 )
 from ..functions.table import fix_val
@@ -84,8 +83,6 @@ def annot_prot(
 
         prot_lst = list()
         swiss_id_lst = list()
-
-        cont_lst = list()
         site_lst = list()
         pfam_lst = list()
 
@@ -103,38 +100,36 @@ def annot_prot(
                 prot = get_pdbaa_prot(desc)
                 swiss_id = get_pdbaa_swiss_id(desc)
 
-                prot_cont_lst = lst_unique(
-                    [
-                        get_resnum(x)
-                        for x in get_chain_cont(
-                            neighbors,
-                            structure[fix_val(modelid, return_int=True)][bound_chainid],
-                            level="R",
-                            max_dist=max_site_dist,
-                        )
-                        if (get_resnum(x) < 50000)
-                        and (get_reschainid(x) == chainid)
-                        and is_aa(x)
-                    ]
-                )
-                cont_lst += prot_cont_lst
-
-                if prot not in prot_lst:
-                    prot_lst.append(prot)
-                    swiss_id_lst.append(swiss_id)
+                prot_lst.append(prot)
+                swiss_id_lst.append(swiss_id)
 
                 if site_dict is not None:
 
+                    cont_lst = lst_unique(
+                        [
+                            get_resnum(x)
+                            for x in get_chain_cont(
+                                neighbors,
+                                structure[fix_val(modelid, return_int=True)][
+                                    bound_chainid
+                                ],
+                                level="R",
+                                max_dist=max_site_dist,
+                            )
+                            if (get_resnum(x) < 50000)
+                            and (get_reschainid(x) == chainid)
+                            and is_aa(x)
+                        ]
+                    )
+
                     max_cont = 0
-                    site_status = other_site
+                    prot_site = other_site
                     for site_name, site_cont_lst in site_dict.items():
-                        site_cont = len(
-                            [x for x in site_cont_lst if x in prot_cont_lst]
-                        )
+                        site_cont = len([x for x in site_cont_lst if x in cont_lst])
                         if site_cont > max_cont:
-                            site_status = site_name
+                            prot_site = site_name
                             max_cont = site_cont
-                    site_lst.append(site_status)
+                    site_lst.append(prot_site)
 
                 if pfam_dict is not None:
                     pfam_status = other_pfam
@@ -144,16 +139,15 @@ def annot_prot(
                         pfam_status = "Binder"
                     pfam_lst.append(pfam_status)
 
-        df.at[index, bound_prot_col] = lst_to_str(lst_unique(prot_lst))
-        df.at[index, bound_prot_swiss_id_col] = lst_to_str(lst_unique(swiss_id_lst))
+        df.at[index, bound_prot_col] = lst_to_str(sort_lst(lst_unique(prot_lst)))
+        df.at[index, bound_prot_swiss_id_col] = lst_to_str(
+            sort_lst(lst_unique(swiss_id_lst))
+        )
         df.at[index, bound_prot_site_col] = lst_to_str(
-            lst_unique(site_lst), empty=none_site
+            sort_lst(lst_unique(site_lst)), join_txt="|", empty=none_site
         )
         df.at[index, bound_prot_pfam_col] = lst_to_str(
-            lst_unique(pfam_lst), empty=none_pfam
-        )
-        df.at[index, bound_prot_cont_col] = lst_to_str(
-            lst_unique(cont_lst), empty=none_pfam
+            sort_lst(lst_unique(pfam_lst)), join_txt="|", empty=none_pfam
         )
 
     print("Annotated proteins!")

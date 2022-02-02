@@ -108,7 +108,7 @@ def get_index_pocket(
                         )
                     pocket_dist_lst.append(pocket_dist)
 
-                if np.mean(pocket_dist) > search_max_dist:
+                if np.mean(pocket_dist_lst) >= search_max_dist:
                     add_pocket = False
 
             if add_pocket:
@@ -163,12 +163,13 @@ def build_pocket_table(
             sort=False,
         )
 
-    pocket_df = pocket_df.reset_index(drop=True)
+    if len(pocket_df) > 0:
+        pocket_df = pocket_df.reset_index(drop=True)
 
-    pocket_df[pocket_col] = pocket_df[pocket_col].map(str)
-    pocket_df = fix_col(pocket_df, pocket_col)
+        pocket_df[pocket_col] = pocket_df[pocket_col].map(str)
+        pocket_df = fix_col(pocket_df, pocket_col)
 
-    pocket_df[pocket_id_col] = pocket_df[pdb_id_col] + pocket_df[pocket_col]
+        pocket_df[pocket_id_col] = pocket_df[pdb_id_col] + pocket_df[pocket_col]
 
     if pocket_table_path is not None:
         save_table(pocket_table_path, pocket_df)

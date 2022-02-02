@@ -25,10 +25,12 @@ SOFTWARE.
 
 sp2_name = "SP2"
 sp12_name = "SP12"
-np_name = "NP"
-bp_name = "BP"
-p110_name = "P110"
+as_name = "Allosteric Site"
+ns_name = "Nucleotide Site"
+bs_name = "Base Site"
+ps_name = "P110 Site"
 other_pharm_name = "Other"
+mult_pharm_name = "Multiple"
 none_pharm_name = "None"
 
 acr_name = "Acrylamide"
@@ -43,28 +45,38 @@ unclass_name = "Unclassified"
 sp2_color = "#d95f02"
 sp12_color = "#1b9e77"
 other_pharm_color = "#66a61e"
-none_pharm_color = "#e6ab02"
+mult_pharm_color = "#e6ab02"
+none_pharm_color = "#a6761d"
 
-pharm_class_lst = [sp2_name, sp12_name, other_pharm_name, none_pharm_name]
+pharm_class_lst = [
+    sp2_name,
+    sp12_name,
+    other_pharm_name,
+    mult_pharm_name,
+    none_pharm_name,
+]
 pharm_color_dict = {
     sp2_name: sp2_color,
     sp12_name: sp12_color,
     other_pharm_name: other_pharm_color,
+    mult_pharm_color: mult_pharm_color,
     none_pharm_name: none_pharm_color,
 }
 
 sp2_cont = [12, 96, 99]
 sp12_cont = [5, 39, 54]
-np_cont = [29, 30, 32]
-bp_cont = [85, 118, 119]
-p110_cont = [106, 108, 110]
+ns_cont = [29, 30, 32]
+bs_cont = [85, 118, 119]
+as_cont = [4, 49, 164]
+ps_cont = [106, 108, 110]
 
 pharm_site_dict = {
     sp2_name: sp2_cont,
     sp12_name: sp12_cont,
-    np_name: np_cont,
-    bp_name: bp_cont,
-    p110_name: p110_cont,
+    ns_name: ns_cont,
+    bs_name: bs_cont,
+    as_name: as_cont,
+    ps_name: ps_cont,
 }
 
 pharm_match_dict = {
