@@ -182,7 +182,7 @@ def create_st_button(link_text, link_url, hover_color="#e78ac3", st_col=None):
                 }}
         </style> """
 
-    html_str = f'<a href="{link_url}" id="{button_id}";>{link_text}</a><br></br>'
+    html_str = f'<a href="{link_url}" target="_blank" id="{button_id}";>{link_text}</a><br></br>'
 
     if st_col is None:
         st.markdown(button_css + html_str, unsafe_allow_html=True)
