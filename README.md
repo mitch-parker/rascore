@@ -42,7 +42,7 @@ conda install -c conda-forge fpocket=4.0.0
 
 ### 1) Conformationally classify RAS structure(s):
 
-rascore -classify *[path to coordinate file(s)]* -out *[output directory path]*
+**rascore -classify [path to coordinate file(s)] -out [output directory path]**
 
 - Coordinate files must be provided in mmCIF or PDB formats and numbered according to UniProt scheme. The following inputs are possible: 
     - Space-separated list
@@ -51,15 +51,13 @@ rascore -classify *[path to coordinate file(s)]* -out *[output directory path]*
 
 ### 2) Build the rascore database from the Protein Data Bank:
 
-rascore -build *[optional, path to pdbaa file]* -out *[output directory path]*
+**rascore -build [optional, path to pdbaa file] -out [output directory path]**
 
 - Takes ~1 hour to build from scratch and requires ~3 GB of storage.
 
 ### 3) Run the rascore GUI application:
 
-rascore -gui *[optional, path to the rascore database directory]* -out *[output directory path]*
-
-- Will include extra user functionality if the rascore database directory path is specified.
+**rascore -gui [optional, path to the rascore database directory] -out [output directory path]**
 
 # Authors
 

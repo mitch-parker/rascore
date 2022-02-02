@@ -37,10 +37,8 @@ from ..functions.lst import (
 )
 from ..functions.table import (
     mask_equal,
-    lst_col,
     title_str,
     merge_dicts,
-    get_df_at_index,
 )
 from ..functions.path import (
     delete_path,
@@ -60,7 +58,6 @@ from ..functions.coord import (
     get_resnum,
     is_aa,
 )
-from ..functions.file import pocket_table_file
 from ..functions.col import (
     pocket_path_col,
     pocket_cont_col,

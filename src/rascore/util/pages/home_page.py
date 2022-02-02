@@ -24,17 +24,10 @@ SOFTWARE.
 """
 
 import streamlit as st
-from PIL import Image
 
 from ..constants.pharm import sp2_color
 from ..constants.conf import loop_resid_dict, sw1_name, sw2_name, sw1_color, sw2_color
 from ..functions.gui import write_st_end, create_st_button, show_st_structure
-from ..functions.path import (
-    get_neighbor_path,
-    get_file_path,
-    pages_str,
-    data_str,
-)
 
 
 def home_page():
@@ -187,15 +180,7 @@ def home_page():
     right_col.markdown("**Developed by Mitchell Parker and Roland Dunbrack**")
     right_col.markdown("**Fox Chase Cancer Center**")
 
-    # img = Image.open(
-    #     get_file_path(
-    #         "rascore_logo.png",
-    #         dir_path=get_neighbor_path(__file__, pages_str, data_str),
-    #     )
-    # )
-    # st.image(img)
-
-    st.sidebar.markdown("## Database Links")
+    st.sidebar.markdown("## Database-Related Links")
 
     database_link_dict = {
         "bioArxiv Paper": "LINK",
@@ -206,7 +191,7 @@ def home_page():
     for link_text, link_url in database_link_dict.items():
         create_st_button(link_text, link_url, st_col=st.sidebar)
 
-    st.sidebar.markdown("## Software Links")
+    st.sidebar.markdown("## Software-Related Links")
 
     software_link_dict = {
         "BioPython": "https://biopython.org",

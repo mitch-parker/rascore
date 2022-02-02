@@ -64,8 +64,8 @@ def main(args):
         )
     elif build is not None:
 
-        from rascore.util.pipelines.prep_rascore import prep_rascore
-        from rascore.util.pipelines.build_rascore import build_rascore
+        from util.pipelines.prep_rascore import prep_rascore
+        from util.pipelines.build_rascore import build_rascore
 
         pdbaa_fasta_path = None
         if build is not True:

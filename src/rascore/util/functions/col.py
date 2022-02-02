@@ -441,7 +441,7 @@ rename_col_dict = {
     pocket_class_col: "Pocket Site",
     interf_class_col: "Homodimer Status",
     bound_prot_col: "Bound Protein Name",
-    bound_prot_swiss_id_col: "Bound Protein SWISS ID",
+    bound_prot_swiss_id_col: "Bound Protein SWISS-PROT ID",
     bound_prot_chainid_col: "Bound Protein Chain",
     bio_lig_col: "Nucleotide",
     ion_lig_col: "Ion",

@@ -231,8 +231,8 @@ def show_st_structure(
     cartoon_color="lightgray",
     zoom=1,
     spin_on=False,
-    width=800,
-    height=500,
+    width=900,
+    height=600,
 ):
 
     view = py3Dmol.view(query=f"pdb:{pdb_code.lower()}", width=width, height=height)
