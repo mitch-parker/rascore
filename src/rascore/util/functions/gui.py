@@ -66,7 +66,7 @@ def write_st_end():
     st.markdown(
         "[Dunbrack Lab](https://dunbrack.fccc.edu/retro/) - [Fox Chase Cancer Center](https://www.foxchase.org)"
     )
-    st.markdown(f"Most Recent Entry {df[date_col].max()}")
+    st.markdown(f"Most Recent Deposited Entry {df[date_col].max()}")
     st.markdown("Copyright (c) 2022 Mitchell Isaac Parker")
 
 
