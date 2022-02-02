@@ -42,7 +42,7 @@ def home_page():
     style_lst = list()
     surface_lst = list()
 
-    opacity = 1
+    opacity = 0.5
 
     surface_lst = [
         [
