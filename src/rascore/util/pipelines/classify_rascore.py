@@ -27,8 +27,6 @@ import os
 import pandas as pd
 from tqdm import tqdm
 
-from rascore.util.functions.cluster import build_sum_table
-
 from ..scripts.annot_lig import annot_lig
 from ..scripts.prep_dih import prep_dih
 from ..scripts.build_dih_matrix import build_dih_matrix
@@ -63,6 +61,7 @@ from ..functions.path import (
     pipelines_str,
     data_str,
 )
+from ..functions.cluster import build_sum_table
 from ..functions.coord import load_coord, get_modelid, get_chainid
 from ..functions.lig import lig_col_lst
 from ..functions.col import (
