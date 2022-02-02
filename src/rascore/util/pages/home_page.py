@@ -26,10 +26,9 @@ SOFTWARE.
 import streamlit as st
 from PIL import Image
 
-from ..functions.gui import (
-    write_st_end,
-    create_st_button,
-)
+from ..constants.pharm import sp2_color
+from ..constants.conf import loop_resid_dict, sw1_name, sw2_name, sw1_color, sw2_color
+from ..functions.gui import write_st_end, create_st_button, show_st_structure
 from ..functions.path import (
     get_neighbor_path,
     get_file_path,
@@ -40,13 +39,161 @@ from ..functions.path import (
 
 def home_page():
 
-    img = Image.open(
-        get_file_path(
-            "rascore_logo.png",
-            dir_path=get_neighbor_path(__file__, pages_str, data_str),
-        )
+    style_lst = list()
+    surface_lst = list()
+
+    opacity = 1
+
+    surface_lst = [
+        [
+            {"opacity": opacity, "color": "white"},
+            {"chain": "A", "hetflag": False},
+        ]
+    ]
+
+    style_lst.append(
+        [
+            {
+                "resn": "GDP",
+            },
+            {
+                "stick": {
+                    "colorscheme": "whiteCarbon",
+                    "radius": 0.2,
+                }
+            },
+        ]
     )
-    st.image(img)
+
+    style_lst.append(
+        [
+            {
+                "resn": "MG",
+            },
+            {
+                "sphere": {
+                    "color": "chartreuse",
+                    "radius": 0.8,
+                }
+            },
+        ]
+    )
+
+    style_lst.append(
+        [
+            {"chain": "A", "resi": 12, "atom": "CA"},
+            {"sphere": {"color": "red", "radius": 0.8}},
+        ]
+    )
+
+    style_lst.append(
+        [
+            {
+                "chain": "A",
+                "resn": "MOV",
+                "elem": "C",
+            },
+            {"stick": {"color": sp2_color, "radius": 0.2}},
+        ]
+    )
+    style_lst.append(
+        [
+            {
+                "chain": "A",
+                "resn": "MOV",
+                "elem": ["N", "O", "H"],
+            },
+            {"stick": {"colorscheme": "Carbon", "radius": 0.2}},
+        ]
+    )
+
+    style_lst.append(
+        [
+            {
+                "chain": "A",
+                "resi": 12,
+            },
+            {"stick": {"colorscheme": "lightgrayCarbon", "radius": 0.2}},
+        ]
+    )
+
+    for loop_name, loop_resids in loop_resid_dict.items():
+
+        if loop_name == sw1_name:
+            loop_color = sw1_color
+            stick_resid = 32
+        elif loop_name == sw2_name:
+            loop_color = sw2_color
+            stick_resid = 71
+
+        surface_lst.append(
+            [
+                {"opacity": opacity, "color": loop_color},
+                {"chain": "A", "resi": loop_resids, "hetflag": False},
+            ]
+        )
+
+        style_lst.append(
+            [
+                {
+                    "chain": "A",
+                    "resi": [loop_resids],
+                },
+                {
+                    "cartoon": {
+                        "style": "oval",
+                        "color": loop_color,
+                        "thickness": 0.2,
+                    }
+                },
+            ]
+        )
+
+        style_lst.append(
+            [
+                {
+                    "chain": "A",
+                    "resi": [stick_resid],
+                    "elem": "C",
+                },
+                {"stick": {"color": loop_color, "radius": 0.2}},
+            ]
+        )
+
+        style_lst.append(
+            [
+                {"chain": "A", "resi": [stick_resid], "elem": ["O", "N", "H"]},
+                {"stick": {"colorscheme": "Carbon", "radius": 0.2}},
+            ]
+        )
+
+    left_col, right_col = st.columns(2)
+
+    with left_col:
+        show_st_structure(
+            "6oim",
+            style_lst=style_lst,
+            surface_lst=surface_lst,
+            cartoon_style="oval",
+            spin_on=True,
+            zoom_dict={"chain": "A"},
+            zoom=1.2,
+            width=400,
+            height=300,
+        )
+
+    right_col.markdown("# rascore")
+    right_col.markdown("### A tool for analyzing the conformations of RAS structures")
+    right_col.markdown("**Developed by Mitchell Parker and Roland Dunbrack**")
+    right_col.markdown("**Fox Chase Cancer Center**")
+
+    # img = Image.open(
+    #     get_file_path(
+    #         "rascore_logo.png",
+    #         dir_path=get_neighbor_path(__file__, pages_str, data_str),
+    #     )
+    # )
+    # st.image(img)
 
     st.sidebar.markdown("## Database Links")
 

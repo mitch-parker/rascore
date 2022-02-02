@@ -231,7 +231,7 @@ def show_st_structure(
     cartoon_color="lightgray",
     zoom=1,
     spin_on=False,
-    width=700,
+    width=950,
     height=500,
 ):
 

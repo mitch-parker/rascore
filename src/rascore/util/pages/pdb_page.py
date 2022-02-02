@@ -67,6 +67,7 @@ from ..functions.col import (
     pocket_class_col,
     interf_class_col,
     bound_prot_col,
+    bound_prot_swiss_id_col,
     bound_prot_chainid_col,
     sw1_col,
     sw2_col,
@@ -121,7 +122,7 @@ def pdb_page():
 
     show_st_table(annot_df, st_col=right_col)
 
-    for col in [bound_prot_col, bound_prot_chainid_col]:
+    for col in [bound_prot_col, bound_prot_swiss_id_col, bound_prot_chainid_col]:
         right_col.markdown(f"**{rename_col_dict[col]}:** {chainid_df.at[0,col]}")
 
     sw1_conf = chainid_df.at[0, sw1_col]
@@ -238,7 +239,7 @@ def pdb_page():
             lig_style = "stick"
             lig_color = "whiteCarbon"
             lig_scheme = "colorscheme"
-            lig_radius = "0.2"
+            lig_radius = 0.2
             if lig_col == ion_lig_col:
                 lig_style = "sphere"
                 lig_scheme = "color"

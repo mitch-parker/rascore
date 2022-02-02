@@ -54,7 +54,7 @@ class MultiApp:
             ),
         )
 
-        st.set_page_config(page_title="rascore", page_icon=img)
+        st.set_page_config(page_title="rascore", page_icon=img, layout="wide")
 
         st.sidebar.markdown("## Main Menu")
         app = st.sidebar.radio(
