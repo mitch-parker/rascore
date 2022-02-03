@@ -285,6 +285,7 @@ def build_dih_table(
     coord_path_col=None,
     num_cpu=1,
 ):
+    df = df.reset_index(drop=True)
 
     df_col_lst = list(df.columns)
 

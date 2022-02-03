@@ -168,7 +168,7 @@ def cli(args=None):
         const=True,
         nargs="?",
         required=False,
-        help="path to rascore database directory (can run limited version if not specified) for running the rascore GUI application (output files saved to rascore_app in current working directory unless an output directory path is specified)",
+        help="optional path to rascore database directory (can run without) for running the rascore GUI application",
     )
     parser.add_argument(
         "-out",

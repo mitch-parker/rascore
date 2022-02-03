@@ -136,6 +136,8 @@ def build_pocket_table(
     coord_path_col=None,
 ):
 
+    df = df.reset_index(drop=True)
+
     if coord_path_col is None:
         coord_path_col = core_path_col
 

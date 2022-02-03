@@ -62,7 +62,9 @@ def write_st_end():
     df[date_col] = df[date_col].dt.strftime("%Y-%m")
 
     st.markdown("---")
-    st.markdown("Developed by Mitchell Parker and Roland Dunbrack")
+    st.markdown(
+        "Application Developed by Mitchell Parker, Bulat Faezov, and Roland Dunbrack"
+    )
     st.markdown(
         "[Dunbrack Lab](https://dunbrack.fccc.edu/retro/) - [Fox Chase Cancer Center](https://www.foxchase.org)"
     )

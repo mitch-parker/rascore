@@ -184,6 +184,8 @@ def annot_lig(
     num_cpu=1,
 ):
 
+    df = df.reset_index(drop=True)
+
     if site_dict is not None:
         for site_name, site_cont in site_dict.items():
             site_dict[site_name] = res_to_lst(site_cont)

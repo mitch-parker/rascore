@@ -177,7 +177,7 @@ def home_page():
 
     right_col.markdown("# rascore")
     right_col.markdown("### A tool for analyzing the conformations of RAS structures")
-    right_col.markdown("**Developed by Mitchell Parker and Roland Dunbrack**")
+    right_col.markdown("**Created by Mitchell Parker and Roland Dunbrack**")
     right_col.markdown("**Fox Chase Cancer Center**")
 
     st.sidebar.markdown("## Database-Related Links")
@@ -267,12 +267,12 @@ def home_page():
 
         ##### Mitchell Parker [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/bukotsunikki.svg?style=social&label=Follow%20%40Mitch_P)](https://twitter.com/Mitch_P)
 
-        - Email: <mitch.isaac.parker@gmail.com>
+        - Email:  <mip34@drexel.edu> or <mitchell.parker@fccc.edu>
         - GitHub: https://github.com/mitch-parker
 
         ##### Roland Dunbrack [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/bukotsunikki.svg?style=social&label=Follow%20%40RolandDunbrack)](https://twitter.com/RolandDunbrack)
 
-        - Email: <roland.dunbrack@gmail.com>
+        - Email: <roland.dunbrack@fccc.edu>
         - GitHub: https://github.com/DunbrackLab
         """,
         unsafe_allow_html=True,

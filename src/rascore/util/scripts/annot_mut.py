@@ -119,6 +119,8 @@ def annot_mut(
     num_cpu=1,
 ):
 
+    df = df.reset_index(drop=True)
+
     if type(uniprot_accs) == list:
         uniprot_acc_lst = uniprot_accs
     else:

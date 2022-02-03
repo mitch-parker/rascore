@@ -111,9 +111,8 @@ def pdb_page():
             mut_status_col,
             nuc_class_col,
             prot_class_col,
-            pharm_class_col,
-            match_class_col,
             pocket_class_col,
+            match_class_col,
             interf_class_col,
         ]
     ):

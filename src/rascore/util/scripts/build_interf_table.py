@@ -244,6 +244,8 @@ def build_interf_table(
     coord_path_col=None,
 ):
 
+    df = df.reset_index(drop=True)
+
     if coord_path_col is None:
         coord_path_col = renum_path_col
 

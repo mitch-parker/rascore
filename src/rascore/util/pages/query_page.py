@@ -49,7 +49,6 @@ from ..functions.col import (
     sw2_col,
     mut_status_col,
     prot_class_col,
-    pharm_class_col,
     match_class_col,
     pocket_class_col,
     interf_class_col,
@@ -96,22 +95,36 @@ def query_page():
 
     df = load_st_table(__file__)
 
-    st.sidebar.markdown("## Query Selection")
+    conf_col_lst = [sw1_col, sw2_col]
 
     annot_col_lst = [
-        sw1_col,
-        sw2_col,
         mut_status_col,
         prot_class_col,
-        pharm_class_col,
-        match_class_col,
         pocket_class_col,
+        match_class_col,
         interf_class_col,
     ]
 
     mask_dict = dict()
 
     mask_df = df.copy(deep=True)
+
+    st.sidebar.markdown(
+        "**Note.** Selections dynamically update from top to bottom. Multiple selections possible."
+    )
+
+    st.sidebar.markdown("## Conformation Selection")
+
+    for col in conf_col_lst:
+
+        mask_dict[col] = st.sidebar.multiselect(
+            rename_col_dict[col],
+            lst_col(mask_df, col, unique=True),
+        )
+
+        mask_df = mask_st_table(mask_df, mask_dict)
+
+    st.sidebar.markdown("## Annotation Selection")
 
     for col in annot_col_lst:
 
@@ -176,8 +189,8 @@ def query_page():
                     aggfunc="nunique",
                     margins=True,
                 )
-                .reset_index()
                 .fillna("")
+                .reset_index()
             )
 
             for col in list(loop_df.columns):
@@ -187,7 +200,7 @@ def query_page():
             show_st_table(loop_df, st_col=table_col)
 
         left_table_col.markdown(
-            '*Note.* "3P" for GTP or GTP analog-bound, "2P" for GDP-bound, and "0P" for nucleotide-free'
+            '**Note.** "3P" for GTP or GTP analog-bound, "2P" for GDP-bound, and "0P" for nucleotide-free'
         )
 
         st.markdown("---")
@@ -289,7 +302,7 @@ def query_page():
 
         left_sum_col, right_sum_col = st.columns(2)
 
-        sum_col_lst = [gene_class_col, nuc_class_col] + annot_col_lst
+        sum_col_lst = [gene_class_col, nuc_class_col] + conf_col_lst + annot_col_lst
 
         row_lst = left_sum_col.multiselect(
             "Rows",

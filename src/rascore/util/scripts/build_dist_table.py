@@ -390,6 +390,8 @@ def build_dist_table(
     coord_path_col=None,
 ):
 
+    df = df.reset_index(drop=True)
+
     dist_df = pd.DataFrame()
 
     for index in tqdm(
