@@ -169,6 +169,8 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None, num_cpu=1):
 
     if len(df) > 0:
 
+        df = df.reset_index(drop=True)
+
         df_col_lst = list(df.columns)
 
         missing_col_lst = [

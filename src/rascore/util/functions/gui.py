@@ -26,6 +26,7 @@ SOFTWARE.
 import pandas as pd
 import uuid
 import re
+from random import randint
 import streamlit as st
 import py3Dmol
 from stmol import showmol
@@ -75,13 +76,17 @@ def write_st_end():
 def get_st_file_path(st_file):
 
     return get_file_path(
-        st_file.name, dir_path=get_neighbor_path(__file__, functions_str, data_str)
+        f"{randint(0,3261994)}_{st_file.name}",
+        dir_path=get_neighbor_path(__file__, functions_str, data_str),
     )
 
 
 def save_st_file(st_file):
-    with open(get_st_file_path(st_file), "wb") as file:
+
+    st_file_path = get_st_file_path(st_file)
+    with open(st_file_path, "wb") as file:
         file.write(st_file.getbuffer())
+    return st_file_path
 
 
 def load_st_table(file_path, file_name=None):
