@@ -12,7 +12,7 @@
 
 # Summary
 
-*rascore* is a tool for analyzing RAS structures (KRAS, NRAS, and HRAS) by the conformations of their catalytic switch 1 (SW1) and switch 2 (SW2) loops. In addition, *rascore* can be used to search and query an updatable database of all available RAS structures in the Protein Data Bank with their SW1 and SW2 loops conformationally classified and their molecular contents annotated (e.g., mutation status, nucleotide state, bound proteins, small molecule inhibitors, etc.). 
+*rascore* is a tool for analyzing RAS structures (KRAS, NRAS, and HRAS) by the conformations of their catalytic switch 1 (SW1) and switch 2 (SW2) loops. In addition, *rascore* can be used to search and query an updatable database of all available RAS structures in the Protein Data Bank with their SW1 and SW2 loops conformationally classified and their molecular contents annotated (e.g., mutation status, nucleotide state, bound protein, inhibitor site, etc.). 
 
 Details of our RAS conformational classification are provided on [bioRxiv](LINK) in our paper: **An expanded classification of active, inactive and druggable RAS conformations.** We hope that researchers will use *rascore* to gain novel insights into RAS biology and drug discovery. 
 
@@ -40,7 +40,7 @@ conda install -c conda-forge fpocket=4.0.0
 
 *Note.* Must activate Anaconda enironment with command "conda activate rascore_env" before running.
 
-### 1) Conformationally classify RAS structure(s):
+### 1) Conformationally classify RAS structures:
 
 **rascore -classify [path to coordinate file(s)] -out [output directory path]**
 
