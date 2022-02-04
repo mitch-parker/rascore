@@ -64,7 +64,7 @@ def write_st_end():
 
     st.markdown("---")
     st.markdown(
-        "Application Developed by Mitchell Parker, Bulat Faezov, and Roland Dunbrack"
+        "Application Developed and Maintained by Mitchell Parker, Bulat Faezov, and Roland Dunbrack"
     )
     st.markdown(
         "[Dunbrack Lab](https://dunbrack.fccc.edu/retro/) - [Fox Chase Cancer Center](https://www.foxchase.org)"
