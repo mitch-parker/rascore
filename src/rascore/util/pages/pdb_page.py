@@ -43,6 +43,7 @@ from ..functions.gui import (
     mask_st_table,
     show_st_structure,
     write_st_end,
+    get_html_text,
 )
 from ..functions.col import (
     rename_col_dict,
@@ -77,7 +78,7 @@ from ..functions.col import (
 
 def pdb_page():
 
-    st.markdown("# Search PDB")
+    st.markdown("# Search Database")
 
     st.markdown("---")
 
@@ -127,13 +128,14 @@ def pdb_page():
     sw1_conf = chainid_df.at[0, sw1_col]
     sw2_conf = chainid_df.at[0, sw2_col]
 
-    sw1_html = f'<p style="font-family:sans-serif; color:{sw1_color}; font-size: large;">{sw1_conf}</p>'
-    sw2_html = f'<p style="font-family:sans-serif; color:{sw2_color}; font-size: large;">{sw2_conf}</p>'
-
     left_col.markdown("#### SW1 Conformation")
-    left_col.markdown(sw1_html, unsafe_allow_html=True)
+    left_col.markdown(
+        get_html_text({sw1_conf: sw1_color}, font_size="large"), unsafe_allow_html=True
+    )
     left_col.markdown("#### SW2 Conformation")
-    left_col.markdown(sw2_html, unsafe_allow_html=True)
+    left_col.markdown(
+        get_html_text({sw2_conf: sw2_color}, font_size="large"), unsafe_allow_html=True
+    )
 
     st.markdown("---")
 
@@ -204,7 +206,6 @@ def pdb_page():
                     "color": "white",
                     "style": cartoon_style,
                     "thickness": 0.2,
-                    "opacity": 1,
                     "opacity": opacity,
                 }
             },

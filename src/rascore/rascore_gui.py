@@ -33,6 +33,7 @@ from PIL import Image
 from util.functions.path import get_file_path, get_dir_name, util_str, data_str
 
 from util.pages.home_page import home_page
+from util.pages.overview_page import overview_page
 from util.pages.conformation_page import conformation_page
 from util.pages.pdb_page import pdb_page
 from util.pages.query_page import query_page
@@ -68,8 +69,9 @@ class MultiApp:
 app = MultiApp()
 
 app.add_app("Home Page", home_page)
-# app.add_app("Browse Conformations", conformation_page)
-app.add_app("Search PDB", pdb_page)
+app.add_app("Database Overview", overview_page)
+app.add_app("Explore Conformations", conformation_page)
+app.add_app("Search Database", pdb_page)
 app.add_app("Query Database", query_page)
 app.add_app("Classify Structures", classify_page)
 

@@ -342,19 +342,21 @@ def query_page():
                 show_st_table(sum_df)
 
                 sum_file_name = st.text_input(
-                    label="Summary File Name", value=f"{rascore_str}_{sum_table_file}"
+                    label="Summary File Name",
+                    value=f"{rascore_str}_{sum_table_file}",
                 )
                 download_st_df(sum_df, sum_file_name, "Download Summary Table")
 
-                st.markdown("---")
+        st.markdown("---")
 
-                st.markdown("#### Entries Table")
+        st.markdown("#### Entries Table")
 
-                show_st_dataframe(gene_nuc_df)
+        show_st_dataframe(gene_nuc_df)
 
-                entries_file_name = st.text_input(
-                    label="Entries File Name", value=f"{rascore_str}_{entry_table_file}"
-                )
-                download_st_df(gene_nuc_df, entries_file_name, "Download Entries Table")
+        entries_file_name = st.text_input(
+            label="Entries File Name",
+            value=f"{rascore_str}_{entry_table_file}",
+        )
+        download_st_df(gene_nuc_df, entries_file_name, "Download Entries Table")
 
         write_st_end()

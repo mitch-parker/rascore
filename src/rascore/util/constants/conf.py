@@ -53,10 +53,11 @@ sw2_name = "SW2"
 sw1_resids = "25-40"
 sw2_resids = "56-76"
 
-loop_resid_dict = {sw1_name: sw1_resids, sw2_name: sw2_resids}
-
 sw1_color = "#e7298a"
 sw2_color = "#7570b3"
+
+loop_resid_dict = {sw1_name: sw1_resids, sw2_name: sw2_resids}
+loop_color_dict = {sw1_name: sw1_color, sw2_name: sw2_color}
 
 sw1_nf_name = f"{sw1_name}.{nf_name}"
 sw1_gdp_name = f"{sw1_name}.{gdp_name}"

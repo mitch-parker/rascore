@@ -252,10 +252,13 @@ def home_page():
         To the left, there is a main menu for navigating to 
         each page in the *rascore* application:
 
-        - Home Page
-        - Search PDB
-        - Query Database
-        - Classify Structures
+        - **Home Page:** We are here!
+        - **Database Overview:** Overview of the *rascore* database, molecular annotations, 
+        and conformational classification.
+        - **Explore Conformations:** Explore RAS conformations by nucleotide state.
+        - **Search Database:** Search for individual PDB entries.
+        - **Query Database:** Query the *rascore* database by RAS conformations and molecular annotations.
+        - **Classify Structures:** Conformationally classify your inputted RAS structures.
         """
     )
     st.markdown("---")

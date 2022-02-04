@@ -23,68 +23,269 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import pandas as pd
 import streamlit as st
 
-from ..functions.gui import load_st_table
+from ..constants.conf import (
+    loop_resid_dict,
+    sw1_color,
+    sw2_color,
+    sw1_name,
+    sw2_name,
+    noise_name,
+    loop_color_dict,
+    conf_color_dict,
+)
+from ..constants.nuc import nuc_color_dict, nuc_class_lst, gtp_name
+
+from ..functions.gui import (
+    get_neighbor_path,
+    load_st_table,
+    get_html_text,
+    write_st_end,
+    show_st_structure,
+    rename_st_cols,
+    show_st_table,
+)
+from ..functions.path import (
+    get_file_path,
+    load_table,
+    pages_str,
+    data_str,
+    rascore_str,
+    cluster_str,
+)
+from ..functions.file import result_table_file
+from ..functions.col import (
+    rename_col_dict,
+    nuc_class_col,
+    gene_class_col,
+    match_class_col,
+    prot_class_col,
+    pdb_id_col,
+    complete_col,
+    bio_lig_col,
+)
+from ..functions.table import (
+    mask_equal,
+    mask_unequal,
+    get_col_most_common,
+    lst_col,
+    fix_col,
+)
 
 
 def conformation_page():
 
-    st.markdown("# Browse Conformations")
+    df = load_st_table(__file__)
 
+    st.markdown("# Explore Conformations")
     st.markdown("---")
 
-    left_col, right_col = st.columns(2)
-
-    left_col.markdown("#### Overview")
-    left_col.markdown(
+    st.sidebar.markdown(
         """
-    - We analyzed all 699 available human KRAS, NRAS, and HRAS structures in the Protein Data Bank (PDB) to 
-    define a more comprehensive classification of active, inactive, and druggable RAS conformations. 
-    - We first annotated the molecular contents of each RAS structure, including their mutation status, 
-    nucleotide state and bound protein (e.g., effector, GAP, GEF) or inhibitor site (e.g., SP12, SP2). 
-    - Second, we conformationally clustered these structures based on the arrangement of their catalytic 
-    switch 1 (SW1) and switch 2 (SW2) loops to create a biologically and therapeutically informed map 
-    of the RAS conformational landscape. 
+    **Note.** Only structures with completely modeled loops from original clustering are displayed.
+    Tables below structures include updated counts from *rascore* database.
     """
     )
 
-    right_col.markdown("#### Key Terms")
-    right_col.markdown(
-        """
+    data_path = get_neighbor_path(__file__, pages_str, data_str)
 
-    - Bound Protein
-        - **Effector:** RAS-binding domain (RBD) or RAS-associating domain (RA) containing protein.
-        - **GEF.CDC25:** Guanine exchange factor catalaytic domain
-            - Removes GDP allowing subsequent GTP rebinding
-        - **GEF.REM:** Guanine exchange factor allosteric domain
-            - Accelerates GDP release at the CDC25 domain of SOS1
-        - **GAP:** GTPase activating protein
-            - Catalyze the otherwise slow intrinsic rate of GTP hydrolysis to GDP
-        - **Binder:** Designed protein inhibitor (e.g., Affimer, DARPin)
-        - **Nanodisc:** Synthetic membrane
-
-    - Inhibitor Site
-        - **SP12:** SW1/SW2 pocket
-        - **SP2:** SW2 pocket
-    """
+    sw1_df = load_table(
+        get_file_path(
+            f"{sw1_name}_{result_table_file}",
+            dir_path=f"{data_path}/{rascore_str}_{cluster_str}/{sw1_name}",
+        )
     )
-
-    st.markdown("#### Conformational Clustering")
-
-    st.markdown(
-        """
-    -	We separately clustered the arrangements of SW1 (residues 25-40) and SW2 (residues 56-76)
-    based on their backbone dihedral angle values: φ (phi), ψ (psi), and ω (omega).
-    - In our analysis, we used the Density-Based Spatial Clustering of Applications with Noise (DBSCAN) 
-    algorithm with a distance metric that locates the maximum backbone dihedral difference upon pairwise 
-    comparison of loop residues.
-    - We first separated RAS structures by their nucleotide state (“0P” for nucleotide-free, “2P” for GDP-bound, 
-    and “3P” for GTP or GTP analog-bound) and subsequently clustered the conformations of SW1 and SW2 for each 
-    nucleotide state using DBSCAN. 
-    - For clarity and brevity in our classification, we named each SW1 and SW2 conformational cluster by its loop 
-    name and nucleotide state and then added further designations as needed.
-    """
+    sw2_df = load_table(
+        get_file_path(
+            f"{sw2_name}_{result_table_file}",
+            dir_path=f"{data_path}/{rascore_str}_{cluster_str}/{sw2_name}",
+        )
     )
+    sw1_df = mask_equal(sw1_df, complete_col, str(True))
+    sw2_df = mask_equal(sw2_df, complete_col, str(True))
 
-    df = load_st_table(__file__)
+    table_col_lst = [rename_col_dict[prot_class_col], rename_col_dict[match_class_col]]
+
+    for nuc_class in nuc_class_lst:
+        with st.expander(f"{nuc_class} Conformations", expanded=True):
+            st.markdown(
+                get_html_text(
+                    {
+                        nuc_class: nuc_color_dict[nuc_class],
+                        " Conformations": "#31333F",
+                    },
+                    font_size="x-large",
+                    font_weight="bold",
+                ),
+                unsafe_allow_html=True,
+            )
+
+            sw1_col, sw2_col = st.columns(2)
+
+            nuc_df = mask_equal(df, nuc_class_col, nuc_class)
+
+            for loop_name, loop_resids in loop_resid_dict.items():
+
+                if loop_name == sw1_name:
+                    cluster_df = sw1_df.copy(deep=True)
+                    stick_resid = 32
+                    loop_col = sw1_col
+
+                elif loop_name == sw2_name:
+                    cluster_df = sw2_df.copy(deep=True)
+                    stick_resid = 71
+                    loop_col = sw2_col
+
+                loop_df = mask_unequal(nuc_df, loop_name, noise_name)
+
+                conf_lst = get_col_most_common(loop_df, loop_name)
+
+                if len(conf_lst) > 1:
+                    conf_str = f"{loop_name} Conformations ({len(conf_lst)} in Total)"
+                else:
+                    conf_str = f"{loop_name} Conformation (Only 1)"
+
+                loop_col.markdown(f"#### {conf_str}")
+
+                loop_conf = loop_col.selectbox("Cluster Name", conf_lst)
+
+                pdb_id = loop_col.selectbox(
+                    "PDB ID",
+                    [
+                        x.upper()
+                        for x in lst_col(loop_df, pdb_id_col)
+                        if x in lst_col(cluster_df, pdb_id_col)
+                    ],
+                )
+
+                pdb_code = pdb_id[:4].lower()
+                chainid = pdb_id[4:5]
+
+                style_lst = list()
+
+                loop_color = conf_color_dict[loop_name][loop_conf]
+
+                cartoon_style = "oval"
+
+                style_lst.append(
+                    [
+                        {
+                            "chain": chainid,
+                            "invert": True,
+                        },
+                        {
+                            "cartoon": {
+                                "color": "white",
+                                "style": cartoon_style,
+                                "thickness": 0.2,
+                                "opacity": 0,
+                            }
+                        },
+                    ]
+                )
+
+                bio_lig = lst_col(
+                    mask_equal(df, pdb_id_col, f"{pdb_code}{chainid}"), bio_lig_col
+                )[0]
+                style_lst.append(
+                    [
+                        {
+                            "resn": [bio_lig],
+                        },
+                        {
+                            "stick": {
+                                "colorscheme": "whiteCarbon",
+                                "radius": 0.2,
+                            }
+                        },
+                    ]
+                )
+
+                style_lst.append(
+                    [
+                        {
+                            "chain": chainid,
+                            "resi": [loop_resids],
+                        },
+                        {
+                            "cartoon": {
+                                "style": cartoon_style,
+                                "color": loop_color,
+                                "thickness": 0.2,
+                            }
+                        },
+                    ]
+                )
+
+                style_lst.append(
+                    [
+                        {
+                            "chain": chainid,
+                            "resi": [stick_resid],
+                            "elem": "C",
+                        },
+                        {"stick": {"color": loop_color, "radius": 0.2}},
+                    ]
+                )
+
+                style_lst.append(
+                    [
+                        {
+                            "chain": chainid,
+                            "resi": [stick_resid],
+                            "elem": ["O", "N", "H"],
+                        },
+                        {"stick": {"colorscheme": "Carbon", "radius": 0.2}},
+                    ]
+                )
+
+                with loop_col:
+                    show_st_structure(
+                        pdb_code,
+                        zoom_dict={"chain": chainid, "resi": [loop_resids]},
+                        style_lst=style_lst,
+                        label_lst=[
+                            [
+                                f"Y{stick_resid}",
+                                {
+                                    "backgroundColor": "lightgray",
+                                    "fontColor": "black",
+                                    "backgroundOpacity": 0.5,
+                                },
+                                {"chain": chainid, "resi": stick_resid, "atom": "OH"},
+                            ]
+                        ],
+                        cartoon_style=cartoon_style,
+                        width=450,
+                        height=300,
+                        zoom=1.5,
+                    )
+
+                for col in table_col_lst:
+                    table_df = (
+                        pd.pivot_table(
+                            data=rename_st_cols(
+                                mask_equal(loop_df, loop_name, loop_conf)
+                            ),
+                            index=col,
+                            columns=rename_col_dict[gene_class_col],
+                            values=rename_col_dict[pdb_id_col],
+                            aggfunc="nunique",
+                            margins=True,
+                        )
+                        .reset_index()
+                        .fillna("")
+                    )
+
+                    for col in list(table_df.columns):
+                        table_df[col] = table_df[col].map(str)
+                        table_df = fix_col(table_df, col)
+
+                    show_st_table(table_df, st_col=loop_col)
+
+        if nuc_class != gtp_name:
+            st.markdown("---")
+
+    write_st_end()

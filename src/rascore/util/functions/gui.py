@@ -89,6 +89,24 @@ def save_st_file(st_file):
     return st_file_path
 
 
+def get_html_text(text_color_dict, font_size="medium", font_weight="normal"):
+
+    html_str = ""
+    for text, color in text_color_dict.items():
+
+        size = font_size
+        if type(font_size) == dict:
+            size = font_size[text]
+
+        weight = font_weight
+        if type(font_weight) == dict:
+            weight = font_weight[text]
+
+        html_str += f'<span style="font-family:sans-serif; font-size: {size}; font-weight: {weight}; color:{color};">{text}</span>'
+
+    return html_str
+
+
 def load_st_table(file_path, file_name=None):
 
     if file_name is None:

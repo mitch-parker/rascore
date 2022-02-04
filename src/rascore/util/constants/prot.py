@@ -41,8 +41,11 @@ other_prot_name = "Other"
 mult_prot_name = "Multiple"
 none_prot_name = "None"
 
-gef_cdc_name = "CDC25"
-gef_rem_name = "REM"
+cdc_name = "CDC25"
+rem_name = "REM"
+
+gef_cdc_name = f"{gef_name}.{cdc_name}"
+gef_rem_name = f"{gef_name}.{rem_name}"
 
 prot_class_dict = {
     effector_name: [rbd_pfam, pi3k_pfam, ra_pfam, ra_gef_pfam],
@@ -57,9 +60,10 @@ prot_class_dict = {
 prot_class_lst = [
     effector_name,
     gap_name,
-    f"{gef_name}.{gef_cdc_name}",
-    f"{gef_name}.{gef_rem_name}",
+    gef_cdc_name,
+    gef_rem_name,
     binder_name,
+    nano_name,
     other_prot_name,
     none_prot_name,
 ]
@@ -70,6 +74,7 @@ prot_color_dict = get_lst_colors(
         gap_name,
         gef_name,
         binder_name,
+        nano_name,
         other_prot_name,
         none_prot_name,
     ],
@@ -77,8 +82,8 @@ prot_color_dict = get_lst_colors(
     return_dict=True,
 )
 
-prot_color_dict[f"{gef_name}.{gef_cdc_name}"] = prot_color_dict[gef_name]
-prot_color_dict[f"{gef_name}.{gef_rem_name}"] = prot_color_dict[gef_name]
+prot_color_dict[gef_cdc_name] = prot_color_dict[gef_name]
+prot_color_dict[gef_rem_name] = prot_color_dict[gef_name]
 
 
 prot_pfam_dict = {

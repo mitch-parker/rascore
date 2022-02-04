@@ -48,8 +48,8 @@ from ..constants.prot import (
     gef_name,
     prot_pfam_dict,
     prot_class_dict,
-    gef_rem_name,
-    gef_cdc_name,
+    rem_name,
+    cdc_name,
     nano_name,
     mult_prot_name,
 )
@@ -325,9 +325,9 @@ def update_annot(pdbaa_fasta_path, out_path=None, past_df=None, num_cpu=1):
                     nuc_class = df.at[index, nuc_class_col]
                     prot_class += "."
                     if nuc_class == gtp_name:
-                        prot_class += gef_rem_name
+                        prot_class += rem_name
                     else:
-                        prot_class += gef_cdc_name
+                        prot_class += cdc_name
             df.at[index, prot_class_col] = prot_class
 
         if (
