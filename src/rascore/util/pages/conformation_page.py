@@ -28,12 +28,9 @@ import streamlit as st
 
 from ..constants.conf import (
     loop_resid_dict,
-    sw1_color,
-    sw2_color,
     sw1_name,
     sw2_name,
     noise_name,
-    loop_color_dict,
     conf_color_dict,
 )
 from ..constants.nuc import nuc_color_dict, nuc_class_lst, gtp_name
