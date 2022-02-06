@@ -64,7 +64,7 @@ def overview_page():
     st.markdown("---")
 
     st.sidebar.markdown(
-        "**Note.** See our [bioRxiv](LINK) paper for additional details."
+        "**Note.** See our [bioRxiv](https://www.biorxiv.org/content/10.1101/2022.02.02.478568v1) paper for additional details."
     )
 
     text_col, leg_1_col, leg_2_col = st.columns((2, 0.75, 0.75))

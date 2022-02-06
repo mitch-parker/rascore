@@ -237,7 +237,7 @@ def home_page():
         bound protein, inhibitor site, etc.). 
 
         Details of our RAS conformational classification are 
-        provided on [bioRxiv](LINK) in our paper: **An expanded 
+        provided on [bioRxiv](https://www.biorxiv.org/content/10.1101/2022.02.02.478568v1) in our paper: **An expanded 
         classification of active, inactive and druggable RAS 
         conformations.** We hope that researchers will use 
         *rascore* to gain novel insights into RAS biology and 
