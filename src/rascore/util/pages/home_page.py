@@ -183,7 +183,7 @@ def home_page():
     st.sidebar.markdown("## Database-Related Links")
 
     database_link_dict = {
-        "bioRxiv Paper": "LINK",
+        "bioRxiv Paper": "https://www.biorxiv.org/content/10.1101/2022.02.02.478568v1",
         "GitHub Page": "https://github.com/mitch-parker/rascore",
         "RCSB Protein Data Bank": "https://www.rcsb.org",
     }
