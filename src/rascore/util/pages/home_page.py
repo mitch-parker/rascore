@@ -229,7 +229,7 @@ def home_page():
         ### Summary
         *rascore* is a tool for analyzing RAS structures 
         (KRAS, NRAS, and HRAS) by the conformations of their 
-        catalytic switch 1 (SW1) and switch 2 (SW2) loops. The *rascore*  
+        catalytic switch 1 (SW1) and switch 2 (SW2) loops. The *rascore* 
         database presents an updated analysis of all available 
         RAS structures in the Protein Data Bank (PDB) with their SW1 and 
         SW2 loops conformationally classified and their molecular 
@@ -237,8 +237,8 @@ def home_page():
         bound protein, inhibitor site, etc.). 
 
         Details of our RAS conformational classification are 
-        provided on [bioRxiv](https://www.biorxiv.org/content/10.1101/2022.02.02.478568v1) in our paper: **An expanded 
-        classification of active, inactive and druggable RAS 
+        provided on [bioRxiv](https://www.biorxiv.org/content/10.1101/2022.02.02.478568v1) in our 
+        paper: **An expanded classification of active, inactive and druggable RAS 
         conformations.** We hope that researchers will use 
         *rascore* to gain novel insights into RAS biology and 
         drug discovery. 
