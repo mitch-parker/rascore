@@ -81,7 +81,7 @@ def overview_page():
       - First, we annotated the molecular contents of each RAS structure, including their mutation status, 
     nucleotide state and bound protein or inhibitor site (*see right for key terms*). 
       - Second, we conformationally clustered all RAS structures based on the arrangement of their catalytic 
-    switch 1 (SW1) and switch 2 (SW2) loops, identifying three SW1 and nine SW2 conformations (*see below for details*).
+    switch 1 (SW1) and switch 2 (SW2) loops, identifying five SW1 and nine SW2 conformations (*see below for details*).
     - The *rascore* database presents a continually updated dataset of annotated and conformationally classified 
     RAS structures from the PDB (*now {len(df)} structures*).
     """
@@ -162,7 +162,8 @@ def overview_page():
     based on their backbone dihedral angle values: φ (phi), ψ (psi), and ω (omega).
     - In our analysis, we used the Density-Based Spatial Clustering of Applications with Noise (DBSCAN) 
     algorithm with a distance metric that locates the maximum backbone dihedral difference upon pairwise 
-    comparison of loop residues (previously implemented by our group for other proteins).
+    comparison of loop residues (previously implemented by our group for other proteins, such as 
+    [kinases](http://dunbrack.fccc.edu/kincore/home) and [antibodies](http://dunbrack2.fccc.edu/PyIgClassify/)).
       - DBSCAN finds major clusters and removes outliers (labeling them as “noise”).
       - We first separated RAS structures by their nucleotide state (0P, 2P, and 3P) and subsequently 
     conformationally clustered the well modeled (complete with high electron density scores) SW1 and SW2 
@@ -198,11 +199,11 @@ def overview_page():
     - For the SW1 conformations, there was a one-to-one correspondence with the nucleotide state, 
     and we, therefore, labeled these conformations SW1.0P, SW1.2P, and SW1.3P (***panel a***).
       - These SW1 conformations can be differentiated by position of residue Y32 in SW1, 
-    which was the original method for classifying these conformations
+    which has been used previously to classify these conformations.
       - Previously, hydrolytically-relevant substates of GTP-bound RAS (SW1.3P) have been described based on 
-    differences in hydrogen-bonding (HB) of the hydroxyl (OH) atom of Y32 with one of the γ-phosphate oxygen 
-    (O1G) atoms of GTP: direct (hydrolytically incompetent), water-mediated (prefers intrinsic hydrolysis), 
-    and absent (prefers GAP-mediated hydrolysis).
+    differences in hydrogen-bonding (HB) of the hydroxyl (OH) atom of Y32 with the closest γ-phosphate oxygen 
+    (called here O1G) atoms of GTP: direct (hydrolytically incompetent), water-mediated 
+    (prefers intrinsic hydrolysis), and absent (prefers GAP-mediated hydrolysis).
       - Examination of the distribution of distances between the Y32(OH) atom and the closest 
     3P(O1G) atom across RAS structures in the GTP-bound cluster (SW1.3P) revealed three peaks at 
     distances of 3, 4.5, and 7 Å; we associated these peaks with the GTP-bound substates, naming 
