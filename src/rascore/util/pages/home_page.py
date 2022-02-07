@@ -256,7 +256,7 @@ def home_page():
         - **Database Overview:** Overview of the *rascore* database, molecular annotations, 
         and conformational classification.
         - **Explore Conformations:** Explore RAS conformations by nucleotide state.
-        - **Search Database:** Search for individual PDB entries containing RAS structures.
+        - **Search PDB:** Search for individual PDB entries containing RAS structures.
         - **Query Database:** Query the *rascore* database by RAS conformations and molecular annotations.
         - **Classify Structures:** Conformationally classify your RAS structures.
         """

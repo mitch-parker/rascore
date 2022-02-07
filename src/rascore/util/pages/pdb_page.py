@@ -78,7 +78,7 @@ from ..functions.col import (
 
 def pdb_page():
 
-    st.markdown("# Search Database")
+    st.markdown("# Search PDB")
 
     st.markdown("---")
 
