@@ -175,7 +175,7 @@ def home_page():
             height=300,
         )
 
-    right_col.markdown("# rascore")
+    right_col.markdown("# Rascore")
     right_col.markdown("### A tool for analyzing the conformations of RAS structures")
     right_col.markdown("**Created by Mitchell Parker and Roland Dunbrack**")
     right_col.markdown("**Fox Chase Cancer Center**")
@@ -227,9 +227,9 @@ def home_page():
     st.markdown(
         """
         ### Summary
-        *rascore* is a tool for analyzing RAS structures 
+        *Rascore* is a tool for analyzing RAS structures 
         (KRAS, NRAS, and HRAS) by the conformations of their 
-        catalytic switch 1 (SW1) and switch 2 (SW2) loops. The *rascore* 
+        catalytic switch 1 (SW1) and switch 2 (SW2) loops. The *Rascore* 
         database presents an updated analysis of all available 
         RAS structures in the Protein Data Bank (PDB) with their SW1 and 
         SW2 loops conformationally classified and their molecular 
@@ -240,7 +240,7 @@ def home_page():
         provided on [bioRxiv](https://www.biorxiv.org/content/10.1101/2022.02.02.478568v1) in our 
         paper: **An expanded classification of active, inactive and druggable RAS 
         conformations.** We hope that researchers will use 
-        *rascore* to gain novel insights into RAS biology and 
+        *Rascore* to gain novel insights into RAS biology and 
         drug discovery. 
         """
     )
@@ -250,14 +250,14 @@ def home_page():
         ### Usage
 
         To the left, there is a main menu for navigating to 
-        each page in the *rascore* database:
+        each page in the *Rascore* database:
 
         - **Home Page:** We are here!
-        - **Database Overview:** Overview of the *rascore* database, molecular annotations, 
+        - **Database Overview:** Overview of the *Rascore* database, molecular annotations, 
         and conformational classification.
         - **Explore Conformations:** Explore RAS conformations by nucleotide state.
         - **Search PDB:** Search for individual PDB entries containing RAS structures.
-        - **Query Database:** Query the *rascore* database by RAS conformations and molecular annotations.
+        - **Query Database:** Query the *Rascore* database by RAS conformations and molecular annotations.
         - **Classify Structures:** Conformationally classify your RAS structures.
         """
     )
