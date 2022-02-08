@@ -45,6 +45,7 @@ from ..functions.gui import (
     show_st_dataframe,
     download_st_df,
     rename_st_cols,
+    show_st_table,
     write_st_end,
 )
 from ..pipelines.classify_rascore import classify_rascore
@@ -104,6 +105,7 @@ def classify_page():
                 else:
                     table_path = save_st_file(table_st_file)
                     classify_input = load_table(table_path)
+                    show_st_table(classify_input)
                     classify_input[core_path_col] = classify_input[core_path_col].map(
                         file_dict
                     )
