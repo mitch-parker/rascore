@@ -82,7 +82,7 @@ def overview_page():
     nucleotide state and bound protein or inhibitor site (*see right for key terms*). 
       - Second, we conformationally clustered all RAS structures based on the arrangement of their catalytic 
     switch 1 (SW1) and switch 2 (SW2) loops, identifying five SW1 and nine SW2 conformations (*see below for details*).
-    - The *rascore* database presents a continually updated dataset of annotated and conformationally classified 
+    - The *Rascore* database presents a continually updated dataset of annotated and conformationally classified 
     RAS structures from the PDB (*now {len(df)} structures*).
     """
     )
@@ -170,7 +170,7 @@ def overview_page():
     loops for each nucleotide state with DBSCAN.
       - We then assigned a small number of poorly or incompletely modeled loops to the clusters obtained from 
     DBSCAN by using a nearest neighbors (NN) approach.
-      - In the rascore database, we use our NN approach to conformationally classify additional RAS structures
+      - In the Rascore database, we use our NN approach to conformationally classify additional RAS structures
     deposited to the PDB.
     """
     )
