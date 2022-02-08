@@ -180,18 +180,25 @@ def home_page():
     right_col.markdown("**Created by Mitchell Parker and Roland Dunbrack**")
     right_col.markdown("**Fox Chase Cancer Center**")
 
-    st.sidebar.markdown("## Database-Related Links")
-
     database_link_dict = {
         "bioRxiv Paper": "https://www.biorxiv.org/content/10.1101/2022.02.02.478568v1",
         "GitHub Page": "https://github.com/mitch-parker/rascore",
         "RCSB Protein Data Bank": "https://www.rcsb.org",
     }
 
+    st.sidebar.markdown("## Database-Related Links")
     for link_text, link_url in database_link_dict.items():
         create_st_button(link_text, link_url, st_col=st.sidebar)
 
-    st.sidebar.markdown("## Software-Related Links")
+    community_link_dict = {
+        "NCI RAS Initiative": "https://www.cancer.gov/research/key-initiatives/ras",
+        "KRAS Kickers": "https://www.kraskickers.org",
+        "RASopathies Network": "https://rasopathiesnet.org",
+    }
+
+    st.sidebar.markdown("## Community-Related Links")
+    for link_text, link_url in community_link_dict.items():
+        create_st_button(link_text, link_url, st_col=st.sidebar)
 
     software_link_dict = {
         "BioPython": "https://biopython.org",
@@ -209,10 +216,11 @@ def home_page():
         "Streamlit": "https://streamlit.io",
     }
 
-    left_link_col, middle_link_col, right_link_col = st.sidebar.columns(3)
+    st.sidebar.markdown("## Software-Related Links")
+    link_1_col, link_2_col, link_3_col = st.sidebar.columns(3)
 
     i = 0
-    link_col_dict = {0: left_link_col, 1: middle_link_col, 2: right_link_col}
+    link_col_dict = {0: link_1_col, 1: link_2_col, 2: link_3_col}
     for link_text, link_url in software_link_dict.items():
 
         st_col = link_col_dict[i]
