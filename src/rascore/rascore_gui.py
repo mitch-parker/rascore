@@ -68,11 +68,11 @@ class MultiApp:
 
 app = MultiApp()
 
-app.add_app("Classify Structures", classify_page)
 app.add_app("Home Page", home_page)
 app.add_app("Database Overview", overview_page)
 app.add_app("Explore Conformations", conformation_page)
 app.add_app("Search PDB", pdb_page)
 app.add_app("Query Database", query_page)
+app.add_app("Classify Structures", classify_page)
 
 app.run()
