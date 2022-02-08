@@ -67,7 +67,7 @@ def classify_page():
             """
         Tab-separated table with columns:
         - **core_path:** coordinate path:
-        - **modelid:*& model number (*optional*)
+        - **modelid:** model number (*optional*)
         - **chainid:** chain identifier
         - **nuc_class:** nucleotide state (*optional*)
         """
