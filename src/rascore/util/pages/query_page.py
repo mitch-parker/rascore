@@ -350,9 +350,6 @@ def query_page():
 
         st.markdown("#### Entries Table")
 
-        del gene_nuc_df[pdb_code_col]
-        del gene_nuc_df[chainid_col]
-
         show_st_dataframe(gene_nuc_df)
 
         entries_file_name = st.text_input(
