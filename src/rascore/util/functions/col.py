@@ -431,6 +431,7 @@ rename_col_dict = {
     id_col: "ID",
     pdb_id_col: "PDB ID",
     pdb_code_col: "PDB Code",
+    modelid_col: "Model",
     chainid_col: "Chain",
     sw1_col: "SW1 Conformation",
     sw2_col: "SW2 Conformation",

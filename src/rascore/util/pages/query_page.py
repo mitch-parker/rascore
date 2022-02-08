@@ -55,6 +55,7 @@ from ..functions.col import (
     gene_class_col,
     nuc_class_col,
     pdb_code_col,
+    modelid_col,
     core_path_col,
     bio_lig_col,
     ion_lig_col,
@@ -350,6 +351,7 @@ def query_page():
         st.markdown("#### Entries Table")
 
         del gene_nuc_df[rename_col_dict[pdb_id_col]]
+        del gene_nuc_df[rename_col_dict[modelid_col]]
 
         show_st_dataframe(gene_nuc_df)
 
