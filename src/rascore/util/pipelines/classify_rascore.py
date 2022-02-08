@@ -42,6 +42,7 @@ from ..functions.table import (
     type_lst,
     merge_tables,
     make_dict,
+    fix_col,
     core_path_col,
     chainid_col,
     modelid_col,
@@ -381,6 +382,9 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None, num_cpu=1):
                 del df[hb_status_col]
 
             result_table_path = get_file_path(result_table_file, dir_path=out_path)
+
+            for col in list(df.columns):
+                df = fix_col(df, col)
 
             save_table(result_table_path, df)
 
