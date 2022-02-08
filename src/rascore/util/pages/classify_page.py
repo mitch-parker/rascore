@@ -67,7 +67,7 @@ def classify_page():
             """
         Tab-separated table with columns:
         - **core_path:** coordinate path:
-        - **modelid:* model number (*optional*)
+        - **modelid:*& model number (*optional*)
         - **chainid:** chain identifier
         - **nuc_class:** nucleotide state (*optional*)
         """
@@ -75,7 +75,6 @@ def classify_page():
         table_st_file = st.file_uploader(
             "Upload Table File", accept_multiple_files=False
         )
-        table_path = save_st_file(table_st_file)
 
     with st.form(key="Classify Form"):
         out_file = st.text_input(
@@ -103,6 +102,7 @@ def classify_page():
                     if table_path is None:
                         classify_input = coord_path_lst
                     else:
+                        table_path = save_st_file(table_st_file)
                         classify_input = load_table(table_path)
                         classify_input[core_path_col] = classify_input[
                             core_path_col
