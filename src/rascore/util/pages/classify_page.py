@@ -60,7 +60,7 @@ def classify_page():
         "Upload RAS Structure(s)", accept_multiple_files=True
     )
 
-    table_path = None
+    table_st_file = None
     with st.expander("Optional Input", expanded=False):
 
         st.markdown(
@@ -99,7 +99,7 @@ def classify_page():
                         dir_path=get_neighbor_path(__file__, pages_str, data_str),
                     )
 
-                    if table_path is None:
+                    if table_st_file is None:
                         classify_input = coord_path_lst
                     else:
                         table_path = save_st_file(table_st_file)
