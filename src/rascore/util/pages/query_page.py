@@ -337,9 +337,6 @@ def query_page():
                     sum_df[col] = sum_df[col].map(str)
                     sum_df = fix_col(sum_df, col)
 
-                del sum_df[pdb_code_col]
-                del sum_df[chainid_col]
-
                 show_st_table(sum_df)
 
                 sum_file_name = st.text_input(
