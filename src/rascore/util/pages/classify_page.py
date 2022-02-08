@@ -61,21 +61,21 @@ def classify_page():
         "Upload RAS Structure(s)", accept_multiple_files=True
     )
 
-    table_st_file = None
-    with st.expander("Optional Input", expanded=False):
+    # table_st_file = None
+    # with st.expander("Optional Input", expanded=False):
 
-        st.markdown(
-            """
-        Tab-separated table with columns:
-        - **core_path:** coordinate path:
-        - **modelid:** model number (*optional*)
-        - **chainid:** chain identifier
-        - **nuc_class:** nucleotide state (*optional*)
-        """
-        )
-        table_st_file = st.file_uploader(
-            "Upload Table File", accept_multiple_files=False
-        )
+    #     st.markdown(
+    #         """
+    #     Tab-separated table with columns:
+    #     - **core_path:** coordinate path:
+    #     - **modelid:** model number (*optional*)
+    #     - **chainid:** chain identifier
+    #     - **nuc_class:** nucleotide state (*optional*)
+    #     """
+    #     )
+    #     table_st_file = st.file_uploader(
+    #         "Upload Table File", accept_multiple_files=False
+    #     )
 
     with st.form(key="Classify Form"):
         out_file = st.text_input(
@@ -100,15 +100,15 @@ def classify_page():
                     dir_path=get_neighbor_path(__file__, pages_str, data_str),
                 )
 
-                if table_st_file is None:
-                    classify_input = coord_path_lst
-                else:
-                    table_path = save_st_file(table_st_file)
-                    classify_input = load_table(table_path)
-                    show_st_table(classify_input)
-                    classify_input[core_path_col] = classify_input[core_path_col].map(
-                        file_dict
-                    )
+                # if table_st_file is None:
+                classify_input = coord_path_lst
+                # else:
+                #     table_path = save_st_file(table_st_file)
+                #     classify_input = load_table(table_path)
+                #     show_st_table(classify_input)
+                #     classify_input[core_path_col] = classify_input[core_path_col].map(
+                #         file_dict
+                #     )
 
                 classify_rascore(classify_input, out_path=classify_path)
 
