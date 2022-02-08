@@ -26,7 +26,7 @@ SOFTWARE.
 import streamlit as st
 from random import randint
 
-from ..functions.col import id_col
+from ..functions.col import id_col, core_path_col
 from ..functions.path import (
     delete_path,
     get_file_path,
@@ -60,6 +60,23 @@ def classify_page():
         "Upload RAS Structure(s)", accept_multiple_files=True
     )
 
+    table_path = None
+    with st.expander("Optional Input", expanded=False):
+
+        st.markdown(
+            """
+        Tab-separated table with columns:
+        - **core_path:** coordinate path:
+        - **modelid:* model number (*optional*)
+        - **chainid:** chain identifier
+        - **nuc_class:** nucleotide state (*optional*)
+        """
+        )
+        table_st_file = st.file_uploader(
+            "Upload Table File", accept_multiple_files=False
+        )
+        table_path = save_st_file(table_st_file)
+
     with st.form(key="Classify Form"):
         out_file = st.text_input(
             label="Classify File Name", value="rascore_classify.tsv"
@@ -70,40 +87,49 @@ def classify_page():
         if len(st_file_lst) > 0:
             with st.spinner(text="Classifying Structure(s)"):
 
-                coord_path_lst = list()
-                file_dict = dict()
-                for st_file in st_file_lst:
-                    coord_path = save_st_file(st_file)
-                    coord_path_lst.append(coord_path)
-                    file_dict[get_file_name(coord_path)] = st_file.name
+                try:
+                    coord_path_lst = list()
+                    file_dict = dict()
+                    for st_file in st_file_lst:
+                        coord_path = save_st_file(st_file)
+                        coord_path_lst.append(coord_path)
+                        file_dict[get_file_name(coord_path)] = st_file.name
 
-                classify_path = get_dir_path(
-                    dir_str=f"{rascore_str}_{classify_str}_{randint(0,3261994)}",
-                    dir_path=get_neighbor_path(__file__, pages_str, data_str),
-                )
+                    classify_path = get_dir_path(
+                        dir_str=f"{rascore_str}_{classify_str}_{randint(0,3261994)}",
+                        dir_path=get_neighbor_path(__file__, pages_str, data_str),
+                    )
 
-                # try:
-                classify_rascore(coord_path_lst, out_path=classify_path)
+                    if table_path is None:
+                        classify_input = coord_path_lst
+                    else:
+                        classify_input = load_table(table_path)
+                        classify_input[core_path_col] = classify_input[
+                            core_path_col
+                        ].map(file_dict)
 
-                st.success("Classified Structure(s)")
+                    classify_rascore(classify_input, out_path=classify_path)
 
-                result_file_path = get_file_path(
-                    result_table_file, dir_path=classify_path
-                )
+                    st.success("Classified Structure(s)")
 
-                df = load_table(result_file_path)
+                    result_file_path = get_file_path(
+                        result_table_file, dir_path=classify_path
+                    )
 
-                df[id_col] = df[id_col].map(file_dict)
+                    df = load_table(result_file_path)
 
-                df = rename_st_cols(df)
+                    df[id_col] = df[id_col].map(file_dict)
 
-                show_st_dataframe(df)
+                    df = rename_st_cols(df)
 
-                download_st_df(df, out_file, "Download Classification Table")
-                # except:
-                #     st.error("Error Analyzing Inputted Structure(s)")
+                    show_st_dataframe(df)
+
+                    download_st_df(df, out_file, "Download Classification Table")
+                except:
+                    st.error("Error Analyzing Inputted Structure(s)")
 
                 delete_path(classify_path)
+                delete_path(table_path)
                 for coord_path in coord_path_lst:
                     delete_path(coord_path)
 
