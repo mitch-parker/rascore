@@ -55,6 +55,7 @@ from ..functions.col import (
     gene_class_col,
     nuc_class_col,
     pdb_code_col,
+    chainid_col,
     core_path_col,
     bio_lig_col,
     ion_lig_col,
@@ -64,9 +65,6 @@ from ..functions.col import (
     mem_lig_col,
     pocket_lig_col,
     bound_prot_chainid_col,
-    pocket_path_col,
-    interf_path_col,
-    bound_interf_chainid_col,
 )
 from ..functions.path import (
     get_file_path,
@@ -339,17 +337,24 @@ def query_page():
                     sum_df[col] = sum_df[col].map(str)
                     sum_df = fix_col(sum_df, col)
 
+                del sum_df[pdb_code_col]
+                del sum_df[chainid_col]
+
                 show_st_table(sum_df)
 
                 sum_file_name = st.text_input(
                     label="Summary File Name",
                     value=f"{rascore_str}_{sum_table_file}",
                 )
+
                 download_st_df(sum_df, sum_file_name, "Download Summary Table")
 
         st.markdown("---")
 
         st.markdown("#### Entries Table")
+
+        del gene_nuc_df[pdb_code_col]
+        del gene_nuc_df[chainid_col]
 
         show_st_dataframe(gene_nuc_df)
 

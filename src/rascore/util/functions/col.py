@@ -430,6 +430,8 @@ order_col_lst = [
 rename_col_dict = {
     id_col: "ID",
     pdb_id_col: "PDB ID",
+    pdb_code_col: "PDB Code",
+    chainid_col: "Chain",
     sw1_col: "SW1 Conformation",
     sw2_col: "SW2 Conformation",
     gene_class_col: "RAS Isoform",
