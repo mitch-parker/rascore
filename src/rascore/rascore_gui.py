@@ -48,7 +48,6 @@ class MultiApp:
         self.apps.append({"title": title, "function": func})
 
     def run(self):
-
         img = Image.open(
             get_file_path(
                 "rascore_logo.png",

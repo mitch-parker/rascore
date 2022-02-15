@@ -109,6 +109,7 @@ def classify_page():
                         classify_input[core_path_col] = classify_input[
                             core_path_col
                         ].map(path_dict)
+                        delete_path(table_path)
 
                     classify_rascore(classify_input, out_path=classify_path)
 
@@ -131,7 +132,6 @@ def classify_page():
                     st.error("Error Analyzing Inputted Structure(s)")
 
                 delete_path(classify_path)
-                delete_path(table_path)
                 for coord_path in coord_path_lst:
                     delete_path(coord_path)
 
