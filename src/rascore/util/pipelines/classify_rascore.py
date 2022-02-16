@@ -73,6 +73,7 @@ from ..functions.col import (
     bio_lig_col,
     cluster_col,
     hb_status_col,
+    complete_col
 )
 from ..functions.file import (
     cluster_table_file,
@@ -107,6 +108,9 @@ from ..constants.conf import (
     sw1_gtp_no_name,
     sw1_gtp_dict,
     conf_color_dict,
+    noise_name,
+    outlier_name,
+    disorder_name
 )
 from ..constants.pml import sup_resids, show_resids
 
@@ -340,6 +344,18 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None, num_cpu=1):
 
                 save_table(loop_result_table_path, loop_result_df)
                 save_table(loop_sum_table_path, loop_sum_df)
+
+                loop_result_df = loop_result_df.reset_index(drop=True)
+
+                for index in list(loop_result_df.index.values):
+                    cluster = loop_result_df.at[index,cluster_col]
+                    if cluster == noise_name:
+                        complete =  str(loop_result_df.at[index,complete_col])
+                        if complete == str(True):
+                            cluster = outlier_name
+                        elif complete == str(False):
+                            cluster = disorder_name
+                        loop_result_df.at[index,cluster_col] = cluster
 
                 loop_result_df = loop_result_df.rename(columns={cluster_col: loop_name})
 

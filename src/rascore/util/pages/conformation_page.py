@@ -30,7 +30,8 @@ from ..constants.conf import (
     loop_resid_dict,
     sw1_name,
     sw2_name,
-    noise_name,
+    outlier_name,
+    disorder_name,
     conf_color_dict,
 )
 from ..constants.nuc import nuc_color_dict, nuc_class_lst, gtp_name
@@ -135,7 +136,7 @@ def conformation_page():
                     stick_resid = 71
                     loop_col = sw2_col
 
-                loop_df = mask_unequal(nuc_df, loop_name, noise_name)
+                loop_df = mask_unequal(nuc_df, loop_name, [outlier_name,disorder_name])
 
                 conf_lst = get_col_most_common(loop_df, loop_name)
 

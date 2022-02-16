@@ -38,7 +38,7 @@ from tqdm import tqdm
 from .lst import type_lst
 from .color import get_rgb, change_hex_alpha, get_lst_colors
 from .download import download_file
-from .path import path_exists, get_lig_path, append_file_path, lig_str
+from .path import path_exists, get_lig_path, append_file_path, delete_path,lig_str
 from .url import lig_expo_url
 
 
@@ -75,7 +75,7 @@ def load_lig(lig, lig_dir=None, tries=3):
     return mol
 
 
-def get_lig_smiles(lig, lig_dir=None):
+def get_lig_smiles(lig, lig_dir=None,tries=3):
 
     mol = lig
     if type(lig) == str:
@@ -83,19 +83,44 @@ def get_lig_smiles(lig, lig_dir=None):
         if len(lig) <= 3:
             mol = load_lig(lig, lig_dir=lig_dir)
     if type(mol) != str:
-        smiles = Chem.MolToSmiles(mol)
+        try_load = True
+        count = 0
+        while try_load:
+            try:
+                smiles = Chem.MolToSmiles(mol)
+                try_load = False
+            except:
+                lig_path = get_lig_path(lig, dir_path=lig_dir)
+                delete_path(lig_path)
+                mol = load_lig(lig, lig_dir=lig_dir,tries=tries)
+                count += 1
+                if tries == count:
+                    try_load = False
 
     return smiles
 
 
-def get_lig_mol(lig, lig_dir=None, stereo=True):
+def get_lig_mol(lig, lig_dir=None, stereo=True, tries=3):
 
     mol = lig
     if type(lig) == str:
         smiles = mol
         if len(lig) <= 3:
             smiles = get_lig_smiles(lig, lig_dir=lig_dir)
-        mol = Chem.MolFromSmiles(smiles)
+
+        try_load = True
+        count = 0
+        while try_load: 
+            try:  
+                mol = Chem.MolFromSmiles(smiles)
+                try_load = False
+            except:
+                lig_path = get_lig_path(lig, dir_path=lig_dir)
+                delete_path(lig_path)
+                smiles = get_lig_smiles(lig, lig_dir=lig_dir,tries=tries)
+                count += 1
+                if tries == count:
+                    try_load = False
 
     if not stereo:
         AllChem.Compute2DCoords(mol)

@@ -69,7 +69,7 @@ def classify_page():
         - **core_path:** coordinate path:
         - **modelid:** model number (*optional*)
         - **chainid:** chain identifier
-        - **nuc_class:** nucleotide state (*optional*)
+        - **nucleotide_class:** nucleotide state (*optional*)
         """
         )
         table_st_file = st.file_uploader(

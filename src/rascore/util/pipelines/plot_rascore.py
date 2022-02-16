@@ -56,7 +56,8 @@ from ..constants.conf import (
     sw1_gtp_name,
     sw1_nf_name,
     sw1_gdp_name,
-    noise_name,
+    outlier_name,
+    disorder_name,
     sw1_gtp_dict,
     sw1_gtp_color_dict,
     sw1_name,
@@ -240,7 +241,7 @@ def plot_rama(df, dih_dict, out_path, num_cpu=1):
         for index in list(dih_df.index.values):
             cluster = dih_df.at[index, loop_name]
             rama_status = major_name
-            if cluster != "Noise":
+            if cluster not in [outlier_name,disorder_name]:
                 if dih_df.at[index, rama_col] != rama_dict[cluster]:
                     rama_status = minor_name
             dih_df.at[index, nuc_class_col] += "_"
@@ -456,7 +457,7 @@ def plot_pymol(df, interf_df, sup_core_path, out_path):
 
 def plot_dist(df, dih_dict, sup_core_path, out_path):
 
-    sw1_gtp_df = mask_unequal(df, sw1_name, [sw1_nf_name, sw1_gdp_name, noise_name])
+    sw1_gtp_df = mask_unequal(df, sw1_name, [sw1_nf_name, sw1_gdp_name, outlier_name, disorder_name])
 
     dist_table_path = get_file_path(
         dist_table_file, dir_str=y32_name, dir_path=out_path
@@ -769,14 +770,16 @@ def plot_pockets(df, pocket_df, dih_dict, sup_core_path, out_path):
                 sw2_gtp_sp12_a_name,
                 sw2_gtp_sp12_b_name,
                 sw2_gdp_sp12_name,
-                noise_name,
+                outlier_name,
+                disorder_name
             ]
         },
         sp2_name: {
             sw2_name: [
                 sw2_gdp_sp2_a_name,
                 sw2_gdp_sp2_b_name,
-                noise_name,
+                               outlier_name,
+                disorder_name
             ]
         },
     }
@@ -784,11 +787,13 @@ def plot_pockets(df, pocket_df, dih_dict, sup_core_path, out_path):
     pocket_loop_cluster_dict[sp12_name][sw1_name] = [
         sw1_gdp_name,
         sw1_gtp_wat_name,
-        noise_name,
+                       outlier_name,
+                disorder_name
     ]
     pocket_loop_cluster_dict[sp2_name][sw1_name] = [
         sw1_gdp_name,
-        noise_name,
+                        outlier_name,
+                disorder_name
     ]
 
     for pocket_site in [sp2_name, sp12_name]:

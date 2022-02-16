@@ -27,6 +27,8 @@ SOFTWARE.
 import os
 import pandas as pd
 
+from ..scripts.annot_lig import annot_lig
+from ..scripts.prep_dih import prep_dih
 from ..scripts.prep_edia import prep_edia
 from ..scripts.build_dih_table import build_dih_table
 from ..scripts.build_dih_matrix import build_dih_matrix
@@ -38,6 +40,7 @@ from ..scripts.build_dist_table import build_dist_table
 from ..scripts.write_pymol_script import write_pymol_script
 
 
+from ..constants.pharm import sp2_name, sp12_name, other_pharm_name, none_pharm_name, pharm_site_dict, pharm_match_dict
 from ..constants.conf import (
     conf_name_dict,
     sw1_name,
@@ -54,21 +57,9 @@ from ..constants.conf import (
     sw1_gtp_dict,
     conf_color_dict,
 )
-from ..constants.nuc import nuc_class_lst, gtp_atomids
+from ..constants.nuc import nuc_class_lst, gtp_atomids, nuc_class_dict
 from ..constants.pml import sup_resids, show_resids
-from ..functions.cluster import dist_to_dih
-from ..functions.col import (
-    cluster_col,
-    loop_col,
-    common_col,
-    rama_col,
-    rotamer_col,
-    pdb_id_col,
-    bio_lig_col,
-    hb_status_col,
-    sw1_col,
-    sw2_col,
-)
+
 from ..functions.table import lst_col, mask_equal, mask_unequal, make_dict
 from ..functions.path import (
     load_table,
@@ -105,7 +96,20 @@ from ..functions.file import (
     pymol_pml_file,
 )
 
-from ..functions.col import pdb_code_col, nuc_class_col, cluster_col
+from ..functions.lig import lig_col_lst
+from ..functions.col import (
+    pdb_code_col, 
+    loop_col,
+    common_col,
+    rama_col,
+    rotamer_col,
+    pdb_id_col,
+    bio_lig_col,
+    hb_status_col,
+    sw1_col,
+    sw2_col,
+    pharm_lig_site_col,
+    nuc_class_col, cluster_col, core_path_col,pharm_class_col,)
 
 
 def cluster_rascore(build_path, out_path=None, name_table_path=None, num_cpu=1):
@@ -135,24 +139,49 @@ def cluster_rascore(build_path, out_path=None, name_table_path=None, num_cpu=1):
 
     df = load_table(entry_table_path)
 
-    try:
-        pdb_code_lst = lst_col(df, pdb_code_col, unique=True)
-        sifts_dict = load_json(sifts_json_path)
-        prep_edia(
-            pdb_codes=pdb_code_lst,
-            edia_dir=build_path,
-            sifts_dict=sifts_dict,
-            edia_json_path=edia_json_path,
-            num_cpu=num_cpu,
-        )
-    except:
-        delete_path(edia_json_path)
+    df_col_lst = list(df.columns)
+
+    if pdb_code_col in df_col_lst:
+        try:
+            pdb_code_lst = lst_col(df, pdb_code_col, unique=True)
+            sifts_dict = load_json(sifts_json_path)
+            prep_edia(
+                pdb_codes=pdb_code_lst,
+                edia_dir=build_path,
+                sifts_dict=sifts_dict,
+                edia_json_path=edia_json_path,
+                num_cpu=num_cpu,
+            )
+        except:
+            delete_path(edia_json_path)
 
     dih_dict = load_json(dih_json_path)
     edia_dict = load_json(edia_json_path)
 
+    if dih_dict is None:
+        prep_dih(lst_col(df,core_path_col),dih_json_path=dih_json_path,num_cpu=num_cpu)
+        dih_dict = load_json(dih_json_path)
+
+    if len([x for x in lig_col_lst if x not in df_col_lst]) > 0:
+        df = annot_lig(
+            df=df,
+            site_dict=pharm_site_dict,
+            match_dict=pharm_match_dict,
+            num_cpu=num_cpu,
+        )
+
+    if pharm_class_col not in df_col_lst:
+        for index in list(df.index.values):
+            pharm_class = df.at[index, pharm_lig_site_col]
+            if pharm_class not in [sp2_name, sp12_name, none_pharm_name]:
+                pharm_class = other_pharm_name
+            df.at[index, pharm_class_col] = pharm_class
+
+    if nuc_class_col not in df_col_lst:
+        df[nuc_class_col] = df[bio_lig_col].map(nuc_class_dict).fillna(gtp_name)
+
     for col in [sw1_col, sw2_col]:
-        if col in list(df.columns):
+        if col in df_col_lst:
             del df[col]
 
     for loop_name, loop_resids in loop_resid_dict.items():

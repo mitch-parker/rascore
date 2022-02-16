@@ -47,7 +47,7 @@ conda install -c conda-forge fpocket=4.0.0
 - Coordinate files must be provided in mmCIF or PDB formats and numbered according to UniProt scheme. The following inputs are possible: 
     - Space-separated list
     - Line-separated list file
-    - Tab-separated table file with columns core_path (coordinate path), modelid (optional, model number), chainid (chain identifier), nuc_class (optional, nucleotide state)
+    - Tab-separated table file with columns core_path (coordinate path), modelid (optional, model number), chainid (chain identifier), nucleotide_class (optional, nucleotide state)
 
 ### 2) Build the Rascore database from the Protein Data Bank:
 

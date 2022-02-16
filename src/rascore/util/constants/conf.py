@@ -38,6 +38,7 @@ from ..functions.color import (
     light_cyan_hex,
     light_pink_hex,
     light_brown_hex,
+    light_gray_hex
 )
 from .nuc import nf_name, gdp_name, gtp_name, nf_color, gdp_color, gtp_color
 from .pharm import sp2_name, sp12_name
@@ -75,6 +76,8 @@ r_name = "R"
 t_name = "T"
 
 noise_name = "Noise"
+outlier_name = 'Outlier'
+disorder_name = 'Disordered'
 
 sw1_gtp_wat_name = f"{sw1_gtp_name}-{wathb_name}"
 sw1_gtp_dir_name = f"{sw1_gtp_name}-{dirhb_name}"
@@ -84,7 +87,8 @@ sw1_gtp_wat_color = cyan_hex
 sw1_gtp_dir_color = purple_hex
 sw1_gtp_no_color = pink_hex
 
-noise_color = gray_hex
+outlier_color = gray_hex
+disorder_color = light_gray_hex
 
 sw1_gtp_dict = {
     wmhb_name: sw1_gtp_wat_name,
@@ -161,7 +165,8 @@ conf_color_dict = {
         sw1_gtp_wat_name: sw1_gtp_wat_color,
         sw1_gtp_dir_name: sw1_gtp_dir_color,
         sw1_gtp_no_name: sw1_gtp_no_color,
-        noise_name: noise_color,
+                outlier_name:outlier_color,
+        disorder_name:disorder_color
     },
     sw2_name: {
         sw2_nf_gef_name: light_blue_hex,
@@ -173,7 +178,8 @@ conf_color_dict = {
         sw2_gtp_sp12_a_name: light_cyan_hex,
         sw2_gtp_t_name: light_pink_hex,
         sw2_gtp_sp12_b_name: light_brown_hex,
-        noise_name: noise_color,
+                 outlier_name:outlier_color,
+        disorder_name:disorder_color
     },
 }
 
@@ -183,7 +189,8 @@ conf_nuc_color_dict = {
         sw1_nf_name: nf_color,
         sw1_gdp_name: gdp_color,
         sw1_gtp_name: gtp_color,
-        noise_name: noise_color,
+                outlier_name:outlier_color,
+        disorder_name:disorder_color
     },
     sw2_name: {
         sw2_nf_gef_name: nf_color,
@@ -195,6 +202,7 @@ conf_nuc_color_dict = {
         sw2_gtp_sp12_a_name: gtp_color,
         sw2_gtp_t_name: gtp_color,
         sw2_gtp_sp12_b_name: gtp_color,
-        noise_name: noise_color,
+                outlier_name:outlier_color,
+        disorder_name:disorder_color
     },
 }

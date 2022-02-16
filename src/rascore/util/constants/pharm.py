@@ -59,7 +59,7 @@ pharm_color_dict = {
     sp2_name: sp2_color,
     sp12_name: sp12_color,
     other_pharm_name: other_pharm_color,
-    mult_pharm_color: mult_pharm_color,
+    mult_pharm_name: mult_pharm_color,
     none_pharm_name: none_pharm_color,
 }
 
