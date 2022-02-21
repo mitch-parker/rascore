@@ -67,8 +67,8 @@ from ..functions.coord import load_coord, get_modelid, get_chainid
 from ..functions.lig import lig_col_lst
 from ..functions.col import (
     id_col,
-    pharm_class_col,
-    pharm_lig_site_col,
+    match_class_col,
+    pharm_lig_match_col,
     nuc_class_col,
     bio_lig_col,
     cluster_col,
@@ -93,10 +93,8 @@ from ..constants.nuc import (
 from ..constants.pharm import (
     pharm_site_dict,
     pharm_match_dict,
-    sp2_name,
-    sp12_name,
-    none_pharm_name,
-    other_pharm_name,
+    mult_pharm_name
+    
 )
 from ..constants.conf import (
     loop_resid_dict,
@@ -199,12 +197,14 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None, num_cpu=1):
                     num_cpu=num_cpu,
                 )
 
-            if pharm_class_col not in df_col_lst:
+            if match_class_col not in df_col_lst:       
                 for index in list(df.index.values):
-                    pharm_class = df.at[index, pharm_lig_site_col]
-                    if pharm_class not in [sp2_name, sp12_name, none_pharm_name]:
-                        pharm_class = other_pharm_name
-                    df.at[index, pharm_class_col] = pharm_class
+                    pharm_match = df.at[index, pharm_lig_match_col]
+                    if "|" in pharm_match:
+                        match_class = mult_pharm_name
+                    else:
+                        match_class = pharm_match
+                    df.at[index, match_class_col] = match_class
 
             if nuc_class_col not in df_col_lst:
                 df[nuc_class_col] = df[bio_lig_col].map(nuc_class_dict).fillna(gtp_name)

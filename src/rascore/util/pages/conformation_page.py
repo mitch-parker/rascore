@@ -83,11 +83,32 @@ def conformation_page():
     st.sidebar.markdown(
         """
     **Note.** Only structures with completely modeled loops from original clustering are displayed.
-    Tables below structures include updated counts from *rascore* database.
+    Tables below structures include updated counts from *Rascore* database.
     """
     )
 
     data_path = get_neighbor_path(__file__, pages_str, data_str)
+
+    sum_df = (
+                    pd.pivot_table(
+                        data=rename_st_cols(df),
+                        index=rename_col_dict[sw2_name],
+                        columns=rename_col_dict[sw1_name],
+                        values=rename_col_dict[pdb_id_col],
+                        aggfunc="nunique",
+                        margins=True,
+                    )
+                    .reset_index()
+                    .fillna("")
+                )
+
+    for col in list(sum_df.columns):
+        sum_df[col] = sum_df[col].map(str)
+        sum_df = fix_col(sum_df, col)
+
+    sum_df = sum_df.rename(columns={rename_col_dict[sw2_name]:'Conformation'})
+
+    show_st_table(sum_df)
 
     sw1_df = load_table(
         get_file_path(

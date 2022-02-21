@@ -64,8 +64,8 @@ def main(args):
         )
     elif build is not None:
 
-        from rascore.util.pipelines.prep_rascore import prep_rascore
-        from rascore.util.pipelines.build_rascore import build_rascore
+        from util.pipelines.prep_rascore import prep_rascore
+        from util.pipelines.build_rascore import build_rascore
 
         pdbaa_fasta_path = None
         if build is not True:
@@ -118,16 +118,16 @@ def main(args):
 
 def cli(args=None):
 
-    print(pyfiglet.figlet_format("rascore"))
+    print(pyfiglet.figlet_format("Rascore"))
     print("A tool for analyzing the conformations of RAS structures\n")
-    print("Author: Mitchell Isaac Parker <mitch.isaac.parker@gmail.com>")
+    print("Author: Mitchell Isaac Parker <mip34@drexel.edu>")
     print("License: MIT License\n")
 
     if not args:
         args = sys.argv[1:]
 
     parser = argparse.ArgumentParser(
-        description="rascore: A tool for analyzing the conformations of RAS structures"
+        description="Rascore: A tool for analyzing the conformations of RAS structures"
     )
 
     group = parser.add_mutually_exclusive_group()

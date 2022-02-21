@@ -2,7 +2,7 @@
 name = "rascore"
 version = "0.2.0"
 description = "A tool for analyzing the conformations of RAS structures"
-authors = ["mitch-parker <mitch.isaac.parker@gmail.com>"]
+authors = ["mitch-parker <mip34@drexel.edu>"]
 license = "MIT License"
 
 [tool.poetry.dependencies]
