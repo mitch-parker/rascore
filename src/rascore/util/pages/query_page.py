@@ -134,7 +134,7 @@ def query_page():
         mask_df = mask_st_table(mask_df, mask_dict)
 
     if len(mask_df) == 0:
-        st.warning("No Structures Available Based On Inputted Query")
+        st.warning("No Structures Available Based On Selected Query")
     else:
 
         left_query_col, right_query_col = st.columns(2)
@@ -176,7 +176,7 @@ def query_page():
             elif loop_name == sw2_name:
                 table_col = right_table_col
 
-            table_col.markdown(f"#### {loop_name} Conformation(s)")
+            table_col.markdown(f"#### {loop_name} Conformations")
 
             loop_df = (
                 pd.pivot_table(
@@ -203,7 +203,7 @@ def query_page():
 
         st.markdown("---")
 
-        st.markdown("#### Download PyMOL Script(s)")
+        st.markdown("#### Download PyMOL Scripts")
 
         pymol_lst = [x for x in list(pymol_color_dict.keys()) if x != pocket_lig_col]
 

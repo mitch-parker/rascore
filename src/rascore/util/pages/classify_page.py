@@ -57,7 +57,7 @@ def classify_page():
     st.markdown("---")
 
     st_file_lst = st.file_uploader(
-        "Upload RAS Structure(s)", accept_multiple_files=True
+        "Upload Coordinate Files", accept_multiple_files=True
     )
 
     table_st_file = None
@@ -80,7 +80,7 @@ def classify_page():
         out_file = st.text_input(
             label="Classify File Name", value="rascore_classify.tsv"
         )
-        submit_files = st.form_submit_button(label="Classify Structure(s)")
+        submit_files = st.form_submit_button(label="Classify Structures")
 
     if submit_files:
         if len(st_file_lst) > 0:
