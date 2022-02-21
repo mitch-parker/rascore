@@ -84,7 +84,7 @@ def classify_page():
 
     if submit_files:
         if len(st_file_lst) > 0:
-            with st.spinner(text="Classifying Structure(s)"):
+            with st.spinner(text="Classifying Structures"):
 
                 try:
                     coord_path_lst = list()
@@ -113,7 +113,7 @@ def classify_page():
 
                     classify_rascore(classify_input, out_path=classify_path)
 
-                    st.success("Classified Structure(s)")
+                    st.success("Classified Structures")
 
                     result_file_path = get_file_path(
                         result_table_file, dir_path=classify_path
@@ -129,7 +129,7 @@ def classify_page():
 
                     download_st_df(df, out_file, "Download Classification Table")
                 except:
-                    st.error("Error Analyzing Inputted Structure(s)")
+                    st.error("Error Analyzing Uploaded Structures")
 
                 delete_path(classify_path)
                 for coord_path in coord_path_lst:

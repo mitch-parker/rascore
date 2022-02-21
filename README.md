@@ -42,7 +42,7 @@ conda install -c conda-forge fpocket=4.0.0
 
 ### 1) Conformationally classify RAS structures:
 
-**rascore -classify [path to coordinate file(s)] -out [output directory path]**
+**rascore -classify [path to coordinate files] -out [output directory path]**
 
 - Coordinate files must be provided in mmCIF or PDB formats and numbered according to UniProt scheme. The following inputs are possible: 
     - Space-separated list

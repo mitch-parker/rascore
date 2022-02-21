@@ -136,7 +136,7 @@ def cli(args=None):
         "--classify",
         nargs="+",
         required=False,
-        help="path to coordinate file(s) of RAS structures to conformationally classify provided as a space-separated list, line-sepated file, or tab-seperated file (output files saved to rascore_classify in current working directory unless an output directory path is specified)",
+        help="path to coordinate files of RAS structures to conformationally classify provided as a space-separated list, line-sepated file, or tab-seperated file (output files saved to rascore_classify in current working directory unless an output directory path is specified)",
     )
     group.add_argument(
         "-build",

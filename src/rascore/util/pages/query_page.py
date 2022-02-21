@@ -25,6 +25,7 @@ SOFTWARE.
 
 import pandas as pd
 import streamlit as st
+from random import randint
 
 from ..scripts.write_pymol_script import write_pymol_script
 
@@ -38,9 +39,11 @@ from ..functions.gui import (
     show_st_dataframe,
     write_st_end,
 )
+from ..functions.lst import lst_nums
 from ..constants.nuc import nuc_class_lst
 from ..constants.gene import gene_class_lst
 from ..functions.table import lst_col, fix_col, mask_equal
+from ..functions.color import get_lst_colors
 from ..constants.pml import sup_resids, sup_pdb_code, sup_chainid, mono_view
 from ..functions.col import (
     rename_col_dict,
@@ -76,7 +79,7 @@ from ..functions.path import (
     rascore_str,
 )
 
-from ..constants.conf import sw1_name, sw2_name, loop_resid_dict, conf_color_dict
+from ..constants.conf import sw1_name, sw2_name, loop_resid_dict, conf_color_dict, sw1_color,sw2_color
 from ..functions.file import (
     entry_table_file,
     sum_table_file,
@@ -203,11 +206,9 @@ def query_page():
 
         st.markdown("---")
 
-        st.markdown("#### Download PyMOL Scripts")
+        st.markdown("#### Download PyMOL Script")
 
         pymol_lst = [x for x in list(pymol_color_dict.keys()) if x != pocket_lig_col]
-
-        pymol_df = gene_nuc_df.copy(deep=True)
 
         coord_path_col = pdb_code_col
         sup_coord_path = sup_pdb_code
@@ -220,12 +221,15 @@ def query_page():
                 core_path_col,
             )[0]
 
-        left_pymol_col, right_pymol_col = st.columns(2)
+        group_col = st.selectbox("Group By Selection", [rename_col_dict[x] for x in conf_col_lst + annot_col_lst])
 
-        show_lst = left_pymol_col.multiselect(
+        show_lst = st.multiselect(
             "Show Molecular Contents",
-            [rename_col_dict[x] for x in pymol_lst],
+            [rename_col_dict[x] for x in pymol_lst],default=[rename_col_dict[bio_lig_col],rename_col_dict[pharm_lig_col]]
         )
+
+
+        left_pymol_col, right_pymol_col = st.columns(2)
 
         show_color_dict = dict()
         for col in list(pymol_color_dict.keys()):
@@ -237,62 +241,103 @@ def query_page():
                 )
             show_color_dict[col] = color
 
-        fetch_path = left_pymol_col.text_input(
+        style_dict = {"Ribbon": False, "Trace": True}
+
+        style_ribbon = style_dict[
+            right_pymol_col.radio("Cartoon Style", ["Ribbon", "Trace"])
+        ]
+
+
+        stick_resids = right_pymol_col.multiselect(
+            'Stick Residues',
+            lst_nums(1,189),
+            default=[32,71]
+        )
+
+        loop_resids = list()
+        for loop_name in list(loop_resid_dict.keys()):
+            if right_pymol_col.checkbox(f"Display {loop_name}",value=True):
+                loop_resids.append(loop_resid_dict[loop_name])
+
+        color_group = left_pymol_col.checkbox("Color Loops By Group")
+        left_pymol_col.write("**Default:** Colors SW1 pink and SW2 purple")
+
+        if color_group:
+            if group_col == rename_col_dict[sw1_name]: 
+                color_palette = conf_color_dict[sw1_name]
+            elif group_col == rename_col_dict[sw2_name]: 
+                color_palette = conf_color_dict[sw2_name]
+            else:
+                group_color_palette = get_lst_colors(lst_col(gene_nuc_df,group_col,unique=True),return_dict=True)
+                if len(group_color_palette.items()) > 10:
+                    color_palette = group_color_palette.copy()
+                else:
+                    left_color_col, right_color_col = st.columns(2)
+                    color_palette = dict()
+                    i = 0
+                    for group, color in group_color_palette.items():
+                        if i == 0:
+                            color_palette[group] = left_color_col.text_input(
+                                f"{group} Color", value=color
+                            )
+                            i += 1
+                        elif i == 1:
+                            color_palette[group] = right_color_col.text_input(
+                                f"{group} Color", value=color
+                            )
+                            i = 0
+        else:
+            color_palette = [sw1_color,sw2_color]
+
+        fetch_path = st.text_input(
             label="Fetch Path (e.g., /Users/mitch-parker/rascore)",
         )
 
-        for loop_name, loop_resids in loop_resid_dict.items():
+        pymol_file_path = get_file_path(
+            f"{pymol_pml_file}_{randint(0,3261994)}",
+            dir_path=get_neighbor_path(__file__, pages_str, data_str),
+        )
 
-            if loop_name == sw1_name:
-                stick_resid = [32]
-            elif loop_name == sw2_name:
-                stick_resid = [71]
-
-            pymol_file_path = get_file_path(
-                f"{loop_name}_{pymol_pml_file}",
-                dir_path=get_neighbor_path(__file__, pages_str, data_str),
-            )
-
-            pymol_file_name = right_pymol_col.text_input(
-                label=f"{loop_name} Script File Name",
-                value=f"{loop_name}_{pymol_pml_file}",
-            )
-            if right_pymol_col.button(f"Create {loop_name} Script File"):
-                with st.spinner(text=f"Creating {loop_name} PyMOL File"):
-                    write_pymol_script(
-                        pymol_df,
-                        pymol_file_path,
-                        group_col=loop_name,
-                        stick_resids=stick_resid,
-                        loop_resids=loop_resids,
-                        style_ribbon=True,
-                        thick_bb=False,
-                        color_palette=conf_color_dict[loop_name],
-                        show_bio=show_color_dict[bio_lig_col],
-                        show_ion=show_color_dict[ion_lig_col],
-                        show_pharm=show_color_dict[pharm_lig_col],
-                        show_chem=show_color_dict[chem_lig_col],
-                        show_mod=show_color_dict[mod_lig_col],
-                        show_mem=show_color_dict[mem_lig_col],
-                        show_pocket=show_color_dict[pocket_lig_col],
-                        show_prot=show_color_dict[bound_prot_chainid_col],
-                        sup_resids=sup_resids,
-                        show_resids=sup_resids,
-                        sup_coord_path=sup_coord_path,
-                        sup_chainid=sup_chainid,
-                        set_view=mono_view,
-                        coord_path_col=coord_path_col,
-                        fetch_path=fetch_path,
-                    )
-
-                download_st_file(
+        pymol_file_name = st.text_input(
+            label="Script File Name",
+            value=f"{rascore_str}_{pymol_pml_file}",
+        )
+        if st.button(f"Create Script File"):
+            with st.spinner(text=f"Creating Script File"):
+                write_pymol_script(
+                    gene_nuc_df,
                     pymol_file_path,
-                    pymol_file_name,
-                    f"Download {loop_name} Script File",
-                    st_col=right_pymol_col,
+                    group_col=[x for x in conf_col_lst + annot_col_lst if rename_col_dict[x] == group_col][0],
+                    stick_resids=stick_resids,
+                    loop_resids=loop_resids,
+                    style_ribbon=style_ribbon,
+                    thick_bb=False,
+                    color_group=color_group,
+                    color_palette=color_palette,
+                    show_bio=show_color_dict[bio_lig_col],
+                    show_ion=show_color_dict[ion_lig_col],
+                    show_pharm=show_color_dict[pharm_lig_col],
+                    show_chem=show_color_dict[chem_lig_col],
+                    show_mod=show_color_dict[mod_lig_col],
+                    show_mem=show_color_dict[mem_lig_col],
+                    show_pocket=show_color_dict[pocket_lig_col],
+                    show_prot=show_color_dict[bound_prot_chainid_col],
+                    sup_resids=sup_resids,
+                    show_resids=sup_resids,
+                    sup_coord_path=sup_coord_path,
+                    sup_chainid=sup_chainid,
+                    set_view=mono_view,
+                    coord_path_col=coord_path_col,
+                    fetch_path=fetch_path,
                 )
 
-                delete_path(pymol_file_path)
+            download_st_file(
+                pymol_file_path,
+                pymol_file_name,
+                f"Download Script File",
+            )
+
+            delete_path(pymol_file_path)
 
         st.markdown("---")
 
