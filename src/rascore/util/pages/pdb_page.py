@@ -95,7 +95,7 @@ def pdb_page():
     chainid_df = mask_st_table(pdb_df, {chainid_col: chainid})
 
     st.markdown(
-        f"### PDB: [{pdb_code}](https://www.rcsb.org/structure/{pdb_code}) ({df.at[0,gene_class_col]}) - Chain {chainid}"
+        f"### PDB: [{pdb_code}](https://www.rcsb.org/structure/{pdb_code}) ({chainid_df.at[0,gene_class_col]}) - Chain {chainid}"
     )
 
     left_col, right_col = st.columns(2)
