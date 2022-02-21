@@ -139,19 +139,10 @@ def pdb_page():
 
     st.markdown("---")
 
+    left_check_col, right_check_col = st.columns(2)
     left_view_col, right_view_col = st.columns(2)
 
-    style_dict = {"Ribbon": "oval", "Trace": "trace"}
-
-    cartoon_style = style_dict[
-        right_view_col.radio("Cartoon Style", ["Ribbon", "Trace"])
-    ]
-
-    surf_trans = right_view_col.slider(
-        "Surface Transparency", min_value=0.0, max_value=1.0
-    )
-
-    left_view_col.markdown("#### Bound Ligand(s)")
+    left_check_col.markdown("#### Bound Ligand(s)")
 
     lig_check_dict = dict()
     for col in [
@@ -166,31 +157,44 @@ def pdb_page():
         if "None" not in lig_lst:
             lig_check_dict[col] = dict()
             for lig in lig_lst:
-                lig_check_dict[col][lig] = left_view_col.checkbox(
+                lig_check_dict[col][lig] = left_check_col.checkbox(
                     f"{rename_col_dict[col]}: {lig}"
                 )
 
     if len(lig_check_dict.keys()) == 0:
-        left_view_col.write("No bound ligands.")
+        left_check_col.write("No bound ligands.")
 
-    left_view_col.markdown("#### Mutation Site(s)")
+    right_check_col.markdown("#### Mutation Site(s)")
 
     mut_check_dict = dict()
     for mut in str_to_lst(chainid_df.at[0, mut_status_col]):
         if mut != "WT":
-            mut_check_dict[mut] = left_view_col.checkbox(mut)
+            mut_check_dict[mut] = right_check_col.checkbox(mut)
 
     if len(mut_check_dict.keys()) == 0:
-        left_view_col.write("Not Mutated.")
+        right_check_col.write("Not Mutated.")
+
+    left_view_col.markdown("#### Viewer Settings")
+
+    style_dict = {"Ribbon": "oval", "Trace": "trace"}
+
+    cartoon_style = style_dict[
+        left_view_col.radio("Cartoon Style", ["Ribbon", "Trace"])
+    ]
+
+    surf_trans = left_view_col.slider(
+        "Surface Transparency", min_value=0.0, max_value=1.0
+    )
+
+    rotate_view = left_view_col.checkbox("Rotate Structure")
+
 
     style_lst = list()
     label_lst = list()
 
-    rotate_view = right_view_col.checkbox("Rotate Structure")
-
     opacity = 0
     if len(pdb_df) > 1:
-        all_chains = right_view_col.checkbox("Show All Chains")
+        all_chains = left_view_col.checkbox("Show All Chains")
 
         if all_chains:
             opacity = 0.75
@@ -441,16 +445,18 @@ def pdb_page():
             ]
         )
 
-    st.markdown("---")
-
-    show_st_structure(
-        pdb_code,
-        style_lst=style_lst,
-        surface_lst=surface_lst,
-        label_lst=label_lst,
-        cartoon_style=cartoon_style,
-        spin_on=rotate_view,
-        zoom_dict={"chain": chainid},
-    )
+    with right_view_col:
+        show_st_structure(
+            pdb_code,
+            style_lst=style_lst,
+            surface_lst=surface_lst,
+            label_lst=label_lst,
+            cartoon_style=cartoon_style,
+            spin_on=rotate_view,
+            zoom_dict={"chain": chainid},
+            zoom=1.5,
+            width=450,
+            height=450,
+        )
 
     write_st_end()
