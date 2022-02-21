@@ -142,7 +142,7 @@ def pdb_page():
     left_check_col, right_check_col = st.columns(2)
     left_view_col, right_view_col = st.columns(2)
 
-    left_check_col.markdown("#### Bound Ligand(s)")
+    left_check_col.markdown("#### Bound Ligands")
 
     lig_check_dict = dict()
     for col in [
@@ -164,7 +164,7 @@ def pdb_page():
     if len(lig_check_dict.keys()) == 0:
         left_check_col.write("No bound ligands.")
 
-    right_check_col.markdown("#### Mutation Site(s)")
+    right_check_col.markdown("#### Mutation Sites")
 
     mut_check_dict = dict()
     for mut in str_to_lst(chainid_df.at[0, mut_status_col]):
