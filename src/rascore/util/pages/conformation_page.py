@@ -106,7 +106,7 @@ def conformation_page():
         sum_df[col] = sum_df[col].map(str)
         sum_df = fix_col(sum_df, col)
 
-    sum_df = sum_df.rename(columns={rename_col_dict[sw2_name]:'Conformation'})
+    sum_df = sum_df.rename(columns={rename_col_dict[sw2_name]:'Conformation Name'})
 
     show_st_table(sum_df)
 

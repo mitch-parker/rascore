@@ -256,7 +256,7 @@ def query_page():
 
             loop_resids = list()
             for loop_name in list(loop_resid_dict.keys()):
-                if right_pymol_col.checkbox(f"Display {loop_name}",value=True):
+                if right_pymol_col.checkbox(f"Highlight {loop_name}",value=True):
                     loop_resids.append(loop_resid_dict[loop_name])
 
             color_group = left_pymol_col.checkbox("Color Loops By Group")
