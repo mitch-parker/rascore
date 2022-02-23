@@ -268,7 +268,7 @@ def query_page():
                 elif group_col == rename_col_dict[sw2_name]: 
                     color_palette = conf_color_dict[sw2_name]
                 else:
-                    group_color_palette = get_lst_colors(lst_col(gene_nuc_df,group_col,unique=True),return_dict=True)
+                    group_color_palette = get_lst_colors(lst_col(rename_st_cols(gene_nuc_df),group_col,unique=True),return_dict=True)
                     if len(group_color_palette.items()) > 10:
                         color_palette = group_color_palette.copy()
                     else:

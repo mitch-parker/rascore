@@ -39,6 +39,7 @@ from ..functions.path import (
     rascore_str,
     classify_str,
 )
+from ..functions.lst import res_to_lst
 from ..functions.file import result_table_file
 from ..functions.gui import (
     save_st_file,
@@ -62,6 +63,23 @@ def classify_page():
 
     table_st_file = None
     with st.expander("Optional Input", expanded=False):
+
+        left_col, right_col = st.columns(2)
+
+        sw1_resids = left_col.text_input('SW1 Residues',value="25-40")
+        sw2_resids = right_col.text_input('SW2 Residues',value="56-76")
+
+        sw1_len = len(res_to_lst('25-40'))
+        sw2_len = len(res_to_lst('57-76'))
+
+        if len(res_to_lst(sw1_resids)) != sw1_len:
+            left_col.warning(f'SW1 Must Be {sw1_len} Residue Long')
+
+        if len(res_to_lst(sw2_resids)) != len(res_to_lst('56-76')):
+            right_col.warning(f'SW2 Must Be {sw2_len} Residue Long')
+
+        y32_resid = left_col.text_input('Y32 Residue',value=32)
+        y71_resid = right_col.text_input('Y71 Residue',value=71)
 
         st.markdown(
             """
@@ -111,7 +129,7 @@ def classify_page():
                         ].map(path_dict)
                         delete_path(table_path)
 
-                    classify_rascore(classify_input, out_path=classify_path)
+                    classify_rascore(classify_input, y32_resid=y32_resid, y71_resid=y71_resid, sw1_resids=sw1_resids, sw2_resids=sw2_resids, out_path=classify_path)
 
                     st.success("Classified Structures")
 

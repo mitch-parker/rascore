@@ -304,7 +304,4 @@ def conformation_page():
 
                     show_st_table(table_df, st_col=loop_col)
 
-        if nuc_class != gtp_name:
-            st.markdown("---")
-
     write_st_end()

@@ -97,7 +97,6 @@ from ..constants.pharm import (
     
 )
 from ..constants.conf import (
-    loop_resid_dict,
     sw1_name,
     sw2_name,
     sw1_gtp_name,
@@ -113,7 +112,9 @@ from ..constants.conf import (
 from ..constants.pml import sup_resids, show_resids
 
 
-def classify_rascore(file_paths, out_path=None, dih_dict=None, num_cpu=1):
+def classify_rascore(file_paths, out_path=None, dih_dict=None, 
+                    sw1_resids="25-40", sw2_resids="56-76", 
+                    y32_resid=32, y71_resid=71, num_cpu=1):
 
     if out_path is None:
         out_path = f"{os.getcwd()}/{rascore_str}_{classify_str}"
@@ -212,7 +213,7 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None, num_cpu=1):
             if dih_dict is None:
                 dih_dict = prep_dih(coord_path_lst, num_cpu=num_cpu)
 
-            for loop_name, loop_resids in loop_resid_dict.items():
+            for loop_name in [sw1_name, sw2_name]:
 
                 cluster_loop_path = f"{cluster_path}/{loop_name}"
                 classify_loop_path = f"{out_path}/{loop_name}"
@@ -261,10 +262,13 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None, num_cpu=1):
                     nuc_df = mask_equal(df, nuc_class_col, nuc_class)
 
                     if len(nuc_df) > 0:
-
-                        chi1_resids = None
-                        if loop_name == sw2_name:
-                            chi1_resids = 71
+                        
+                        if loop_name == sw1_name:
+                            chi1_resids = None
+                            loop_resids = sw1_resids
+                        elif loop_name == sw2_name:
+                            loop_resids = sw2_resids
+                            chi1_resids = y71_resid
 
                         dih_df = build_dih_table(
                             df=nuc_df,
@@ -368,7 +372,7 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None, num_cpu=1):
             if sw1_gtp_name in lst_col(df, sw1_name, unique=True):
                 dist_df = build_dist_table(
                     mask_equal(df, sw1_name, sw1_gtp_name),
-                    x_resids=[32],
+                    x_resids=[y32_resid],
                     y_resids=[bio_lig_col],
                     x_atomids=["OH"],
                     y_atomids=[gtp_atomids],
@@ -404,16 +408,18 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None, num_cpu=1):
 
             save_table(result_table_path, df)
 
-            for loop_name, loop_resids in loop_resid_dict.items():
+            for loop_name in [sw1_name,sw2_name]:
 
                 pymol_pml_path = get_file_path(
                     f"{loop_name}_{pymol_pml_file}", dir_path=out_path
                 )
 
                 if loop_name == sw1_name:
-                    stick_resids = [32]
+                    loop_resids = sw1_resids
+                    stick_resids = [y32_resid]
                 elif loop_name == sw2_name:
-                    stick_resids = [71]
+                    loop_resids = sw2_resids
+                    stick_resids = [y71_resid]
 
                 write_pymol_script(
                     df,
