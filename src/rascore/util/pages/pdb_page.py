@@ -329,7 +329,7 @@ def pdb_page():
                         "resn": [pharm_lig],
                         "elem": ["N", "O", "H"],
                     },
-                    {"stick": {"colorscheme": "Carbon", "radius": 0.2}},
+                    {"stick": {"colorscheme": "lightgrayCarbon", "radius": 0.2}},
                 ]
             )
 

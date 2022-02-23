@@ -204,206 +204,206 @@ def query_page():
             '**Note.** "3P" for GTP or GTP analog-bound, "2P" for GDP-bound, and "0P" for nucleotide-free'
         )
 
-        st.markdown("---")
+        with st.expander("PyMOL Script", expanded=False):
 
-        st.markdown("#### Download PyMOL Script")
+            st.markdown("#### PyMOL Script")
 
-        pymol_lst = [x for x in list(pymol_color_dict.keys()) if x != pocket_lig_col]
+            pymol_lst = [x for x in list(pymol_color_dict.keys()) if x != pocket_lig_col]
 
-        coord_path_col = pdb_code_col
-        sup_coord_path = sup_pdb_code
-        if len(
-            [x for x in lst_col(gene_nuc_df, core_path_col) if path_exists(x)]
-        ) == len(gene_nuc_df):
-            coord_path_col = core_path_col
-            sup_coord_path = lst_col(
-                mask_equal(df, pdb_id_col, f"{sup_pdb_code}{sup_chainid}"),
-                core_path_col,
-            )[0]
+            coord_path_col = pdb_code_col
+            sup_coord_path = sup_pdb_code
+            if len(
+                [x for x in lst_col(gene_nuc_df, core_path_col) if path_exists(x)]
+            ) == len(gene_nuc_df):
+                coord_path_col = core_path_col
+                sup_coord_path = lst_col(
+                    mask_equal(df, pdb_id_col, f"{sup_pdb_code}{sup_chainid}"),
+                    core_path_col,
+                )[0]
 
-        group_col = st.selectbox("Group By Selection", [rename_col_dict[x] for x in conf_col_lst + annot_col_lst])
+            group_col = st.selectbox("Group By Selection", [rename_col_dict[x] for x in conf_col_lst + annot_col_lst])
 
-        show_lst = st.multiselect(
-            "Show Molecular Contents",
-            [rename_col_dict[x] for x in pymol_lst],default=[rename_col_dict[bio_lig_col],rename_col_dict[pharm_lig_col]]
-        )
-
-
-        left_pymol_col, right_pymol_col = st.columns(2)
-
-        show_color_dict = dict()
-        for col in list(pymol_color_dict.keys()):
-            rename_col = rename_col_dict[col]
-            color = None
-            if rename_col in show_lst:
-                color = left_pymol_col.text_input(
-                    f"{rename_col} Color", value=pymol_color_dict[col]
-                )
-            show_color_dict[col] = color
-
-        style_dict = {"Ribbon": False, "Trace": True}
-
-        style_ribbon = style_dict[
-            right_pymol_col.radio("Cartoon Style", ["Ribbon", "Trace"])
-        ]
-
-
-        stick_resids = right_pymol_col.multiselect(
-            'Stick Residues',
-            lst_nums(1,189),
-            default=[32,71]
-        )
-
-        loop_resids = list()
-        for loop_name in list(loop_resid_dict.keys()):
-            if right_pymol_col.checkbox(f"Display {loop_name}",value=True):
-                loop_resids.append(loop_resid_dict[loop_name])
-
-        color_group = left_pymol_col.checkbox("Color Loops By Group")
-        left_pymol_col.write("**Default:** Colors SW1 pink and SW2 purple")
-
-        if color_group:
-            if group_col == rename_col_dict[sw1_name]: 
-                color_palette = conf_color_dict[sw1_name]
-            elif group_col == rename_col_dict[sw2_name]: 
-                color_palette = conf_color_dict[sw2_name]
-            else:
-                group_color_palette = get_lst_colors(lst_col(gene_nuc_df,group_col,unique=True),return_dict=True)
-                if len(group_color_palette.items()) > 10:
-                    color_palette = group_color_palette.copy()
-                else:
-                    left_color_col, right_color_col = st.columns(2)
-                    color_palette = dict()
-                    i = 0
-                    for group, color in group_color_palette.items():
-                        if i == 0:
-                            color_palette[group] = left_color_col.text_input(
-                                f"{group} Color", value=color
-                            )
-                            i += 1
-                        elif i == 1:
-                            color_palette[group] = right_color_col.text_input(
-                                f"{group} Color", value=color
-                            )
-                            i = 0
-        else:
-            color_palette = [sw1_color,sw2_color]
-
-        fetch_path = st.text_input(
-            label="Fetch Path (e.g., /Users/mitch-parker/rascore)",
-        )
-
-        pymol_file_path = get_file_path(
-            f"{pymol_pml_file}_{randint(0,3261994)}",
-            dir_path=get_neighbor_path(__file__, pages_str, data_str),
-        )
-
-        pymol_file_name = st.text_input(
-            label="Script File Name",
-            value=f"{rascore_str}_{pymol_pml_file}",
-        )
-        if st.button(f"Create Script File"):
-            with st.spinner(text=f"Creating Script File"):
-                write_pymol_script(
-                    gene_nuc_df,
-                    pymol_file_path,
-                    group_col=[x for x in conf_col_lst + annot_col_lst if rename_col_dict[x] == group_col][0],
-                    stick_resids=stick_resids,
-                    loop_resids=loop_resids,
-                    style_ribbon=style_ribbon,
-                    thick_bb=False,
-                    color_group=color_group,
-                    color_palette=color_palette,
-                    show_bio=show_color_dict[bio_lig_col],
-                    show_ion=show_color_dict[ion_lig_col],
-                    show_pharm=show_color_dict[pharm_lig_col],
-                    show_chem=show_color_dict[chem_lig_col],
-                    show_mod=show_color_dict[mod_lig_col],
-                    show_mem=show_color_dict[mem_lig_col],
-                    show_pocket=show_color_dict[pocket_lig_col],
-                    show_prot=show_color_dict[bound_prot_chainid_col],
-                    sup_resids=sup_resids,
-                    show_resids=sup_resids,
-                    sup_coord_path=sup_coord_path,
-                    sup_chainid=sup_chainid,
-                    set_view=mono_view,
-                    coord_path_col=coord_path_col,
-                    fetch_path=fetch_path,
-                )
-
-            download_st_file(
-                pymol_file_path,
-                pymol_file_name,
-                f"Download Script File",
+            show_lst = st.multiselect(
+                "Show Molecular Contents",
+                [rename_col_dict[x] for x in pymol_lst],default=[rename_col_dict[bio_lig_col],rename_col_dict[pharm_lig_col]]
             )
 
-            delete_path(pymol_file_path)
 
-        st.markdown("---")
+            left_pymol_col, right_pymol_col = st.columns(2)
 
-        st.markdown("#### Summary Table")
-
-        left_sum_col, right_sum_col = st.columns(2)
-
-        sum_col_lst = [gene_class_col, nuc_class_col] + conf_col_lst + annot_col_lst
-
-        row_lst = left_sum_col.multiselect(
-            "Rows",
-            [rename_col_dict[x] for x in sum_col_lst],
-            rename_col_dict[sw2_col],
-        )
-
-        col_lst = right_sum_col.multiselect(
-            "Columns",
-            [rename_col_dict[x] for x in sum_col_lst],
-            default=rename_col_dict[sw1_col],
-        )
-
-        gene_nuc_df = rename_st_cols(gene_nuc_df)
-
-        if len([x for x in row_lst if x in col_lst]) > 0:
-            st.warning("Cannot Have Same Selection in Rows and Columns")
-        else:
-            if len(row_lst) > 0 and len(col_lst) > 0:
-                sum_df = (
-                    pd.pivot_table(
-                        data=gene_nuc_df,
-                        index=row_lst,
-                        columns=col_lst,
-                        values=rename_col_dict[pdb_id_col],
-                        aggfunc="nunique",
-                        margins=True,
+            show_color_dict = dict()
+            for col in list(pymol_color_dict.keys()):
+                rename_col = rename_col_dict[col]
+                color = None
+                if rename_col in show_lst:
+                    color = left_pymol_col.text_input(
+                        f"{rename_col} Color", value=pymol_color_dict[col]
                     )
-                    .reset_index()
-                    .fillna("")
+                show_color_dict[col] = color
+
+            style_dict = {"Ribbon": False, "Trace": True}
+
+            style_ribbon = style_dict[
+                right_pymol_col.radio("Cartoon Style", ["Ribbon", "Trace"])
+            ]
+
+
+            stick_resids = right_pymol_col.multiselect(
+                'Stick Residues',
+                lst_nums(1,189),
+                default=[32,71]
+            )
+
+            loop_resids = list()
+            for loop_name in list(loop_resid_dict.keys()):
+                if right_pymol_col.checkbox(f"Display {loop_name}",value=True):
+                    loop_resids.append(loop_resid_dict[loop_name])
+
+            color_group = left_pymol_col.checkbox("Color Loops By Group")
+            left_pymol_col.write("**Default:** Colors SW1 pink and SW2 purple")
+
+            if color_group:
+                if group_col == rename_col_dict[sw1_name]: 
+                    color_palette = conf_color_dict[sw1_name]
+                elif group_col == rename_col_dict[sw2_name]: 
+                    color_palette = conf_color_dict[sw2_name]
+                else:
+                    group_color_palette = get_lst_colors(lst_col(gene_nuc_df,group_col,unique=True),return_dict=True)
+                    if len(group_color_palette.items()) > 10:
+                        color_palette = group_color_palette.copy()
+                    else:
+                        left_color_col, right_color_col = st.columns(2)
+                        color_palette = dict()
+                        i = 0
+                        for group, color in group_color_palette.items():
+                            if i == 0:
+                                color_palette[group] = left_color_col.text_input(
+                                    f"{group} Color", value=color
+                                )
+                                i += 1
+                            elif i == 1:
+                                color_palette[group] = right_color_col.text_input(
+                                    f"{group} Color", value=color
+                                )
+                                i = 0
+            else:
+                color_palette = [sw1_color,sw2_color]
+
+            fetch_path = st.text_input(
+                label="Fetch Path (e.g., /Users/mitch-parker/rascore)",
+            )
+
+            pymol_file_path = get_file_path(
+                f"{pymol_pml_file}_{randint(0,3261994)}",
+                dir_path=get_neighbor_path(__file__, pages_str, data_str),
+            )
+
+            pymol_file_name = st.text_input(
+                label="PyMOL Script Name",
+                value=f"{rascore_str}_{pymol_pml_file}",
+            )
+            if st.button(f"Create PyMOL Script"):
+                with st.spinner(text=f"Creating PyMOL Script"):
+                    write_pymol_script(
+                        gene_nuc_df,
+                        pymol_file_path,
+                        group_col=[x for x in conf_col_lst + annot_col_lst if rename_col_dict[x] == group_col][0],
+                        stick_resids=stick_resids,
+                        loop_resids=loop_resids,
+                        style_ribbon=style_ribbon,
+                        thick_bb=False,
+                        color_group=color_group,
+                        color_palette=color_palette,
+                        show_bio=show_color_dict[bio_lig_col],
+                        show_ion=show_color_dict[ion_lig_col],
+                        show_pharm=show_color_dict[pharm_lig_col],
+                        show_chem=show_color_dict[chem_lig_col],
+                        show_mod=show_color_dict[mod_lig_col],
+                        show_mem=show_color_dict[mem_lig_col],
+                        show_pocket=show_color_dict[pocket_lig_col],
+                        show_prot=show_color_dict[bound_prot_chainid_col],
+                        sup_resids=sup_resids,
+                        show_resids=sup_resids,
+                        sup_coord_path=sup_coord_path,
+                        sup_chainid=sup_chainid,
+                        set_view=mono_view,
+                        coord_path_col=coord_path_col,
+                        fetch_path=fetch_path,
+                    )
+
+                download_st_file(
+                    pymol_file_path,
+                    pymol_file_name,
+                    f"Download PyMOL Script",
                 )
 
-                for col in list(sum_df.columns):
-                    sum_df[col] = sum_df[col].map(str)
-                    sum_df = fix_col(sum_df, col)
+                delete_path(pymol_file_path)
 
-                show_st_table(sum_df)
+        with st.expander("Summary Table", expanded=False):
 
-                sum_file_name = st.text_input(
-                    label="Summary File Name",
-                    value=f"{rascore_str}_{sum_table_file}",
-                )
+            st.markdown("#### Summary Table")
 
-                download_st_df(sum_df, sum_file_name, "Download Summary Table")
+            left_sum_col, right_sum_col = st.columns(2)
 
-        st.markdown("---")
+            sum_col_lst = [gene_class_col, nuc_class_col] + conf_col_lst + annot_col_lst
 
-        st.markdown("#### Entries Table")
+            row_lst = left_sum_col.multiselect(
+                "Rows",
+                [rename_col_dict[x] for x in sum_col_lst],
+                rename_col_dict[sw2_col],
+            )
 
-        del gene_nuc_df[rename_col_dict[pdb_id_col]]
-        del gene_nuc_df[rename_col_dict[modelid_col]]
+            col_lst = right_sum_col.multiselect(
+                "Columns",
+                [rename_col_dict[x] for x in sum_col_lst],
+                default=rename_col_dict[sw1_col],
+            )
 
-        show_st_dataframe(gene_nuc_df)
+            gene_nuc_df = rename_st_cols(gene_nuc_df)
 
-        entries_file_name = st.text_input(
-            label="Entries File Name",
-            value=f"{rascore_str}_{entry_table_file}",
-        )
-        download_st_df(gene_nuc_df, entries_file_name, "Download Entries Table")
+            if len([x for x in row_lst if x in col_lst]) > 0:
+                st.warning("Cannot Have Same Selection in Rows and Columns")
+            else:
+                if len(row_lst) > 0 and len(col_lst) > 0:
+                    sum_df = (
+                        pd.pivot_table(
+                            data=gene_nuc_df,
+                            index=row_lst,
+                            columns=col_lst,
+                            values=rename_col_dict[pdb_id_col],
+                            aggfunc="nunique",
+                            margins=True,
+                        )
+                        .reset_index()
+                        .fillna("")
+                    )
+
+                    for col in list(sum_df.columns):
+                        sum_df[col] = sum_df[col].map(str)
+                        sum_df = fix_col(sum_df, col)
+
+                    show_st_table(sum_df)
+
+                    sum_file_name = st.text_input(
+                        label="Summary File Name",
+                        value=f"{rascore_str}_{sum_table_file}",
+                    )
+
+                    download_st_df(sum_df, sum_file_name, "Download Summary Table")
+
+        with st.expander("Entries Table", expanded=False):
+
+            st.markdown("#### Entries Table")
+
+            del gene_nuc_df[rename_col_dict[pdb_id_col]]
+            del gene_nuc_df[rename_col_dict[modelid_col]]
+
+            show_st_dataframe(gene_nuc_df)
+
+            entries_file_name = st.text_input(
+                label="Entries File Name",
+                value=f"{rascore_str}_{entry_table_file}",
+            )
+            download_st_df(gene_nuc_df, entries_file_name, "Download Entries Table")
 
         write_st_end()
