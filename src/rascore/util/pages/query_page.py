@@ -44,7 +44,7 @@ from ..constants.nuc import nuc_class_lst
 from ..constants.gene import gene_class_lst
 from ..functions.table import lst_col, fix_col, mask_equal
 from ..functions.color import get_lst_colors
-from ..constants.pml import sup_resids, sup_pdb_code, sup_chainid, mono_view
+from ..constants.pml import sup_resids, show_resids, sup_pdb_code, sup_chainid, mono_view
 from ..functions.col import (
     rename_col_dict,
     pdb_id_col,
@@ -258,6 +258,9 @@ def query_page():
             for loop_name in list(loop_resid_dict.keys()):
                 if right_pymol_col.checkbox(f"Highlight {loop_name}",value=True):
                     loop_resids.append(loop_resid_dict[loop_name])
+            if len(loop_resids) == 0:
+                loop_resids = [show_resids]
+                
 
             color_group = left_pymol_col.checkbox("Color Loops By Group")
             left_pymol_col.write("**Default:** Colors SW1 pink and SW2 purple")
@@ -323,7 +326,7 @@ def query_page():
                         show_pocket=show_color_dict[pocket_lig_col],
                         show_prot=show_color_dict[bound_prot_chainid_col],
                         sup_resids=sup_resids,
-                        show_resids=sup_resids,
+                        show_resids=show_resids,
                         sup_coord_path=sup_coord_path,
                         sup_chainid=sup_chainid,
                         set_view=mono_view,
