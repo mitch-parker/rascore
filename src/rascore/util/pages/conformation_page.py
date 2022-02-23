@@ -168,7 +168,7 @@ def conformation_page():
 
                 loop_col.markdown(f"#### {conf_str}")
 
-                loop_conf = loop_col.selectbox("Cluster Name", conf_lst)
+                loop_conf = loop_col.selectbox("Conformation Name", conf_lst)
 
                 pdb_id = loop_col.selectbox(
                     "PDB ID",
