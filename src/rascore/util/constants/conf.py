@@ -115,6 +115,13 @@ sw2_gtp_sp12_a_name = f"{sw2_gtp_name}-{sp12_name}-A"
 sw2_gtp_sp12_b_name = f"{sw2_gtp_name}-{sp12_name}-B"
 sw2_gtp_t_name = f"{sw2_gtp_name}-{t_name}"
 
+sw1_gtp_outlier_name = f"{sw1_gtp_name}-{outlier_name}"
+sw1_gdp_outlier_name = f"{sw1_gdp_name}-{outlier_name}"
+sw1_nf_outlier_name = f"{sw1_nf_name}-{outlier_name}"
+sw1_gtp_disorder_name = f"{sw1_gtp_name}-{disorder_name}"
+sw1_gdp_disorder_name = f"{sw1_gdp_name}-{disorder_name}"
+sw1_nf_disorder_name = f"{sw1_nf_name}-{disorder_name}"
+
 conf_name_dict = {
     sw1_name: {
         nf_name: {"BBAABBBBBAABBLAA": sw1_nf_name},
@@ -165,8 +172,12 @@ conf_color_dict = {
         sw1_gtp_wat_name: sw1_gtp_wat_color,
         sw1_gtp_dir_name: sw1_gtp_dir_color,
         sw1_gtp_no_name: sw1_gtp_no_color,
-                outlier_name:outlier_color,
-        disorder_name:disorder_color
+        sw1_gtp_outlier_name:outlier_color,
+        sw1_gdp_outlier_name: outlier_color,
+        sw1_nf_outlier_name: outlier_color,
+        sw1_gtp_disorder_name: disorder_color,
+        sw1_gdp_disorder_name: disorder_color,
+        sw1_nf_disorder_name: disorder_color,
     },
     sw2_name: {
         sw2_nf_gef_name: light_blue_hex,
@@ -178,8 +189,12 @@ conf_color_dict = {
         sw2_gtp_sp12_a_name: light_cyan_hex,
         sw2_gtp_t_name: light_pink_hex,
         sw2_gtp_sp12_b_name: light_brown_hex,
-                 outlier_name:outlier_color,
-        disorder_name:disorder_color
+        sw1_gtp_outlier_name:outlier_color,
+        sw1_gdp_outlier_name: outlier_color,
+        sw1_nf_outlier_name: outlier_color,
+        sw1_gtp_disorder_name: disorder_color,
+        sw1_gdp_disorder_name: disorder_color,
+        sw1_nf_disorder_name: disorder_color,
     },
 }
 
@@ -189,8 +204,12 @@ conf_nuc_color_dict = {
         sw1_nf_name: nf_color,
         sw1_gdp_name: gdp_color,
         sw1_gtp_name: gtp_color,
-                outlier_name:outlier_color,
-        disorder_name:disorder_color
+        sw1_gtp_outlier_name:outlier_color,
+        sw1_gdp_outlier_name: outlier_color,
+        sw1_nf_outlier_name: outlier_color,
+        sw1_gtp_disorder_name: disorder_color,
+        sw1_gdp_disorder_name: disorder_color,
+        sw1_nf_disorder_name: disorder_color,
     },
     sw2_name: {
         sw2_nf_gef_name: nf_color,
@@ -202,7 +221,11 @@ conf_nuc_color_dict = {
         sw2_gtp_sp12_a_name: gtp_color,
         sw2_gtp_t_name: gtp_color,
         sw2_gtp_sp12_b_name: gtp_color,
-                outlier_name:outlier_color,
-        disorder_name:disorder_color
+        sw1_gtp_outlier_name:outlier_color,
+        sw1_gdp_outlier_name: outlier_color,
+        sw1_nf_outlier_name: outlier_color,
+        sw1_gtp_disorder_name: disorder_color,
+        sw1_gdp_disorder_name: disorder_color,
+        sw1_nf_disorder_name: disorder_color,
     },
 }
