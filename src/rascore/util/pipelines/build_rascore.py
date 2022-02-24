@@ -636,14 +636,14 @@ def build_rascore(out_path=None, pdbaa_fasta_path=None, num_cpu=1):
     interf_table_path = get_file_path(interf_table_file, dir_path=out_path)
     dih_json_path = get_file_path(dih_json_file, dir_path=out_path)
 
-    # if pdbaa_fasta_path is None:
-    #     curr_date = datetime.today().strftime("%Y-%m-%d")
-    #     pdbaa_fasta_path = get_file_path(
-    #         f"{curr_date}_{pdbaa_fasta_file}",
-    #         dir_str=pdbaa_str,
-    #         dir_path=out_path,
-    #         pre_str=False,
-    #     )
+    if pdbaa_fasta_path is None:
+        curr_date = datetime.today().strftime("%Y-%m-%d")
+        pdbaa_fasta_path = get_file_path(
+            f"{curr_date}_{pdbaa_fasta_file}",
+            dir_str=pdbaa_str,
+            dir_path=out_path,
+            pre_str=False,
+        )
 
     past_df = load_table(entry_table_path)
 
@@ -655,58 +655,58 @@ def build_rascore(out_path=None, pdbaa_fasta_path=None, num_cpu=1):
         else:
             past_df[complete_col] = str(True)
 
-    # print("Downloading updated pdbaa file.")
+    print("Downloading updated pdbaa file.")
 
-    # try:
-    #     download_unzip(url=pdbaa_url, path=pdbaa_fasta_path)
-    # except:
-    #     pdbaa_fasta_path_lst = [
-    #         x
-    #         for x in os.listdir(get_dir_path(dir_str=pdbaa_str, dir_path=out_path))
-    #         if pdbaa_fasta_file in x
-    #     ]
-    #     if len(pdbaa_fasta_path_lst) > 0:
-    #         pdbaa_fasta_path = sorted(
-    #             pdbaa_fasta_path_lst,
-    #             reverse=True,
-    #         )[0]
+    try:
+        download_unzip(url=pdbaa_url, path=pdbaa_fasta_path)
+    except:
+        pdbaa_fasta_path_lst = [
+            x
+            for x in os.listdir(get_dir_path(dir_str=pdbaa_str, dir_path=out_path))
+            if pdbaa_fasta_file in x
+        ]
+        if len(pdbaa_fasta_path_lst) > 0:
+            pdbaa_fasta_path = sorted(
+                pdbaa_fasta_path_lst,
+                reverse=True,
+            )[0]
 
-    #         last_date = pdbaa_fasta_path.split(f"_{pdbaa_fasta_file}")[0]
-    #         last_date = last_date.split(f"{pdbaa_str}/")[1]
-    #         print(f"Updated pdbaa file unavailable. Using latest version ({last_date})")
+            last_date = pdbaa_fasta_path.split(f"_{pdbaa_fasta_file}")[0]
+            last_date = last_date.split(f"{pdbaa_str}/")[1]
+            print(f"Updated pdbaa file unavailable. Using latest version ({last_date})")
 
-    # try:
-    #     search_pdbaa(
-    #         pdbaa_fasta_path=pdbaa_fasta_path,
-    #         search_lst=swiss_id_lst,
-    #         entry_table_path=entry_table_path,
-    #         min_length=25,
-    #     )
-    # except:
-    #     print("Error reading pdbaa file.")
-    #     copy_path(
-    #         get_file_path(
-    #             entry_table_file,
-    #             dir_path=get_neighbor_path(__file__, pipelines_str, data_str),
-    #         ),
-    #         entry_table_path,
-    #     )
+    try:
+        search_pdbaa(
+            pdbaa_fasta_path=pdbaa_fasta_path,
+            search_lst=swiss_id_lst,
+            entry_table_path=entry_table_path,
+            min_length=25,
+        )
+    except:
+        print("Error reading pdbaa file.")
+        copy_path(
+            get_file_path(
+                entry_table_file,
+                dir_path=get_neighbor_path(__file__, pipelines_str, data_str),
+            ),
+            entry_table_path,
+        )
 
-    # if past_df is not None:
-    #     df = load_table(entry_table_path)
-    #     if len(df) < len(past_df):
-    #         print("Downgrading rascore database to older version.")
-    #         past_df = None
+    if past_df is not None:
+        df = load_table(entry_table_path)
+        if len(df) < len(past_df):
+            print("Downgrading rascore database to older version.")
+            past_df = None
 
-    # update_prep(out_path=out_path, past_df=past_df, num_cpu=num_cpu)
-    # update_annot(
-    #     pdbaa_fasta_path,
-    #     out_path=out_path,
-    #     past_df=past_df,
-    #     num_cpu=num_cpu,
-    # )
-    # update_interf(out_path=out_path, past_df=past_df, num_cpu=num_cpu)
-    # update_pocket(out_path=out_path, past_df=past_df, num_cpu=num_cpu)
+    update_prep(out_path=out_path, past_df=past_df, num_cpu=num_cpu)
+    update_annot(
+        pdbaa_fasta_path,
+        out_path=out_path,
+        past_df=past_df,
+        num_cpu=num_cpu,
+    )
+    update_interf(out_path=out_path, past_df=past_df, num_cpu=num_cpu)
+    update_pocket(out_path=out_path, past_df=past_df, num_cpu=num_cpu)
     update_classify(out_path=out_path, past_df=past_df, num_cpu=num_cpu)
 
     df = load_table(entry_table_path)
