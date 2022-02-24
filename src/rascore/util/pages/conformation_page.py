@@ -159,7 +159,7 @@ def conformation_page():
 
                 
 
-                loop_df = mask_unequal(nuc_df, loop_name, [x for x in lst_col(nuc_df,loop_name,unique=True) if x in [outlier_name, disorder_name]])
+                loop_df = mask_unequal(nuc_df, loop_name, [x for x in lst_col(nuc_df,loop_name,unique=True) if outlier_name in x or disorder_name in x]])
 
                 conf_lst = get_col_most_common(loop_df, loop_name)
 
