@@ -707,7 +707,7 @@ def build_rascore(out_path=None, pdbaa_fasta_path=None, num_cpu=1):
     # )
     # update_interf(out_path=out_path, past_df=past_df, num_cpu=num_cpu)
     # update_pocket(out_path=out_path, past_df=past_df, num_cpu=num_cpu)
-    #update_classify(out_path=out_path, past_df=past_df, num_cpu=num_cpu)
+    update_classify(out_path=out_path, past_df=past_df, num_cpu=num_cpu)
 
     df = load_table(entry_table_path)
     if complete_col in list(df.columns):
@@ -728,7 +728,5 @@ def build_rascore(out_path=None, pdbaa_fasta_path=None, num_cpu=1):
                 dir_path=get_neighbor_path(__file__, pipelines_str, data_str),
             ),
         )
-
-
 
     print("Rascore update complete!")

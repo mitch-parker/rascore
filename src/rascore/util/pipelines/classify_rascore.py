@@ -63,7 +63,8 @@ from ..functions.path import (
     data_str,
 )
 from ..functions.cluster import build_sum_table
-from ..functions.coord import load_coord, get_modelid, get_chainid, calc_dih_angle
+from ..functions.coord import load_coord, get_modelid, get_chainid
+from ..functions.dih import calc_dih_angle
 from ..functions.lig import lig_col_lst
 from ..functions.col import (
     id_col,
@@ -366,11 +367,12 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None,
                 for index in list(loop_result_df.index.values):
                     cluster = loop_result_df.at[index,cluster_col]
                     if cluster == noise_name:
+                        nuc_class = loop_result_df.at[index,nuc_class_col]
                         complete =  str(loop_result_df.at[index,complete_col])
                         if complete == str(True):
-                            cluster = outlier_name
+                            cluster = f"{loop_name}.{nuc_class}-{outlier_name}"
                         elif complete == str(False):
-                            cluster = disorder_name
+                            cluster = f"{loop_name}.{nuc_class}-{disorder_name}"
                         loop_result_df.at[index,cluster_col] = cluster
 
                 loop_result_df = loop_result_df.rename(columns={cluster_col: loop_name})
@@ -413,7 +415,11 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None,
                 del df[hb_status_col]
 
 
-            for index in tqdm(list(df.index.values)):
+            for index in tqdm(list(df.index.values),
+                    desc="Building dihedral table",
+                    position=0,
+                    leave=True,
+                ):
             
                 atom_dist = calc_dih_angle(structure=load_coord(df.at[index,core_path_col]),
                                 chainid=df.at[index,chainid_col],
@@ -437,12 +443,7 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None,
                         y71_status += 'Out'
                     else:
                         y71_status += 'In'
-
-
-            df.at[index,atom_dist_col] = atom_dist
-            df.at[index,y71_name] = y71_status
-
-            del df[atom_dist_col]
+                df.at[index,y71_name] = y71_status
 
             result_table_path = get_file_path(result_table_file, dir_path=out_path)
 
