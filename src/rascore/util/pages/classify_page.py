@@ -104,50 +104,50 @@ def classify_page():
         if len(st_file_lst) > 0:
             with st.spinner(text="Classifying Structures"):
 
-                #try:
-                coord_path_lst = list()
-                id_dict = dict()
-                path_dict = dict()
-                for st_file in st_file_lst:
-                    coord_path = save_st_file(st_file)
-                    coord_path_lst.append(coord_path)
-                    id_dict[get_file_name(coord_path)] = st_file.name
-                    path_dict[st_file.name] = coord_path
+                try:
+                    coord_path_lst = list()
+                    id_dict = dict()
+                    path_dict = dict()
+                    for st_file in st_file_lst:
+                        coord_path = save_st_file(st_file)
+                        coord_path_lst.append(coord_path)
+                        id_dict[get_file_name(coord_path)] = st_file.name
+                        path_dict[st_file.name] = coord_path
 
-                classify_path = get_dir_path(
-                    dir_str=f"{rascore_str}_{classify_str}_{randint(0,3261994)}",
-                    dir_path=get_neighbor_path(__file__, pages_str, data_str),
-                )
+                    classify_path = get_dir_path(
+                        dir_str=f"{rascore_str}_{classify_str}_{randint(0,3261994)}",
+                        dir_path=get_neighbor_path(__file__, pages_str, data_str),
+                    )
 
-                if table_st_file is None:
-                    classify_input = coord_path_lst
-                else:
-                    table_path = save_st_file(table_st_file)
-                    classify_input = load_table(table_path)
-                    classify_input[core_path_col] = classify_input[
-                        core_path_col
-                    ].map(path_dict)
-                    delete_path(table_path)
+                    if table_st_file is None:
+                        classify_input = coord_path_lst
+                    else:
+                        table_path = save_st_file(table_st_file)
+                        classify_input = load_table(table_path)
+                        classify_input[core_path_col] = classify_input[
+                            core_path_col
+                        ].map(path_dict)
+                        delete_path(table_path)
 
-                classify_rascore(classify_input, y32_resid=y32_resid, y71_resid=y71_resid, sw1_resids=sw1_resids, sw2_resids=sw2_resids, out_path=classify_path)
+                    classify_rascore(classify_input, y32_resid=y32_resid, y71_resid=y71_resid, sw1_resids=sw1_resids, sw2_resids=sw2_resids, out_path=classify_path)
 
-                st.success("Classified Structures")
+                    st.success("Classified Structures")
 
-                result_file_path = get_file_path(
-                    result_table_file, dir_path=classify_path
-                )
+                    result_file_path = get_file_path(
+                        result_table_file, dir_path=classify_path
+                    )
 
-                df = load_table(result_file_path)
+                    df = load_table(result_file_path)
 
-                df[id_col] = df[id_col].map(id_dict)
+                    df[id_col] = df[id_col].map(id_dict)
 
-                df = rename_st_cols(df)
+                    df = rename_st_cols(df)
 
-                show_st_dataframe(df)
+                    show_st_dataframe(df)
 
-                download_st_df(df, out_file, "Download Classification Table")
-                # except:
-                #     st.error("Error Analyzing Uploaded Structures")
+                    download_st_df(df, out_file, "Download Classification Table")
+                except:
+                    st.error("Error Analyzing Uploaded Structures")
 
                 delete_path(classify_path)
                 for coord_path in coord_path_lst:
