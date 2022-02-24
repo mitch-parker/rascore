@@ -157,7 +157,9 @@ def conformation_page():
                     stick_resid = 71
                     loop_col = sw2_col
 
-                loop_df = mask_unequal(nuc_df, loop_name, [outlier_name,disorder_name])
+                
+
+                loop_df = mask_unequal(nuc_df, loop_name, [x for x in lst_col(nuc_df,loop_name,unique=True) if x in [outlier_name, disorder_name]])
 
                 conf_lst = get_col_most_common(loop_df, loop_name)
 
