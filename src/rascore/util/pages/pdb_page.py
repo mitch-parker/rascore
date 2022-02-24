@@ -72,6 +72,8 @@ from ..functions.col import (
     bound_prot_chainid_col,
     sw1_col,
     sw2_col,
+    y32_col,
+    y71_col,
     date_col,
 )
 
@@ -122,20 +124,22 @@ def pdb_page():
 
     show_st_table(annot_df, st_col=right_col)
 
-    for col in [bound_prot_col, bound_prot_swiss_id_col, bound_prot_chainid_col]:
-        right_col.markdown(f"**{rename_col_dict[col]}:** {chainid_df.at[0,col]}")
+    if chainid_df.at[0,bound_prot_col] != "None":
+        for col in [bound_prot_col, bound_prot_swiss_id_col, bound_prot_chainid_col]:
+            left_col.markdown(f"**{rename_col_dict[col]}:** {chainid_df.at[0,col]}")
 
-    sw1_conf = chainid_df.at[0, sw1_col]
-    sw2_conf = chainid_df.at[0, sw2_col]
+    st_col_lst = st.columns(4)
 
-    left_col.markdown("#### SW1 Conformation")
-    left_col.markdown(
-        get_html_text({sw1_conf: sw1_color}, font_size="large"), unsafe_allow_html=True
-    )
-    left_col.markdown("#### SW2 Conformation")
-    left_col.markdown(
-        get_html_text({sw2_conf: sw2_color}, font_size="large"), unsafe_allow_html=True
-    )
+    for i, col in enumerate([sw1_col, y32_col, sw2_col, y71_col]):
+
+        if col in [sw1_col, y32_col]:
+            color = sw1_color
+        elif col in [sw2_col, y71_col]:
+            color = sw2_color
+
+        st_col_lst[i].markdown(f"#### {col} Conformation")
+        st_col_lst[i].markdown(get_html_text({chainid_df.at[0, col]:color}, 
+        font_size="large"),unsafe_allow_html=True)
 
     st.markdown("---")
 

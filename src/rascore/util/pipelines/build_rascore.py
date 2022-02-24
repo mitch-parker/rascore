@@ -30,7 +30,7 @@ from datetime import datetime
 
 from ..pipelines.classify_rascore import classify_rascore
 
-from ..constants.conf import sw1_name, sw2_name, loop_resid_dict
+from ..constants.conf import sw1_name, sw2_name, y32_name, y71_name, loop_resid_dict
 from ..constants.nuc import nuc_class_dict, gtp_name
 from ..constants.gene import uniprot_acc_lst, swiss_id_lst, gene_class_dict
 from ..constants.mut import mut_class_lst, other_mut_name
@@ -568,7 +568,21 @@ def update_classify(out_path=None, past_df=None, num_cpu=1):
     df = load_table(entry_table_path)
 
     if past_df is not None:
-        if sw1_name in list(past_df.columns) and sw2_name in list(past_df.columns):
+        if (
+            len(
+                [
+                    x
+                    for x in [
+                        sw1_name,
+                        sw2_name,
+                        y32_name,
+                        y71_name
+                    ]
+                    if x not in list(past_df.columns)
+                ]
+            )
+            == 0
+        ):
             df = mask_unequal(df, pdb_id_col, lst_col(past_df, pdb_id_col))
 
     dih_dict = load_json(dih_json_path)
@@ -585,13 +599,27 @@ def update_classify(out_path=None, past_df=None, num_cpu=1):
 
         result_df = load_table(get_file_path(result_table_file, dir_path=classify_path))
 
-        for loop_name in list(loop_resid_dict.keys()):
-            df[loop_name] = df[pdb_id_col].map(
-                make_dict(lst_col(result_df, pdb_id_col), lst_col(result_df, loop_name))
+        for col in [sw1_name, sw2_name, y32_name, y71_name]:
+            df[col] = df[pdb_id_col].map(
+                make_dict(lst_col(result_df, pdb_id_col), lst_col(result_df, col))
             )
 
     if past_df is not None:
-        if sw1_name in list(past_df.columns) and sw2_name in list(past_df.columns):
+        if (
+            len(
+                [
+                    x
+                    for x in [
+                        sw1_name,
+                        sw2_name,
+                        y32_name,
+                        y71_name
+                    ]
+                    if x not in list(past_df.columns)
+                ]
+            )
+            == 0
+        ):
             df[complete_col] = str(False)
             df = pd.concat([df, past_df], sort=False)
 
@@ -617,15 +645,15 @@ def build_rascore(out_path=None, pdbaa_fasta_path=None, num_cpu=1):
     #         pre_str=False,
     #     )
 
-    # past_df = load_table(entry_table_path)
+    past_df = load_table(entry_table_path)
 
-    # if past_df is None:
-    #     print("No rascore database found! Building rascore database from scratch!")
-    # else:
-    #     if complete_col in list(past_df.columns):
-    #         past_df = mask_equal(past_df, complete_col, str(True))
-    #     else:
-    #         past_df[complete_col] = str(True)
+    if past_df is None:
+        print("No rascore database found! Building rascore database from scratch!")
+    else:
+        if complete_col in list(past_df.columns):
+            past_df = mask_equal(past_df, complete_col, str(True))
+        else:
+            past_df[complete_col] = str(True)
 
     # print("Downloading updated pdbaa file.")
 
@@ -679,7 +707,7 @@ def build_rascore(out_path=None, pdbaa_fasta_path=None, num_cpu=1):
     # )
     # update_interf(out_path=out_path, past_df=past_df, num_cpu=num_cpu)
     # update_pocket(out_path=out_path, past_df=past_df, num_cpu=num_cpu)
-    # update_classify(out_path=out_path, past_df=past_df, num_cpu=num_cpu)
+    #update_classify(out_path=out_path, past_df=past_df, num_cpu=num_cpu)
 
     df = load_table(entry_table_path)
     if complete_col in list(df.columns):
@@ -700,5 +728,7 @@ def build_rascore(out_path=None, pdbaa_fasta_path=None, num_cpu=1):
                 dir_path=get_neighbor_path(__file__, pipelines_str, data_str),
             ),
         )
+
+
 
     print("Rascore update complete!")

@@ -23,6 +23,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+y32_col = "Y32"
+y71_col = "Y71"
 sw1_col = "SW1"
 sw2_col = "SW2"
 
@@ -279,6 +281,8 @@ order_col_lst = [
     chainid_col,
     sw1_col,
     sw2_col,
+    y32_col,
+    y71_col,
     cf_col,
     cluster_col,
     total_col,
@@ -435,6 +439,8 @@ rename_col_dict = {
     chainid_col: "Chain",
     sw1_col: "SW1 Conformation",
     sw2_col: "SW2 Conformation",
+    y32_col: "Y32 Conformation",
+    y71_col: "Y71 Conformation",
     gene_class_col: "RAS Isoform",
     mut_status_col: "Mutation Status",
     nuc_class_col: "Nucleotide State",
@@ -443,7 +449,7 @@ rename_col_dict = {
     match_class_col: "Inhibitor Chemistry",
     interf_class_col: "Homodimer Status",
     bound_prot_col: "Bound Protein Name",
-    bound_prot_swiss_id_col: "Bound Protein SWISS-PROT ID",
+    bound_prot_swiss_id_col: "Bound Protein SwissProt ID",
     bound_prot_chainid_col: "Bound Protein Chain",
     bio_lig_col: "Nucleotide",
     ion_lig_col: "Ion",

@@ -63,7 +63,7 @@ from ..functions.path import (
     data_str,
 )
 from ..functions.cluster import build_sum_table
-from ..functions.coord import load_coord, get_modelid, get_chainid
+from ..functions.coord import load_coord, get_modelid, get_chainid, calc_dih_angle
 from ..functions.lig import lig_col_lst
 from ..functions.col import (
     id_col,
@@ -73,7 +73,8 @@ from ..functions.col import (
     bio_lig_col,
     cluster_col,
     hb_status_col,
-    complete_col
+    complete_col,
+    atom_dist_col
 )
 from ..functions.file import (
     cluster_table_file,
@@ -97,6 +98,8 @@ from ..constants.pharm import (
     
 )
 from ..constants.conf import (
+    y32_name,
+    y71_name,
     sw1_name,
     sw2_name,
     sw1_gtp_name,
@@ -177,6 +180,10 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None,
 
         df_col_lst = list(df.columns)
 
+        for col in [sw1_name, sw2_name]:
+            if col in df_col_lst:
+                del df[col]
+
         missing_col_lst = [
             x for x in [core_path_col, modelid_col, chainid_col] if x not in df_col_lst
         ]
@@ -212,6 +219,11 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None,
 
             if dih_dict is None:
                 dih_dict = prep_dih(coord_path_lst, num_cpu=num_cpu)
+
+
+
+            df[y32_name] = "Y32." + df[nuc_class_col]
+            df[y71_name] = "Y71." + df[nuc_class_col]
 
             for loop_name in [sw1_name, sw2_name]:
 
@@ -363,15 +375,13 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None,
 
                 loop_result_df = loop_result_df.rename(columns={cluster_col: loop_name})
 
-                loop_result_df = loop_result_df.loc[
-                    :, [core_path_col, modelid_col, chainid_col, loop_name]
-                ]
+                loop_result_df = loop_result_df.loc[:,[core_path_col, modelid_col, chainid_col, loop_name]]
 
                 df = merge_tables(df, loop_result_df)
 
-            if sw1_gtp_name in lst_col(df, sw1_name, unique=True):
+            if gtp_name in lst_col(df, nuc_class_col, unique=True):
                 dist_df = build_dist_table(
-                    mask_equal(df, sw1_name, sw1_gtp_name),
+                    mask_equal(df, nuc_class_col, gtp_name),
                     x_resids=[y32_resid],
                     y_resids=[bio_lig_col],
                     x_atomids=["OH"],
@@ -388,18 +398,51 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None,
 
                 df = merge_tables(df, dist_df)
 
-                df[sw1_name].replace(
-                    {
-                        sw1_gtp_name: "",
-                        sw1_gtp_wat_name: "",
-                        sw1_gtp_dir_name: "",
-                        sw1_gtp_no_name: "",
-                    },
-                    inplace=True,
-                )
-                df[sw1_name] += df[hb_status_col].fillna("").map(str)
+                df[hb_status_col] = df[hb_status_col].fillna("").map(str)
 
+                for index in list(df.index.values):
+                    hb_status = df.at[index,hb_status_col] 
+                    if df.at[index,sw1_name] in [sw1_gtp_name,sw1_gtp_wat_name,sw1_gtp_dir_name,sw1_gtp_no_name]:
+                        df.at[index,sw1_name] = hb_status
+
+                    if '-' in hb_status:
+                        hb_status = hb_status.split('-')[1]
+                    
+                        df.at[index,y32_name] = df.at[index,y32_name] + '-' + hb_status
+                    
                 del df[hb_status_col]
+
+
+            for index in tqdm(list(df.index.values)):
+            
+                atom_dist = calc_dih_angle(structure=load_coord(df.at[index,core_path_col]),
+                                chainid=df.at[index,chainid_col],
+                                resid_1=69,
+                                resid_2=76,
+                                resid_3=77,
+                                resid_4=6,
+                                atomid_1='CA',
+                                atomid_2='CA',
+                                atomid_3='CA',
+                                atomid_4='CA',
+                                check_dist=False
+                                )
+
+                y71_status = f'Y71.{df.at[index,nuc_class_col]}'
+                y71_status += '-'
+                if atom_dist == 999.00:
+                    y71_status += 'Disordered'
+                else:
+                    if atom_dist >= -75:
+                        y71_status += 'Out'
+                    else:
+                        y71_status += 'In'
+
+
+            df.at[index,atom_dist_col] = atom_dist
+            df.at[index,y71_name] = y71_status
+
+            del df[atom_dist_col]
 
             result_table_path = get_file_path(result_table_file, dir_path=out_path)
 

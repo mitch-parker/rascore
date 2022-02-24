@@ -105,7 +105,7 @@ def prep_rascore(build_path=None):
 
     for table_file in tqdm(
         table_file_lst,
-        desc="Preparing rascore database tables",
+        desc="Preparing Rascore database tables",
         position=0,
         leave=True,
     ):
@@ -113,7 +113,7 @@ def prep_rascore(build_path=None):
 
     for json_file in tqdm(
         json_file_lst,
-        desc="Preparing rascore database jsons",
+        desc="Preparing Rascore database jsons",
         position=0,
         leave=True,
     ):

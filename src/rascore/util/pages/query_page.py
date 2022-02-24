@@ -50,6 +50,8 @@ from ..functions.col import (
     pdb_id_col,
     sw1_col,
     sw2_col,
+    y32_col,
+    y71_col,
     mut_status_col,
     prot_class_col,
     match_class_col,
@@ -96,7 +98,7 @@ def query_page():
 
     df = load_st_table(__file__)
 
-    conf_col_lst = [sw1_col, sw2_col]
+    conf_col_lst = [sw1_col, sw2_col, y32_col, y71_col]
 
     annot_col_lst = [
         mut_status_col,

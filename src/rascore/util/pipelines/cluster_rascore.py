@@ -141,6 +141,10 @@ def cluster_rascore(build_path, out_path=None, name_table_path=None, num_cpu=1):
 
     df_col_lst = list(df.columns)
 
+    for col in [sw1_name, sw2_name]:
+        if col in df_col_lst:
+            del df[col]
+
     if pdb_code_col in df_col_lst:
         try:
             pdb_code_lst = lst_col(df, pdb_code_col, unique=True)
