@@ -164,7 +164,7 @@ def overview_page():
     algorithm with a distance metric that locates the maximum backbone dihedral difference upon pairwise 
     comparison of loop residues (previously implemented by our group for other proteins, such as 
     [kinases](http://dunbrack.fccc.edu/kincore/home) and [antibodies](http://dunbrack2.fccc.edu/PyIgClassify/)).
-      - DBSCAN finds major clusters and removes outliers (labeling them as “noise”).
+      - DBSCAN finds major clusters and removes outliers.
       - We first separated RAS structures by their nucleotide state (0P, 2P, and 3P) and subsequently 
     conformationally clustered the well modeled (complete with high electron density scores) SW1 and SW2 
     loops for each nucleotide state with DBSCAN.
