@@ -73,7 +73,7 @@ from ..functions.path import (
 )
 from ..functions.lig import lig_lst_dict
 from ..functions.lst import lst_to_str, res_to_str, type_lst, lst_unique, res_to_lst
-from ..functions.table import get_str_num, merge_dicts, merge_tables
+from ..functions.table import get_str_num, merge_dicts, merge_tables, lst_col
 from ..functions.col import (
     pdb_id_col,
     pdb_code_col,
@@ -493,159 +493,164 @@ def isolate_chains(
     renum_path = get_renum_path(pdb_code, dir_path=renum_dir)
     sifts_path = get_sifts_path(pdb_code, dir_path=sifts_dir)
 
-    chainid_lst = pdb_dict[pdb_code]
+    try:
+        chainid_lst = pdb_dict[pdb_code]
 
-    structure = load_coord(renum_path)
-    renum_dict = load_cif_dict(renum_path)
+        structure = load_coord(renum_path)
+        renum_dict = load_cif_dict(renum_path)
 
-    deposit_date = renum_dict["_pdbx_database_status.recvd_initial_deposition_date"][0]
+        deposit_date = renum_dict["_pdbx_database_status.recvd_initial_deposition_date"][0]
 
-    if not all_models:
-        structure = type_lst(structure[0])
+        if not all_models:
+            structure = type_lst(structure[0])
 
-    chain_df = pd.DataFrame()
+        chain_df = pd.DataFrame()
 
-    for chainid in chainid_lst:
+        for chainid in chainid_lst:
 
-        bound_chainid_lst = None
-        if bound_chainid_dict is not None:
             pdb_id = f"{pdb_code}{chainid}"
-            if pdb_id in list(bound_chainid_dict.keys()):
-                bound_chainid_lst = bound_chainid_dict[pdb_id]
 
-        rcsb_assembly_path = "None"
-        renum_assembly_path = "None"
+            bound_chainid_lst = None
+            if bound_chainid_dict is not None:
+                if pdb_id in list(bound_chainid_dict.keys()):
+                    bound_chainid_lst = bound_chainid_dict[pdb_id]
 
-        if bound_chainid_lst is None:
+            rcsb_assembly_path = "None"
+            renum_assembly_path = "None"
 
-            renum_assembly_dir = get_dir_path(
-                dir_str=renum_assembly_str, dir_path=renum_dir
-            )
-            rcsb_assembly_dir = get_dir_path(
-                dir_str=rcsb_assembly_str, dir_path=rcsb_dir
-            )
+            if bound_chainid_lst is None:
 
-            for renum_assembly_file in search_dir(renum_assembly_dir, pdb_code):
-
-                renum_assembly_path = f"{renum_assembly_dir}/{renum_assembly_file}"
-                rcsb_assembly_path = f"{rcsb_assembly_dir}/{renum_assembly_file.replace('_renum.cif','.cif.gz')}"
-
-                assembly_dict = load_cif_dict(renum_assembly_path)
-
-                assembly_chainid_lst = lst_unique(
-                    assembly_dict["_pdbe_chain_remapping.orig_auth_asym_id"]
+                renum_assembly_dir = get_dir_path(
+                    dir_str=renum_assembly_str, dir_path=renum_dir
+                )
+                rcsb_assembly_dir = get_dir_path(
+                    dir_str=rcsb_assembly_str, dir_path=rcsb_dir
                 )
 
-                if chainid in assembly_chainid_lst:
-                    if (
-                        len(
-                            [
-                                x
-                                for x in assembly_chainid_lst
-                                if x in chainid_lst and x != chainid
+                for renum_assembly_file in search_dir(renum_assembly_dir, pdb_code):
+
+                    renum_assembly_path = f"{renum_assembly_dir}/{renum_assembly_file}"
+                    rcsb_assembly_path = f"{rcsb_assembly_dir}/{renum_assembly_file.replace('_renum.cif','.cif.gz')}"
+
+                    assembly_dict = load_cif_dict(renum_assembly_path)
+
+                    assembly_chainid_lst = lst_unique(
+                        assembly_dict["_pdbe_chain_remapping.orig_auth_asym_id"]
+                    )
+
+                    if chainid in assembly_chainid_lst:
+                        if (
+                            len(
+                                [
+                                    x
+                                    for x in assembly_chainid_lst
+                                    if x in chainid_lst and x != chainid
+                                ]
+                            )
+                            == 0
+                        ):
+                            bound_chainid_lst = [
+                                x for x in assembly_chainid_lst if x != chainid
                             ]
-                        )
-                        == 0
-                    ):
-                        bound_chainid_lst = [
-                            x for x in assembly_chainid_lst if x != chainid
-                        ]
 
-        sele_dict, sele_df = build_sele_dict(
-            structure,
-            chainid,
-            chainid_lst,
-            resid_cont_dict=resid_cont_dict,
-            bound_chainid_lst=bound_chainid_lst,
-        )
-
-        sele_df[pdb_code_col] = pdb_code
-        sele_df[chainid_col] = chainid
-        sele_df[rcsb_path_col] = rcsb_path
-        sele_df[renum_path_col] = renum_path
-        sele_df[sifts_path_col] = sifts_path
-        sele_df[rcsb_assembly_path_col] = rcsb_assembly_path
-        sele_df[renum_assembly_path_col] = renum_assembly_path
-
-        for modelid in list(sele_dict.keys()):
-
-            modelid_str = modelid
-            if not all_models:
-                modelid_str = None
-
-            cif_path = get_core_path(
-                pdb_code, chainid, modelid=modelid_str, dir_path=core_dir
-            )
-            pdb_path = get_core_path(
-                pdb_code,
+            sele_dict, sele_df = build_sele_dict(
+                structure,
                 chainid,
-                modelid=modelid_str,
-                return_pdb=True,
-                dir_path=core_dir,
+                chainid_lst,
+                resid_cont_dict=resid_cont_dict,
+                bound_chainid_lst=bound_chainid_lst,
             )
 
-            update_cif = True
-            if not update_coords:
-                if path_exists(cif_path):
-                    update_cif = False
+            sele_df[pdb_code_col] = pdb_code
+            sele_df[chainid_col] = chainid
+            sele_df[rcsb_path_col] = rcsb_path
+            sele_df[renum_path_col] = renum_path
+            sele_df[sifts_path_col] = sifts_path
+            sele_df[rcsb_assembly_path_col] = rcsb_assembly_path
+            sele_df[renum_assembly_path_col] = renum_assembly_path
 
-            update_pdb = True
-            if not update_coords:
-                if path_exists(cif_path):
-                    update_pdb = False
+            for modelid in list(sele_dict.keys()):
 
-            sele_df.at[int(modelid), core_path_col] = cif_path
+                modelid_str = modelid
+                if not all_models:
+                    modelid_str = None
 
-            if update_cif:
-                chain_sele = ChainSelect(sele_dict[modelid])
-                save_coord(cif_path, structure[int(modelid)], sele=chain_sele)
-
-            if update_pdb:
-                pymol_obj = f"{pdb_code}{chainid}"
-
-                if all_models:
-                    pymol_obj += str(modelid)
-
-                with pymol2.PyMOL() as pymol:
-                    cmd = pymol.cmd
-                    cmd.load(cif_path, pymol_obj)
-                    cmd.save(pdb_path, pymol_obj)
-
-            if add_h:
-                pdb_h_path = get_core_path(
+                cif_path = get_core_path(
+                    pdb_code, chainid, modelid=modelid_str, dir_path=core_dir
+                )
+                pdb_path = get_core_path(
                     pdb_code,
                     chainid,
                     modelid=modelid_str,
                     return_pdb=True,
-                    add_h=True,
                     dir_path=core_dir,
                 )
 
-                update_pdb_h = True
+                update_cif = True
                 if not update_coords:
-                    if path_exists(pdb_h_path):
-                        update_pdb_h = False
+                    if path_exists(cif_path):
+                        update_cif = False
 
-                if update_pdb_h:
-                    cmd_lst = ["reduce", pdb_path, ">", pdb_h_path, "-NOHETh"]
+                update_pdb = True
+                if not update_coords:
+                    if path_exists(cif_path):
+                        update_pdb = False
 
-                    if add_h_his:
-                        cmd_lst.append("-HIS")
+                sele_df.at[int(modelid), core_path_col] = cif_path
 
-                    os.system(lst_to_str(cmd_lst, join_txt=" "))
+                if update_cif:
+                    chain_sele = ChainSelect(sele_dict[modelid])
+                    save_coord(cif_path, structure[int(modelid)], sele=chain_sele)
 
-            sele_df[pdb_id_col] = sele_df[pdb_code_col].map(str) + sele_df[
-                chainid_col
-            ].map(str)
+                if update_pdb:
+                    pymol_obj = f"{pdb_code}{chainid}"
 
-            if all_models:
-                sele_df[pdb_id_col] += sele_df[modelid_col].map(str)
+                    if all_models:
+                        pymol_obj += str(modelid)
 
-            sele_df[modelid_col] = 0
+                    with pymol2.PyMOL() as pymol:
+                        cmd = pymol.cmd
+                        cmd.load(cif_path, pymol_obj)
+                        cmd.save(pdb_path, pymol_obj)
 
-            sele_df[date_col] = deposit_date
+                if add_h:
+                    pdb_h_path = get_core_path(
+                        pdb_code,
+                        chainid,
+                        modelid=modelid_str,
+                        return_pdb=True,
+                        add_h=True,
+                        dir_path=core_dir,
+                    )
 
-            chain_df = pd.concat([chain_df, sele_df], sort=False)
+                    update_pdb_h = True
+                    if not update_coords:
+                        if path_exists(pdb_h_path):
+                            update_pdb_h = False
+
+                    if update_pdb_h:
+                        cmd_lst = ["reduce", pdb_path, ">", pdb_h_path, "-NOHETh"]
+
+                        if add_h_his:
+                            cmd_lst.append("-HIS")
+
+                        os.system(lst_to_str(cmd_lst, join_txt=" "))
+
+                sele_df[pdb_id_col] = sele_df[pdb_code_col].map(str) + sele_df[
+                    chainid_col
+                ].map(str)
+
+                if all_models:
+                    sele_df[pdb_id_col] += sele_df[modelid_col].map(str)
+
+                sele_df[modelid_col] = 0
+
+                sele_df[date_col] = deposit_date
+
+                chain_df = pd.concat([chain_df, sele_df], sort=False)
+    except:
+        print(f"Error loading PDB: {pdb_code}. Removing entry.")
+        chain_df = pd.DataFrame()
 
     return chain_df
 
@@ -794,22 +799,26 @@ def prep_coord(
         num_cpu=num_cpu,
     )
 
-    if data is not None:
-        df_col_lst = list(data.columns)
+    if len(df) > 0:
+        if data is not None:
+            df_col_lst = list(data.columns)
 
-        for col in [
-            pdb_id_col,
-            bound_lig_col,
-            bound_prot_chainid_col,
-            range_col,
-            date_col,
-            pmid_col,
-        ]:
-            if col in df_col_lst:
-                del data[col]
+            for col in [
+                pdb_id_col,
+                bound_lig_col,
+                bound_prot_chainid_col,
+                range_col,
+                date_col,
+                pmid_col,
+            ]:
+                if col in df_col_lst:
+                    del data[col]
 
-        df = merge_tables(df, data)
+            df = merge_tables(df, data)
 
-    save_table(coord_table_path, df)
+        save_table(coord_table_path, df)
 
-    print("Prepared coordinate files!")
+        if len(df) > 0:
+            print(f"Prepared {len(lst_col(df, pdb_id_col, unique=True))}/{len(pdb_id_lst)} chains from {len(lst_col(df, pdb_code_col,unique=True))}/{len(pdb_code_lst)} entries!")
+
+    print("Prepared coordinates!")

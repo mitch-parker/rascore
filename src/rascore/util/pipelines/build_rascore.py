@@ -203,30 +203,35 @@ def update_prep(out_path=None, past_df=None, num_cpu=1):
         if past_sifts_dict is not None:
             sifts_dict = merge_dicts([sifts_dict, past_sifts_dict])
         save_json(sifts_json_path, sifts_dict)
+        
+        try:
+            df = load_table(entry_table_path)
 
-        df = load_table(entry_table_path)
+            core_path_lst = lst_col(df, core_path_col, unique=True)
+            dih_dict = prep_dih(coord_paths=core_path_lst, num_cpu=num_cpu)
 
-        core_path_lst = lst_col(df, core_path_col, unique=True)
-        dih_dict = prep_dih(coord_paths=core_path_lst, num_cpu=num_cpu)
+            past_dih_dict = load_json(dih_json_path)
+            if past_dih_dict is not None:
+                dih_dict = merge_dicts([dih_dict, past_dih_dict])
+            save_json(dih_json_path, dih_dict)
 
-        past_dih_dict = load_json(dih_json_path)
-        if past_dih_dict is not None:
-            dih_dict = merge_dicts([dih_dict, past_dih_dict])
-        save_json(dih_json_path, dih_dict)
+            if past_df is not None:
+                if (
+                    len(
+                        [
+                            x
+                            for x in [bound_lig_col, bound_prot_chainid_col]
+                            if x not in list(past_df.columns)
+                        ]
+                    )
+                    == 0
+                ):
+                    df = pd.concat([df, past_df], sort=False)
+                    save_table(entry_table_path, df)
+        except:
+            if past_df is not None:
+                save_table(entry_table_path, past_df)
 
-        if past_df is not None:
-            if (
-                len(
-                    [
-                        x
-                        for x in [bound_lig_col, bound_prot_chainid_col]
-                        if x not in list(past_df.columns)
-                    ]
-                )
-                == 0
-            ):
-                df = pd.concat([df, past_df], sort=False)
-                save_table(entry_table_path, df)
 
 
 def update_annot(pdbaa_fasta_path, out_path=None, past_df=None, num_cpu=1):
@@ -657,23 +662,25 @@ def build_rascore(out_path=None, pdbaa_fasta_path=None, num_cpu=1):
 
     print("Downloading updated pdbaa file.")
 
-    try:
-        download_unzip(url=pdbaa_url, path=pdbaa_fasta_path)
-    except:
-        pdbaa_fasta_path_lst = [
-            x
-            for x in os.listdir(get_dir_path(dir_str=pdbaa_str, dir_path=out_path))
-            if pdbaa_fasta_file in x
-        ]
-        if len(pdbaa_fasta_path_lst) > 0:
-            pdbaa_fasta_path = sorted(
-                pdbaa_fasta_path_lst,
-                reverse=True,
-            )[0]
+    # try:
+    #     download_unzip(url=pdbaa_url, path=pdbaa_fasta_path)
+    # except:
+    #     pdbaa_fasta_path_lst = [
+    #         x
+    #         for x in os.listdir(get_dir_path(dir_str=pdbaa_str, dir_path=out_path))
+    #         if pdbaa_fasta_file in x
+    #     ]
+    #     if len(pdbaa_fasta_path_lst) > 0:
+    #         pdbaa_fasta_path = sorted(
+    #             pdbaa_fasta_path_lst,
+    #             reverse=True,
+    #         )[0]
 
-            last_date = pdbaa_fasta_path.split(f"_{pdbaa_fasta_file}")[0]
-            last_date = last_date.split(f"{pdbaa_str}/")[1]
-            print(f"Updated pdbaa file unavailable. Using latest version ({last_date})")
+    #         last_date = pdbaa_fasta_path.split(f"_{pdbaa_fasta_file}")[0]
+    #         last_date = last_date.split(f"{pdbaa_str}/")[1]
+    #         print(f"Updated pdbaa file unavailable. Using latest version ({last_date})")
+
+    pdbaa_fasta_path = '/Users/mitchellparker/Desktop/rascore_build/pdbaa/2022-03-01_pdbaa.fasta'
 
     try:
         search_pdbaa(

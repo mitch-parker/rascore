@@ -45,6 +45,7 @@ from ..functions.col import (
     bound_prot_site_col,
     bound_prot_pfam_col,
     bound_prot_swiss_id_col,
+    bound_prot_cont_col
 )
 from ..functions.table import fix_val
 from ..functions.path import save_table
@@ -60,7 +61,7 @@ def annot_prot(
     other_site="Unclassified",
     none_pfam="None",
     none_site="None",
-    max_site_dist=5,
+    max_site_dist=4,
     prot_table_path=None,
 ):
 
@@ -82,6 +83,7 @@ def annot_prot(
         bound_prot_chainid = df.at[index, bound_prot_chainid_col]
 
         prot_lst = list()
+        cont_lst = list()
         swiss_id_lst = list()
         site_lst = list()
         pfam_lst = list()
@@ -103,29 +105,35 @@ def annot_prot(
                 prot_lst.append(prot)
                 swiss_id_lst.append(swiss_id)
 
-                if site_dict is not None:
+                resid_cont_lst = lst_unique(
+                    [
+                        get_resnum(x)
+                        for x in get_chain_cont(
+                            neighbors,
+                            structure[fix_val(modelid, return_int=True)][
+                                bound_chainid
+                            ],
+                            level="R",
+                            max_dist=max_site_dist,
+                        )
+                        if (get_resnum(x) < 50000)
+                        and (get_reschainid(x) == chainid)
+                        and is_aa(x)
+                    ]
+                )
 
-                    cont_lst = lst_unique(
-                        [
-                            get_resnum(x)
-                            for x in get_chain_cont(
-                                neighbors,
-                                structure[fix_val(modelid, return_int=True)][
-                                    bound_chainid
-                                ],
-                                level="R",
-                                max_dist=max_site_dist,
-                            )
-                            if (get_resnum(x) < 50000)
-                            and (get_reschainid(x) == chainid)
-                            and is_aa(x)
-                        ]
-                    )
+                if len(resid_cont_lst) > 0:
+                    resid_cont_str = bound_chainid
+                    resid_cont_str += ':'
+                    resid_cont_str += lst_to_str(resid_cont_lst)
+                    cont_lst.append(resid_cont_str)
+
+                if site_dict is not None:
 
                     max_cont = 0
                     prot_site = other_site
                     for site_name, site_cont_lst in site_dict.items():
-                        site_cont = len([x for x in site_cont_lst if x in cont_lst])
+                        site_cont = len([x for x in site_cont_lst if x in resid_cont_lst])
                         if site_cont > max_cont:
                             prot_site = site_name
                             max_cont = site_cont
@@ -149,6 +157,8 @@ def annot_prot(
         df.at[index, bound_prot_pfam_col] = lst_to_str(
             sort_lst(lst_unique(pfam_lst)), join_txt="|", empty=none_pfam
         )
+
+        df.at[index, bound_prot_cont_col] = lst_to_str(cont_lst, join_txt=";")
 
     print("Annotated proteins!")
 

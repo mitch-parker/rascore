@@ -156,7 +156,6 @@ def conformation_page():
                     stick_resid = 71
                     loop_col = sw2_col
 
-                
 
                 loop_df = mask_equal(nuc_df, loop_name, [x for x in lst_col(nuc_df,loop_name,unique=True) if outlier_name not in x and disorder_name not in x])
 
@@ -175,7 +174,7 @@ def conformation_page():
                     "PDB ID",
                     [
                         x.upper()
-                        for x in lst_col(loop_df, pdb_id_col)
+                        for x in lst_col(mask_equal(loop_df,loop_name,loop_conf), pdb_id_col)
                         if x in lst_col(cluster_df, pdb_id_col)
                     ],
                 )
@@ -211,8 +210,9 @@ def conformation_page():
                 )[0]
                 style_lst.append(
                     [
-                        {
-                            "resn": [bio_lig],
+                        {   
+                            "chain": chainid,
+                            "resn": bio_lig,
                         },
                         {
                             "stick": {
@@ -227,7 +227,7 @@ def conformation_page():
                     [
                         {
                             "chain": chainid,
-                            "resi": [loop_resids],
+                            "resi": loop_resids,
                         },
                         {
                             "cartoon": {
@@ -243,7 +243,7 @@ def conformation_page():
                     [
                         {
                             "chain": chainid,
-                            "resi": [stick_resid],
+                            "resi": stick_resid,
                             "elem": "C",
                         },
                         {"stick": {"color": loop_color, "radius": 0.2}},
@@ -254,7 +254,7 @@ def conformation_page():
                     [
                         {
                             "chain": chainid,
-                            "resi": [stick_resid],
+                            "resi": stick_resid,
                             "elem": ["O", "N", "H"],
                         },
                         {"stick": {"colorscheme": "Carbon", "radius": 0.2}},

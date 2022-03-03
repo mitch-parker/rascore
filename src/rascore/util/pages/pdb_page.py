@@ -130,14 +130,14 @@ def pdb_page():
 
     st_col_lst = st.columns(4)
 
-    for i, col in enumerate([sw1_col, y32_col, sw2_col, y71_col]):
+    for i, col in enumerate([sw1_col, sw2_col, y32_col, y71_col]):
 
         if col in [sw1_col, y32_col]:
             color = sw1_color
         elif col in [sw2_col, y71_col]:
             color = sw2_color
 
-        st_col_lst[i].markdown(f"#### {col} Conformation")
+        st_col_lst[i].markdown(f"#### {rename_col_dict[col]}")
         st_col_lst[i].markdown(get_html_text({chainid_df.at[0, col]:color}, 
         font_size="large"),unsafe_allow_html=True)
 

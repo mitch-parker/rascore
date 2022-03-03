@@ -81,7 +81,7 @@ from ..functions.path import (
     rascore_str,
 )
 
-from ..constants.conf import sw1_name, sw2_name, loop_resid_dict, conf_color_dict, sw1_color,sw2_color
+from ..constants.conf import sw1_name, sw2_name, y32_name, y71_name, loop_resid_dict, conf_color_dict, sw1_color,sw2_color
 from ..functions.file import (
     entry_table_file,
     sum_table_file,
@@ -186,7 +186,7 @@ def query_page():
             loop_df = (
                 pd.pivot_table(
                     data=rename_st_cols(gene_nuc_df),
-                    index=rename_col_dict[loop_name],
+                    index=[rename_col_dict[loop_name]],
                     columns=rename_col_dict[gene_class_col],
                     values=rename_col_dict[pdb_id_col],
                     aggfunc="nunique",

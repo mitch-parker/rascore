@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "rascore"
 version = "0.2.0"
-description = "A tool for analyzing the conformations of RAS structures"
+description = "A tool for analyzing RAS protein structures"
 authors = ["mitch-parker <mip34@drexel.edu>"]
 license = "MIT License"
 

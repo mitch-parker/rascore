@@ -44,6 +44,11 @@ from .col import (
     altchi2_col,
 )
 
+p_rot = 'p'
+m_rot = 'm'
+t_rot = 't'
+n_rot = '-'
+
 bb_dict = {
     phi_col: [["C", "N", "CA", "C"], [-1, 0, 0, 0]],
     psi_col: [["N", "CA", "C", "N"], [0, 0, 0, 1]],
@@ -165,13 +170,13 @@ def get_rot_type(rot):
     rot = float(rot)
 
     if rot == 999.00:
-        return "-"
+        return n_rot
     elif 0 <= rot < 120:
-        return "p"
+        return p_rot
     elif 120 <= rot < 240:
-        return "t"
+        return t_rot
     elif 240 <= rot < 360:
-        return "m"
+        return m_rot 
 
 
 def calc_dih_angle(

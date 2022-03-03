@@ -36,7 +36,6 @@ mut_table_file = "mutation.tsv"
 cf_table_file = "cf.tsv"
 
 edia_json_file = "edia.json"
-map_json_file = "map.json"
 dih_json_file = "dihedral.json"
 interf_json_file = "interface.json"
 pocket_json_file = "pocket.json"

@@ -143,16 +143,17 @@ def rename_st_cols(df, col_lst=None):
     return df.loc[:, col_lst].rename(columns=rename_col_dict)
 
 
-def show_st_dataframe(df, st_col=None):
+def show_st_dataframe(df, st_col=None, hide_index=True):
 
-    hide_dataframe_row_index = """
-            <style>
-            .row_heading.level0 {display:none}
-            .blank {display:none}
-            </style>
-            """
+    if hide_index:
+        hide_dataframe_row_index = """
+                <style>
+                .row_heading.level0 {display:none}
+                .blank {display:none}
+                </style>
+                """
 
-    st.markdown(hide_dataframe_row_index, unsafe_allow_html=True)
+        st.markdown(hide_dataframe_row_index, unsafe_allow_html=True)
 
     if st_col is None:
         st.dataframe(df)
@@ -160,15 +161,16 @@ def show_st_dataframe(df, st_col=None):
         st_col.dataframe(df)
 
 
-def show_st_table(df, st_col=None):
+def show_st_table(df, st_col=None, hide_index=True):
 
-    hide_table_row_index = """
-            <style>
-            tbody th {display:none}
-            .blank {display:none}
-            </style>
-            """
-    st.markdown(hide_table_row_index, unsafe_allow_html=True)
+    if hide_index:
+        hide_table_row_index = """
+                <style>
+                tbody th {display:none}
+                .blank {display:none}
+                </style>
+                """
+        st.markdown(hide_table_row_index, unsafe_allow_html=True)
 
     if st_col is None:
         st.table(df)

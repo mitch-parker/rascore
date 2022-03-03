@@ -48,6 +48,7 @@ from ..functions.col import (
     pharm_lig_col,
     pharm_lig_site_col,
     pharm_lig_match_col,
+    bound_lig_cont_col
 )
 from ..functions.table import get_df_at_index, fix_val
 from ..functions.path import save_table
@@ -85,12 +86,13 @@ def build_lig_df(
     structure = load_coord(coord_path)
     neighbors = get_neighbors(structure[fix_val(modelid, return_int=True)][chainid])
 
+    cont_lst = list()
     site_lst = list()
     match_lst = list()
 
     for residue in get_residues(structure):
         if is_het(residue):
-            cont_lst = lst_unique(
+            resid_cont_lst = lst_unique(
                 [
                     get_resnum(x)
                     for x in get_residue_cont(
@@ -104,7 +106,8 @@ def build_lig_df(
                     and (is_aa(x))
                 ]
             )
-            if len(cont_lst) > 0:
+
+            if len(resid_cont_lst) > 0:
                 resname = get_resname(residue)
                 lig_class = False
                 is_pharm = False
@@ -119,12 +122,18 @@ def build_lig_df(
                     lig_dict[pharm_lig_col].append(resname)
                     is_pharm = True
 
+
                 if is_pharm:
+                    resid_cont_str = resname
+                    resid_cont_str += ':'
+                    resid_cont_str += lst_to_str(resid_cont_lst)
+                    cont_lst.append(resid_cont_str)
+
                     if site_dict is not None:
                         max_cont = 0
                         pharm_site = other_site
                         for site_name, site_cont_lst in site_dict.items():
-                            site_cont = len([x for x in site_cont_lst if x in cont_lst])
+                            site_cont = len([x for x in site_cont_lst if x in resid_cont_lst])
                             if site_cont > max_cont:
                                 pharm_site = site_name
                                 max_cont = site_cont
@@ -165,6 +174,8 @@ def build_lig_df(
     df.at[index, pharm_lig_match_col] = lst_to_str(
         sort_lst(lst_unique(match_lst)), join_txt="|", empty=none_match
     )
+
+    df.at[index, bound_lig_cont_col] = lst_to_str(cont_lst, join_txt=";")
 
     return df
 

@@ -155,6 +155,10 @@ def make_facet_plot(
     kde_thresh=0.05,
     kde_levels=10,
     kde_cut=3.0,
+    kde_alpha=0.1,
+    rug_alpha=0.5,
+    rug_height=0.05,
+    rug_width=0.05,
     stat_pairs=None,
     stat_test="t-test_ind",
     stat_loc="inside",
@@ -359,13 +363,12 @@ def make_facet_plot(
                     "thresh": kde_thresh,
                     "levels": kde_levels,
                     "cut": kde_cut,
-                    "alpha": 0.1,
+                    "alpha": kde_alpha,
                     "fill": True,
                     "linewidth": line_width,
                 },
-                rug_kws={"lw": 0.05, "alpha": 0.5, "height": 0.05},
+                rug_kws={"lw": rug_width, "alpha": rug_alpha, "height": rug_height},
             )
-
         else:
 
             if plot_line:
@@ -673,11 +676,11 @@ def make_facet_plot(
 
         if h_lines is not None:
             for h in h_line_lst:
-                ax.axhline(y=h, linewidth=line_width, color=h_color)
+                ax.axhline(y=h, linewidth=line_width, linestyle="--", color=h_color)
 
         if v_lines is not None:
             for v in v_line_lst:
-                ax.axvline(x=v, linewidth=line_width, color=v_color)
+                ax.axvline(x=v, linewidth=line_width, linestyle="--", color=v_color)
 
         clean_name = ax_name
         if type(clean_name) == str:
@@ -900,9 +903,14 @@ def make_facet_plot(
 
     append_file_path(plot_path)
 
+    if 'png' in plot_path:
+        plot_format = 'png'
+    if 'pdf' in plot_path:
+        plot_format = 'pdf'
+
     plt.savefig(
         plot_path,
-        format="pdf",
+        format=plot_format,
         bbox_extra_artists=bbox_extra_artists,
         bbox_inches="tight",
         pad_inches=0.0,

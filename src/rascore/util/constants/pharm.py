@@ -23,6 +23,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from ..functions.color import get_lst_colors
+
 sp2_name = "SP2"
 sp12_name = "SP12"
 as_name = "Allosteric Site"
@@ -48,13 +50,6 @@ other_pharm_color = "#66a61e"
 mult_pharm_color = "#e6ab02"
 none_pharm_color = "#a6761d"
 
-pharm_class_lst = [
-    sp2_name,
-    sp12_name,
-    other_pharm_name,
-    mult_pharm_name,
-    none_pharm_name,
-]
 pharm_color_dict = {
     sp2_name: sp2_color,
     sp12_name: sp12_color,
@@ -62,6 +57,14 @@ pharm_color_dict = {
     mult_pharm_name: mult_pharm_color,
     none_pharm_name: none_pharm_color,
 }
+
+pharm_class_lst = [
+    sp2_name,
+    sp12_name,
+    other_pharm_name,
+    mult_pharm_name,
+    none_pharm_name,
+]
 
 sp2_cont = [12, 96, 99]
 sp12_cont = [5, 39, 54]

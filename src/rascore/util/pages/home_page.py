@@ -25,7 +25,7 @@ SOFTWARE.
 
 import streamlit as st
 
-from ..constants.pharm import sp2_color
+from ..constants.pharm import pharm_color_dict, sp2_name
 from ..constants.conf import loop_resid_dict, sw1_name, sw2_name, sw1_color, sw2_color
 from ..functions.gui import write_st_end, create_st_button, show_st_structure
 
@@ -86,7 +86,7 @@ def home_page():
                 "resn": "MOV",
                 "elem": "C",
             },
-            {"stick": {"color": sp2_color, "radius": 0.2}},
+            {"stick": {"color": pharm_color_dict[sp2_name], "radius": 0.2}},
         ]
     )
     style_lst.append(
@@ -176,7 +176,7 @@ def home_page():
         )
 
     right_col.markdown("# Rascore")
-    right_col.markdown("### A tool for analyzing the conformations of RAS structures")
+    right_col.markdown("### A tool for analyzing RAS protein structures")
     right_col.markdown("**Created by Mitchell Parker and Roland Dunbrack**")
     right_col.markdown("**Fox Chase Cancer Center**")
 
@@ -235,7 +235,7 @@ def home_page():
     st.markdown(
         """
         ### Summary
-        *Rascore* is a tool for analyzing RAS structures 
+        *Rascore* is a tool for analyzing RAS protein structures 
         (KRAS, NRAS, and HRAS) by the conformations of their 
         catalytic switch 1 (SW1) and switch 2 (SW2) loops. The *Rascore* 
         database presents an updated analysis of all available 

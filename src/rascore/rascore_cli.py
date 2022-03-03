@@ -46,8 +46,8 @@ def main(args):
 
     classify = args.classify
     build = args.build
-    # cluster = args.cluster
-    # plot = args.plot
+    #cluster = args.cluster
+    plot = args.plot
     gui = args.gui
 
     out = args.out
@@ -55,7 +55,7 @@ def main(args):
 
     if classify is not None:
 
-        from rascore.util.pipelines.classify_rascore import classify_rascore
+        from util.pipelines.classify_rascore import classify_rascore
 
         classify_rascore(
             file_paths=classify,
@@ -79,19 +79,19 @@ def main(args):
         )
 
     # elif cluster is not None:
-    #     from rascore.util.pipelines.prep_rascore import prep_rascore
-    #     from rascore.util.pipelines.cluster_rascore import cluster_rascore
+    #     from util.pipelines.prep_rascore import prep_rascore
+    #     from util.pipelines.cluster_rascore import cluster_rascore
 
     #     prep_rascore(build_path=cluster)
     #     cluster_rascore(cluster, out_path=out, num_cpu=cpu)
 
-    # elif plot is not None:
+    elif plot is not None:
 
-    #     from rascore.util.pipelines.prep_rascore import prep_rascore
-    #     from rascore.util.pipelines.plot_rascore import plot_rascore
+        from util.pipelines.prep_rascore import prep_rascore
+        from util.pipelines.plot_rascore import plot_rascore
 
-    #     prep_rascore(build_path=plot)
-    #     plot_rascore(plot, out_path=out, num_cpu=cpu)
+        prep_rascore(build_path=plot)
+        plot_rascore(plot, out_path=out, num_cpu=cpu)
 
     elif gui is not None:
         if gui is not True:
@@ -119,7 +119,7 @@ def main(args):
 def cli(args=None):
 
     print(pyfiglet.figlet_format("Rascore"))
-    print("A tool for analyzing the conformations of RAS structures\n")
+    print("A tool for analyzing RAS protein structures\n")
     print("Author: Mitchell Isaac Parker <mip34@drexel.edu>")
     print("License: MIT License\n")
 
@@ -127,7 +127,7 @@ def cli(args=None):
         args = sys.argv[1:]
 
     parser = argparse.ArgumentParser(
-        description="Rascore: A tool for analyzing the conformations of RAS structures"
+        description="Rascore: A tool for analyzing RAS protein structures"
     )
 
     group = parser.add_mutually_exclusive_group()
@@ -154,13 +154,13 @@ def cli(args=None):
     #     required=False,
     #     help="path to rascore database directory (output files saved to rascore_cluster in current working directory unless an output directory path is specified)",
     # )
-    # group.add_argument(
-    #     "-plot",
-    #     "--plot",
-    #     type=str,
-    #     required=False,
-    #     help="path to rascore database directory (output files saved to rascore_plot in current working directory unless an output directory path is specified)",
-    # )
+    group.add_argument(
+        "-plot",
+        "--plot",
+        type=str,
+        required=False,
+        help="path to rascore database directory (output files saved to rascore_plot in current working directory unless an output directory path is specified)",
+    )
     group.add_argument(
         "-gui",
         "--gui",

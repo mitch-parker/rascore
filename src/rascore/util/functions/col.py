@@ -114,6 +114,9 @@ bound_lig_col = "bound_ligand"
 bound_prot_col = "bound_protein"
 bound_prot_swiss_id_col = "bound_protein_swiss_id"
 
+bound_lig_cont_col = 'bound_ligand_contacts'
+bound_prot_cont_col = 'bound_protein_contacts'
+
 pharm_lig_site_col = "pharmacological_ligand_site"
 pharm_lig_match_col = "pharmarmacological_ligand_match"
 
@@ -389,6 +392,8 @@ order_col_lst = [
     occup_col,
     bound_lig_col,
     bound_prot_col,
+    bound_lig_cont_col,
+    bound_prot_cont_col,
     bound_prot_swiss_id_col,
     pharm_lig_site_col,
     pharm_lig_match_col,
@@ -439,8 +444,8 @@ rename_col_dict = {
     chainid_col: "Chain",
     sw1_col: "SW1 Conformation",
     sw2_col: "SW2 Conformation",
-    y32_col: "Y32 Conformation",
-    y71_col: "Y71 Conformation",
+    y32_col: "Y32 Position",
+    y71_col: "Y71 Position",
     gene_class_col: "RAS Isoform",
     mut_status_col: "Mutation Status",
     nuc_class_col: "Nucleotide State",

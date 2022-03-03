@@ -67,8 +67,9 @@ from .table import (
 def is_noise(val):
 
     noise_status = False
-    if val == "Noise":
-        noise_status = True
+    if type(val) == str:
+        if 'Noise' in val:
+            noise_status = True
     elif val == -1:
         noise_status = True
 
@@ -395,7 +396,11 @@ def add_dih_stats(temp_df, sum_df, col, index):
 
     count_dict = build_col_count_dict(temp_df, col)
 
-    common = [x for x in get_col_most_common(temp_df, col) if "-" not in x][0]
+    common = [x for x in get_col_most_common(temp_df, col) if "-" not in x]
+    if len(common) == 0:
+        common = "-"
+    else:
+        common = common[0]
     entropy = calc_entropy(list(count_dict.values()))
     occupancy = calc_occupancy(list(count_dict.values()))
 
@@ -439,23 +444,23 @@ def build_sum_table(df):
 
         sum_df.at[index, cluster_col] = cluster
 
-        for col in stat_col_lst:
-            if col in df_col_lst:
-                dist_lst = lst_col(temp_df, col, return_float=True)
+        if "Noise" not in cluster and "Outlier" not in cluster and "Disordered" not in cluster:
+            for col in stat_col_lst:
+                if col in df_col_lst:
+                    dist_lst = lst_col(temp_df, col, return_float=True)
 
-                mean_dist = calc_dist_stat(dist_lst, method="mean")
-                max_dist = calc_dist_stat(dist_lst, method="max")
+                    mean_dist = calc_dist_stat(dist_lst, method="mean")
+                    max_dist = calc_dist_stat(dist_lst, method="max")
 
-                val_lst = [mean_dist, max_dist]
+                    val_lst = [mean_dist, max_dist]
 
-                if dih_dist:
-                    if col == nn_dist_col:
-                        val_lst = [dist_to_dih(x) for x in val_lst]
+                    if dih_dist:
+                        if col == nn_dist_col:
+                            val_lst = [dist_to_dih(x) for x in val_lst]
 
-                sum_df.at[index, f"{col}_{mean_col}"] = val_lst[0]
-                sum_df.at[index, f"{col}_{max_col}"] = val_lst[1]
+                    sum_df.at[index, f"{col}_{mean_col}"] = val_lst[0]
+                    sum_df.at[index, f"{col}_{max_col}"] = val_lst[1]
 
-        if "Noise" not in cluster:
             for add_col in add_col_lst:
                 if add_col in df_col_lst:
                     sum_df = add_dih_stats(temp_df, sum_df, add_col, index)

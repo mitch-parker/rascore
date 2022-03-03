@@ -64,18 +64,14 @@ from ..functions.path import (
 )
 from ..functions.cluster import build_sum_table
 from ..functions.coord import load_coord, get_modelid, get_chainid
-from ..functions.dih import calc_dih_angle
 from ..functions.lig import lig_col_lst
 from ..functions.col import (
     id_col,
-    match_class_col,
-    pharm_lig_match_col,
     nuc_class_col,
     bio_lig_col,
     cluster_col,
     hb_status_col,
     complete_col,
-    atom_dist_col
 )
 from ..functions.file import (
     cluster_table_file,
@@ -88,37 +84,34 @@ from ..functions.file import (
 from ..constants.nuc import (
     gtp_name,
     nuc_class_dict,
-    nuc_class_lst,
     nuc_class_dict,
     gtp_atomids,
+    nuc_class_lst,
 )
 from ..constants.pharm import (
-    pharm_site_dict,
-    pharm_match_dict,
-    mult_pharm_name
-    
+    pharm_site_dict,    
 )
 from ..constants.conf import (
     y32_name,
     y71_name,
     sw1_name,
     sw2_name,
-    sw1_gtp_name,
-    sw1_gtp_dir_name,
-    sw1_gtp_wat_name,
-    sw1_gtp_no_name,
-    sw1_gtp_dict,
-    conf_color_dict,
+    in_name,
+    out_name,
     noise_name,
     outlier_name,
-    disorder_name
+    disorder_name,
+    conf_color_dict
 )
 from ..constants.pml import sup_resids, show_resids
 
 
 def classify_rascore(file_paths, out_path=None, dih_dict=None, 
                     sw1_resids="25-40", sw2_resids="56-76", 
-                    y32_resid=32, y71_resid=71, num_cpu=1):
+                    y32_resid=32, y71_resid=71, 
+                    g12_resid=12, v9_resid=9,
+                    y32_dist=10.5, y71_dist=8.75,
+                    num_cpu=1):
 
     if out_path is None:
         out_path = f"{os.getcwd()}/{rascore_str}_{classify_str}"
@@ -175,13 +168,14 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None,
 
         df = pd.concat([df, temp_df], sort=False)
 
-    if len(df) > 0:
-
+    if len(df) == 0:
+        print('No structures to classify.')
+    else:
         df = df.reset_index(drop=True)
 
         df_col_lst = list(df.columns)
 
-        for col in [sw1_name, sw2_name]:
+        for col in [y32_name, y71_name, sw1_name, sw2_name]:
             if col in df_col_lst:
                 del df[col]
 
@@ -202,18 +196,8 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None,
                 df = annot_lig(
                     df=df,
                     site_dict=pharm_site_dict,
-                    match_dict=pharm_match_dict,
                     num_cpu=num_cpu,
                 )
-
-            if match_class_col not in df_col_lst:       
-                for index in list(df.index.values):
-                    pharm_match = df.at[index, pharm_lig_match_col]
-                    if "|" in pharm_match:
-                        match_class = mult_pharm_name
-                    else:
-                        match_class = pharm_match
-                    df.at[index, match_class_col] = match_class
 
             if nuc_class_col not in df_col_lst:
                 df[nuc_class_col] = df[bio_lig_col].map(nuc_class_dict).fillna(gtp_name)
@@ -221,12 +205,52 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None,
             if dih_dict is None:
                 dih_dict = prep_dih(coord_path_lst, num_cpu=num_cpu)
 
+            dist_df = build_dist_table(
+                df,
+                x_resids=[y32_resid, y71_resid],
+                y_resids=[g12_resid, v9_resid],
+                x_atomids=['OH','OH'],
+                y_atomids=['CA','CA'],
+                atom_dist_col_lst=[y32_name, y71_name]
+            )
 
+            dist_dict = {y32_name: y32_dist, y71_name: y71_dist}
 
-            df[y32_name] = "Y32." + df[nuc_class_col]
-            df[y71_name] = "Y71." + df[nuc_class_col]
+            for index in list(dist_df.index.values):
 
-            for loop_name in [sw1_name, sw2_name]:
+                nuc_class = dist_df.at[index, nuc_class_col]
+
+                for resid_name in [y32_name, y71_name]:
+
+                    atom_dist = dist_df.at[index, resid_name]
+
+                    if atom_dist == 999.00:
+                        group_name = disorder_name
+                    else:
+                        group_name = resid_name
+                        if atom_dist <= dist_dict[resid_name]:
+                            group_name += in_name
+                        else:
+                            group_name += out_name
+
+                    dist_df.at[index, resid_name] = group_name
+
+            for resid_name in [y32_name, y71_name]:
+
+                merge_df = dist_df.loc[
+                    :, [core_path_col, modelid_col, chainid_col, resid_name]
+                ]
+
+                df = merge_tables(df, merge_df)
+
+            for resid_name in [y32_name, y71_name]:
+
+                if resid_name == y32_name:
+                    loop_name = sw1_name
+                    loop_resids = sw1_resids
+                elif resid_name == y71_name:
+                    loop_name = sw2_name
+                    loop_resids = sw2_resids
 
                 cluster_loop_path = f"{cluster_path}/{loop_name}"
                 classify_loop_path = f"{out_path}/{loop_name}"
@@ -234,96 +258,86 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None,
                 loop_result_df = pd.DataFrame()
                 loop_sum_df = pd.DataFrame()
 
-                for nuc_class in nuc_class_lst:
+                for group_name in lst_col(df, resid_name, unique=True):
 
-                    print(
-                        f"Classifying {loop_name} conformations in {nuc_class} structures."
-                    )
+                    group_df = mask_equal(df, resid_name, group_name)
 
-                    loop_nuc_name = f"{loop_name}_{nuc_class}"
+                    for nuc_class in nuc_class_lst:
 
-                    cluster_table_path = get_file_path(
-                        cluster_table_file,
-                        dir_str=loop_nuc_name,
-                        dir_path=cluster_loop_path,
-                    )
+                        group_nuc_df = mask_equal(group_df, nuc_class_col, nuc_class)
 
-                    fit_matrix_path = get_file_path(
-                        dih_fit_matrix_file,
-                        dir_str=loop_nuc_name,
-                        dir_path=cluster_loop_path,
-                    )
+                        group_nuc_name = f"{group_name}.{nuc_class}"
 
-                    result_table_path = get_file_path(
-                        result_table_file,
-                        dir_str=loop_nuc_name,
-                        dir_path=classify_loop_path,
-                    )
+                        print(
+                                f"Classifying {loop_name} conformations in {group_name}.{nuc_class} structures."
+                            )
 
-                    sum_table_path = get_file_path(
-                        sum_table_file,
-                        dir_str=loop_nuc_name,
-                        dir_path=classify_loop_path,
-                    )
-
-                    pred_matrix_path = get_file_path(
-                        pred_matrix_file,
-                        dir_str=loop_nuc_name,
-                        dir_path=classify_loop_path,
-                    )
-
-                    nuc_df = mask_equal(df, nuc_class_col, nuc_class)
-
-                    if len(nuc_df) > 0:
-                        
-                        if loop_name == sw1_name:
-                            chi1_resids = None
-                            loop_resids = sw1_resids
-                        elif loop_name == sw2_name:
-                            loop_resids = sw2_resids
-                            chi1_resids = y71_resid
-
-                        dih_df = build_dih_table(
-                            df=nuc_df,
-                            dih_dict=dih_dict,
-                            bb_resids=loop_resids,
-                            chi1_resids=chi1_resids,
+                        cluster_table_path = get_file_path(
+                            cluster_table_file,
+                            dir_str=group_nuc_name,
+                            dir_path=cluster_loop_path,
                         )
 
-                        cluster_df = load_table(cluster_table_path)
-
-                        build_dih_matrix(
-                            fit_df=cluster_df,
-                            pred_df=dih_df,
-                            max_norm_path=pred_matrix_path,
+                        fit_matrix_path = get_file_path(
+                            dih_fit_matrix_file,
+                            dir_str=group_nuc_name,
+                            dir_path=cluster_loop_path,
                         )
 
-                        fit_matrix = load_matrix(fit_matrix_path)
-                        pred_matrix = load_matrix(pred_matrix_path)
-
-                        classify_matrix(
-                            cluster_df=cluster_df,
-                            pred_df=dih_df,
-                            fit_matrix=fit_matrix,
-                            pred_matrix=pred_matrix,
-                            result_table_path=result_table_path,
-                            max_nn_dist=0.45,
-                            only_save_pred=True,
-                            reorder_class=False,
+                        result_table_path = get_file_path(
+                            result_table_file,
+                            dir_str=group_nuc_name,
+                            dir_path=classify_loop_path,
                         )
 
-                        result_df = load_table(result_table_path)
-
-                        sum_df = build_sum_table(result_df)
-
-                        save_table(result_table_path, result_df)
-                        save_table(sum_table_path, sum_df)
-
-                        loop_result_df = pd.concat(
-                            [loop_result_df, result_df], sort=False
+                        pred_matrix_path = get_file_path(
+                            pred_matrix_file,
+                            dir_str=group_nuc_name,
+                            dir_path=classify_loop_path,
                         )
-                        loop_sum_df = pd.concat([loop_sum_df, sum_df], sort=False)
 
+                        if len(group_nuc_df) > 0:
+
+                            dih_df = build_dih_table(
+                                    df=group_nuc_df,
+                                    dih_dict=dih_dict,
+                                    bb_resids=loop_resids,
+                                )
+
+                            if disorder_name not in group_nuc_name:
+
+                                cluster_df = load_table(cluster_table_path)
+
+                                build_dih_matrix(
+                                    fit_df=cluster_df,
+                                    pred_df=dih_df,
+                                    max_norm_path=pred_matrix_path,
+                                )
+
+                                fit_matrix = load_matrix(fit_matrix_path)
+                                pred_matrix = load_matrix(pred_matrix_path)
+
+                                classify_matrix(
+                                    cluster_df=cluster_df,
+                                    pred_df=dih_df,
+                                    fit_matrix=fit_matrix,
+                                    pred_matrix=pred_matrix,
+                                    result_table_path=result_table_path,
+                                    max_nn_dist=0.45,
+                                    only_save_pred=True,
+                                    reorder_class=False,
+                                )
+                            else:
+                                result_df = dih_df.copy(deep=True)
+                                result_df[cluster_col] = noise_name
+                                save_table(result_table_path, result_df)
+
+                            result_df = load_table(result_table_path)
+
+                            loop_result_df = pd.concat(
+                                [loop_result_df, result_df], sort=False
+                            )
+                       
                 loop_result_table_path = get_file_path(
                     result_table_file, dir_str=loop_name, dir_path=out_path
                 )
@@ -359,21 +373,22 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None,
                         result_dict
                     )
 
+                loop_result_df = loop_result_df.reset_index(drop=True)
+            
+                for index in list(loop_result_df.index.values):
+                    cluster = loop_result_df.at[index, cluster_col]
+                    if noise_name in cluster:
+                        complete =  str(loop_result_df.at[index, complete_col])
+                        if complete == str(True):
+                            cluster = outlier_name
+                        elif complete == str(False):
+                            cluster = disorder_name
+                        loop_result_df.at[index,cluster_col] = cluster
+
+                loop_sum_df = build_sum_table(loop_result_df)
+
                 save_table(loop_result_table_path, loop_result_df)
                 save_table(loop_sum_table_path, loop_sum_df)
-
-                loop_result_df = loop_result_df.reset_index(drop=True)
-
-                for index in list(loop_result_df.index.values):
-                    cluster = loop_result_df.at[index,cluster_col]
-                    if cluster == noise_name:
-                        nuc_class = loop_result_df.at[index,nuc_class_col]
-                        complete =  str(loop_result_df.at[index,complete_col])
-                        if complete == str(True):
-                            cluster = f"{loop_name}.{nuc_class}-{outlier_name}"
-                        elif complete == str(False):
-                            cluster = f"{loop_name}.{nuc_class}-{disorder_name}"
-                        loop_result_df.at[index,cluster_col] = cluster
 
                 loop_result_df = loop_result_df.rename(columns={cluster_col: loop_name})
 
@@ -392,58 +407,11 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None,
                     check_hb=True,
                 )
 
-                dist_df[hb_status_col] = dist_df[hb_status_col].map(sw1_gtp_dict)
-
-                dist_df = dist_df.loc[
+                merge_df = dist_df.loc[
                     :, [core_path_col, modelid_col, chainid_col, hb_status_col]
                 ]
 
-                df = merge_tables(df, dist_df)
-
-                df[hb_status_col] = df[hb_status_col].fillna("").map(str)
-
-                for index in list(df.index.values):
-                    hb_status = df.at[index,hb_status_col] 
-                    if df.at[index,sw1_name] in [sw1_gtp_name,sw1_gtp_wat_name,sw1_gtp_dir_name,sw1_gtp_no_name]:
-                        df.at[index,sw1_name] = hb_status
-
-                    if '-' in hb_status:
-                        hb_status = hb_status.split('-')[1]
-                    
-                        df.at[index,y32_name] = df.at[index,y32_name] + '-' + hb_status
-                    
-                del df[hb_status_col]
-
-
-            for index in tqdm(list(df.index.values),
-                    desc="Building dihedral table",
-                    position=0,
-                    leave=True,
-                ):
-            
-                atom_dist = calc_dih_angle(structure=load_coord(df.at[index,core_path_col]),
-                                chainid=df.at[index,chainid_col],
-                                resid_1=69,
-                                resid_2=76,
-                                resid_3=77,
-                                resid_4=6,
-                                atomid_1='CA',
-                                atomid_2='CA',
-                                atomid_3='CA',
-                                atomid_4='CA',
-                                check_dist=False
-                                )
-
-                y71_status = f'Y71.{df.at[index,nuc_class_col]}'
-                y71_status += '-'
-                if atom_dist == 999.00:
-                    y71_status += 'Disordered'
-                else:
-                    if atom_dist >= -75:
-                        y71_status += 'Out'
-                    else:
-                        y71_status += 'In'
-                df.at[index,y71_name] = y71_status
+                df = merge_tables(df, merge_df)
 
             result_table_path = get_file_path(result_table_file, dir_path=out_path)
 
@@ -474,8 +442,8 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None,
                     style_ribbon=True,
                     thick_bb=False,
                     show_bio=True,
-                    color_palette=conf_color_dict[loop_name],
                     sup_group=True,
+                    color_palette=conf_color_dict[loop_name],
                     sup_resids=sup_resids,
                     show_resids=show_resids,
                 )

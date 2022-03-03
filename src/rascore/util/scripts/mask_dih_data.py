@@ -90,11 +90,11 @@ def add_edia_status(
 
 def mask_dih_table(df):
 
-    fit_df = mask_equal(df, complete_col, "True", reset_index=False)
+    fit_df = mask_equal(df, complete_col, str(True), reset_index=False)
 
     if edia_col in list(fit_df.columns):
         fit_df = mask_search(
-            fit_df, edia_col, "Below", " ", equal=False, reset_index=False
+            fit_df, edia_col, "Above", " ", equal=True, reset_index=False
         )
 
     pred_df = df.loc[~df.index.isin(list(fit_df.index.values)), :]

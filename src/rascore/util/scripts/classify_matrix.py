@@ -102,6 +102,19 @@ def classify_matrix(
 
         for cluster in cluster_lst:
 
+            if max_nn_dist is None:
+                nn_cutoff = nn_cutoff_dict[cluster]
+            else:
+                nn_cutoff = max_nn_dist
+                nn_cutoff_dict[cluster] = nn_cutoff
+
+            if fit_constr_matrix is not None and pred_constr_matrix is not None:
+                if max_constr_dist is None:
+                    constr_cutoff = constr_cutoff_dict[cluster]
+                else:
+                    constr_cutoff = max_constr_dist
+                    constr_cutoff_dict[cluster] = constr_cutoff
+
             add_cluster = True
 
             index_lst = get_val_index_lst(cluster_df, cluster_col, cluster)
@@ -120,12 +133,6 @@ def classify_matrix(
 
             nn_dict[cluster] = nn_dist
 
-            nn_cutoff = max_nn_dist
-            if max_nn_dist is None:
-                nn_cutoff = nn_cutoff_dict[cluster]
-            else:
-                nn_cutoff_dict[cluster] = nn_cutoff
-
             if nn_dist > nn_cutoff:
                 add_cluster = False
             else:
@@ -142,12 +149,6 @@ def classify_matrix(
                         method=constr_method,
                     )
                 constr_dict[cluster] = constr_dist
-
-                constr_cutoff = max_constr_dist
-                if max_constr_dist is None:
-                    constr_cutoff = constr_cutoff_dict[cluster]
-                else:
-                    constr_cutoff_dict[cluster] = constr_cutoff
 
                 if constr_dist > constr_cutoff:
                     add_cluster = False
@@ -199,12 +200,14 @@ def classify_matrix(
         ):
             report_df.at[i, cluster_col] = cluster
             report_df.at[i, total_col] = cluster_count_dict[cluster]
-            report_df.at[i, nn_cutoff_col] = nn_cutoff_dict[cluster]
+            if cluster in list(nn_cutoff_dict.keys()):
+                report_df.at[i, nn_cutoff_col] = nn_cutoff_dict[cluster]
             report_df.at[i, total_classified_nn_col] = report_dict[cluster][
                 total_classified_nn_col
             ]
             if fit_constr_matrix is not None and pred_constr_matrix is not None:
-                report_df.at[i, constr_cutoff_col] = constr_cutoff_dict[cluster]
+                if cluster in list(constr_cutoff_dict.keys()):
+                    report_df.at[i, constr_cutoff_col] = constr_cutoff_dict[cluster]
                 report_df.at[i, total_classified_constr_col] = report_dict[cluster][
                     total_classified_constr_col
                 ]
