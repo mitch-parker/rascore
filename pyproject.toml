@@ -3,7 +3,7 @@ name = "rascore"
 version = "0.2.0"
 description = "A tool for analyzing RAS protein structures"
 authors = ["mitch-parker <mip34@drexel.edu>"]
-license = "MIT License"
+license = "Apache License 2.0"
 
 [tool.poetry.dependencies]
 python = "3.8"

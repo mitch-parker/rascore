@@ -79,7 +79,7 @@ Please feel free to contact us with any issues, comments, or questions.
 - NIH R35 GM122517 (to R.D.)
 
 # License
-MIT License
+Apache License 2.0
 
 
 Copyright (c) 2022 Mitchell Isaac Parker
