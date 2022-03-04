@@ -177,7 +177,7 @@ def query_page():
             elif col in [y71_name, sw2_name]:
                 conf_col = right_conf_col
 
-            conf_col.markdown(f"#### {rename_col_dict[col]}")
+            conf_col.markdown(f"#### {rename_col_dict[table_col]}")
 
             loop_df = (
                 pd.pivot_table(
