@@ -199,7 +199,7 @@ def query_page():
 
             loop_df = loop_df.reset_index()
 
-            show_st_table(loop_df, st_col=table_col)
+            show_st_table(loop_df, st_col=conf_col)
 
         left_conf_col.markdown(
             '**Note.** "3P" for GTP or GTP analog-bound, "2P" for GDP-bound, and "0P" for nucleotide-free'
