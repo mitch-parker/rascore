@@ -16,7 +16,7 @@
 
 """
 
-from ..functions.color import get_lst_colors
+from ..scripts.prep_pocket import pocket_bound_name, pocket_unbound_name
 
 sp2_name = "SP2"
 sp12_name = "SP12"
@@ -35,7 +35,7 @@ ind_name = "Indole"
 ben_name = "Benzodioxane"
 bip_name = "Biphenyl"
 
-unclass_name = "Unclassified"
+uncl_name = "Unclassified"
 
 sp2_color = "#d95f02"
 sp12_color = "#1b9e77"
@@ -52,12 +52,31 @@ pharm_color_dict = {
 }
 
 pharm_class_lst = [
-    sp2_name,
     sp12_name,
+    sp2_name,
     other_pharm_name,
     mult_pharm_name,
     none_pharm_name,
 ]
+
+match_class_lst = [   
+    f"{sp12_name}.{ind_name}",
+    f"{sp12_name}.{ben_name}",
+    f"{sp12_name}.{bip_name}",
+    f"{sp12_name}.{uncl_name}",
+    f"{sp2_name}.{acr_name}",
+    f"{sp2_name}.{sul_name}",
+    f"{sp2_name}.{uncl_name}",
+    other_pharm_name,
+    mult_pharm_name,
+    none_pharm_name
+]
+
+pocket_class_lst = list()
+
+for pharm_class in pharm_class_lst:
+    pocket_class_lst.append(f"{pharm_class}-{pocket_bound_name}")
+    pocket_class_lst.append(f"{pharm_class}-{pocket_unbound_name}")
 
 sp2_cont = [12, 96, 99]
 sp12_cont = [5, 39, 54]

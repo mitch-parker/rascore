@@ -461,19 +461,6 @@ rename_col_dict = {
     resolution_col: "Resolution",
     r_factor_col: "R-Factor",
     date_col: "Deposit Date",
-    interf_area_col: "Interface Area",
-    pocket_volume_col: "Pocket Volume",
-    pocket_score_col: "Pocket Score",
-    phi_col: "Phi",
-    psi_col: "Psi",
-    omega_col: "Omega",
-    chi1_col: "Chi1",
-    chi2_col: "Chi2",
-    altchi1_col: "AltChi1",
-    altchi2_col: "AltChi2",
-    chi3_col: "Chi3",
-    chi4_col: "Chi4",
-    chi5_col: "Chi5",
 }
 
 

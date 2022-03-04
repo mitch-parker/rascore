@@ -18,3 +18,5 @@
 
 dimer_name = "Homodimer"
 none_dimer_name = "None"
+
+interf_class_lst = [dimer_name,none_dimer_name]

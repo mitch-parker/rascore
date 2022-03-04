@@ -25,8 +25,6 @@ gene_class_lst = [kras_name, hras_name, nras_name]
 swiss_id_lst = ["RASK_HUMAN", "RASN_HUMAN", "RASH_HUMAN"]
 uniprot_acc_lst = ["P01116", "P01116-2", "P01112", "P01111"]
 
-gene_class_lst = [hras_name, kras_name, nras_name]
-
 gene_class_dict = {
     "GTPase HRas": hras_name,
     "GTPase KRas": kras_name,

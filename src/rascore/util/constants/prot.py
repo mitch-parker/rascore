@@ -58,6 +58,7 @@ prot_class_lst = [
     binder_name,
     nano_name,
     other_prot_name,
+    mult_prot_name,
     none_prot_name,
 ]
 

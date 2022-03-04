@@ -47,7 +47,7 @@ from ..constants.pharm import (
     mult_pharm_name
 )
 from ..constants.gene import hras_name
-from ..constants.nuc import nuc_class_lst, nuc_color_dict, gtp_atomids
+from ..constants.nuc import nuc_class_lst, nuc_color_dict, gtp_atomids, gtp_name
 from ..constants.conf import (
     loop_resid_dict,
     conf_color_dict,
@@ -75,7 +75,8 @@ from ..constants.conf import (
     sw2_gdp_out_sp2b_name,
     sw2_gtp_in_sp12b_name,
     sw2_gtp_out_t_name,
-    sw2_nf_out_gef_name
+    sw2_nf_out_gef_name,
+    hb_color_dict
 )
 from ..constants.pocket import pocket_site_lst, pocket_color_dict
 from ..constants.pml import (
@@ -106,8 +107,10 @@ from ..functions.file import (
     pymol_pml_file,
     plot_img_file,
     venn_img_file,
-    stat_table_file
+    stat_table_file,
+    sum_table_file
 )
+from ..functions.coord import wmhb_name, hb_name
 from ..functions.path import (
     get_file_path,
     load_table,
@@ -149,7 +152,8 @@ from ..functions.col import (
     bound_prot_cont_col,
     bound_lig_cont_col,
     sig_col,
-    risk_ratio_col
+    risk_ratio_col,
+    interf_class_col
 )
 
 from ..functions.table import (
@@ -161,7 +165,7 @@ from ..functions.table import (
     build_col_count_dict,
     make_dict,
 )
-from ..functions.lst import res_to_lst, str_to_lst
+from ..functions.lst import res_to_lst, str_to_lst, type_lst, lst_to_str
 
 
 def plot_rama(df, dih_dict, out_path, num_cpu=1):
@@ -478,9 +482,9 @@ def plot_pymol(df, interf_df, sup_core_path, out_path):
 
 def plot_dist(df, dih_dict, sup_core_path, out_path):
 
-    dist_table_path = get_file_path(
-        f"{y32_name}_{y71_name}_{dist_table_file}", dir_path=out_path
-    )
+    # dist_table_path = get_file_path(
+    #     f"{y32_name}_{y71_name}_{dist_table_file}", dir_path=out_path
+    # )
 
     # build_dist_table(
     #         df,
@@ -492,54 +496,54 @@ def plot_dist(df, dih_dict, sup_core_path, out_path):
     #         dist_table_path=dist_table_path
     #     )
 
-    dist_df = load_table(dist_table_path)
+    # dist_df = load_table(dist_table_path)
 
-    make_facet_plot(
-        dist_df,
-        get_file_path(f"{y32_name}_{plot_img_file}", dir_str=y32_name, dir_path=out_path,pre_str=False),
-        x_col=y32_name,
-        x_str="Y32(OH):G12(CA)\nDistance (Å)",
-        plot_width=1.5,
-        plot_height=1.5,
-        plot_kde=True,
-        kde_bw=0.3,
-        show_legend=False,
-        v_lines=[10.5],
-        x_round=0,
-        y_round=1,
-        x_lim=[0,20],
-        x_ticks=[0,5,10,15,20],
-        hue_col=nuc_class_col,
-        hue_palette=nuc_color_dict
-    )
-
-    make_facet_plot(
-        dist_df,
-        get_file_path(f"{y71_name}_{plot_img_file}", dir_str=y71_name, dir_path=out_path,pre_str=False),
-        x_col=y71_name,
-        x_str="Y71(OH):V9(CA)\nDistance (Å)",
-        plot_width=1.5,
-        plot_height=1.5,
-        plot_kde=True,
-        kde_bw=0.3,
-        show_legend=False,
-        v_lines=[8.75],
-        x_round=0,
-        y_round=1,
-        x_lim=[0,20],
-        x_ticks=[0,5,10,15,20],
-        hue_col=nuc_class_col,
-        hue_palette=nuc_color_dict
-    )
-
-    # sw1_gtp_df = mask_unequal(df, sw1_name, [sw1_nf_name, sw1_gdp_name, outlier_name, disorder_name])
-
-    # dist_table_path = get_file_path(
-    #     dist_table_file, dir_str=y32_name, dir_path=out_path
+    # make_facet_plot(
+    #     dist_df,
+    #     get_file_path(f"{y32_name}_{plot_img_file}", dir_str=y32_name, dir_path=out_path,pre_str=False),
+    #     x_col=y32_name,
+    #     x_str="Y32(OH):G12(CA)\nDistance (Å)",
+    #     plot_width=1.5,
+    #     plot_height=1.5,
+    #     plot_kde=True,
+    #     kde_bw=0.3,
+    #     show_legend=False,
+    #     v_lines=[10.5],
+    #     x_round=0,
+    #     y_round=1,
+    #     x_lim=[0,20],
+    #     x_ticks=[0,5,10,15,20],
+    #     hue_col=nuc_class_col,
+    #     hue_palette=nuc_color_dict
     # )
 
+    # make_facet_plot(
+    #     dist_df,
+    #     get_file_path(f"{y71_name}_{plot_img_file}", dir_str=y71_name, dir_path=out_path,pre_str=False),
+    #     x_col=y71_name,
+    #     x_str="Y71(OH):V9(CA)\nDistance (Å)",
+    #     plot_width=1.5,
+    #     plot_height=1.5,
+    #     plot_kde=True,
+    #     kde_bw=0.3,
+    #     show_legend=False,
+    #     v_lines=[8.75],
+    #     x_round=0,
+    #     y_round=1,
+    #     x_lim=[0,20],
+    #     x_ticks=[0,5,10,15,20],
+    #     hue_col=nuc_class_col,
+    #     hue_palette=nuc_color_dict
+    # )
+
+    gtp_df = mask_equal(df, nuc_class_col, gtp_name)
+
+    dist_table_path = get_file_path(
+        dist_table_file, dir_str=mut_class_col, dir_path=out_path
+    )
+
     # build_dist_table(
-    #     sw1_gtp_df,
+    #     gtp_df,
     #     x_resids=[32],
     #     y_resids=[bio_lig_col],
     #     x_atomids=["OH"],
@@ -551,25 +555,26 @@ def plot_dist(df, dih_dict, sup_core_path, out_path):
     #     check_hb=True,
     # )
 
-    # dist_df = load_table(dist_table_path)
+    dist_df = load_table(dist_table_path)
 
-    # dist_df[hb_status_col] = dist_df[hb_status_col].map(sw1_gtp_dict)
+    print('All',dist_df[hb_status_col].value_counts())
 
-    # make_facet_plot(
-    #     dist_df,
-    #     get_file_path(plot_img_file, dir_str=y32_name, dir_path=out_path),
-    #     x_col=atom_dist_col,
-    #     x_str="Y32(OH):3P(O1G)\nDistance (Å)",
-    #     plot_width=1.5,
-    #     plot_height=1.5,
-    #     plot_kde=True,
-    #     show_legend=False,
-    #     x_round=1,
-    #     y_round=1,
-    #     x_ticks=[2.5, 5.0, 7.5, 10.0],
-    #     hue_col=hb_status_col,
-    #     hue_palette=sw1_gtp_color_dict,
-    # )
+    make_facet_plot(
+        dist_df,
+        get_file_path(plot_img_file, dir_str=mut_class_col, dir_path=out_path),
+        x_col=atom_dist_col,
+        x_str="Y32(OH):3P(O1G)\nDistance (Å)",
+        plot_width=1.5,
+        plot_height=1.5,
+        plot_kde=True,
+        show_legend=False,
+        x_round=1,
+        y_round=1,
+        x_lim=[0,15],
+        x_ticks=[0.0, 2.5, 5.0, 7.5, 10.0,12.5,15.0],
+        hue_col=hb_status_col,
+        hue_palette=hb_color_dict,
+    )
 
     # hras_df = mask_equal(
     #     mask_equal(mask_equal(dist_df, bio_lig_col, "GNP"), outlier_col, "False"),
@@ -583,7 +588,7 @@ def plot_dist(df, dih_dict, sup_core_path, out_path):
     #     ),
     #     stick_resids=[32],
     #     group_col=hb_status_col,
-    #     color_palette=sw1_gtp_color_dict,
+    #     color_palette=hb_color_dict,
     #     thick_bb=False,
     #     show_bio=True,
     #     sup_coord_path=sup_core_path,
@@ -598,7 +603,8 @@ def plot_dist(df, dih_dict, sup_core_path, out_path):
     #     show_resids=show_resids,
     # )
 
-    # r_df = mask_equal(dist_df, sw2_name, sw2_gtp_r_name)
+    on_df = mask_equal(dist_df, sw1_name, sw1_gtp_in_on_name)
+    on_df = mask_equal(on_df, sw2_name, sw2_gtp_in_r_name)
 
     # dih_table_path = get_file_path(
     #     f"{q61_name}_{dih_table_file}",
@@ -607,64 +613,66 @@ def plot_dist(df, dih_dict, sup_core_path, out_path):
     # )
 
     # build_dih_table(
-    #     r_df, dih_dict, chi1_resids=61, chi2_resids=61, dih_table_path=dih_table_path
+    #     on_df, dih_dict, chi1_resids=61, chi2_resids=61, dih_table_path=dih_table_path
     # )
 
-    # dih_df = load_table(dih_table_path)
+    #dih_df = load_table(dih_table_path)
 
-    # for mut_class in ["WT", "G12D", "G12V"]:
+    for mut_class in ["WT", "G12D", "G12V"]:
 
-    #     mut_df = mask_equal(
-    #         dih_df,
-    #         mut_class_col,
-    #         mut_class,
-    #     )
+        mut_df = mask_equal(
+            on_df,
+            mut_class_col,
+            mut_class,
+        )
 
-    #     make_facet_plot(
-    #         mut_df,
-    #         get_file_path(
-    #             f"{mut_class}_{q61_name}_{chi1_col}_{chi2_col}_{plot_img_file}",
-    #             dir_str=y32_name,
-    #             dir_path=out_path,
-    #         ),
-    #         x_col=chi1_col,
-    #         y_col=chi2_col,
-    #         hue_col=hb_status_col,
-    #         hue_palette=sw1_gtp_color_dict,
-    #         x_str=f"χ$^1$",
-    #         y_str=f"χ$^2$",
-    #         plot_width=1.5,
-    #         plot_height=1.5,
-    #         kde_bw=1,
-    #         show_legend=False,
-    #     )
+        # make_facet_plot(
+        #     mut_df,
+        #     get_file_path(
+        #         f"{mut_class}_{q61_name}_{chi1_col}_{chi2_col}_{plot_img_file}",
+        #         dir_str=y32_name,
+        #         dir_path=out_path,
+        #     ),
+        #     x_col=chi1_col,
+        #     y_col=chi2_col,
+        #     hue_col=hb_status_col,
+        #     hue_palette=hb_color_dict,
+        #     x_str=f"χ$^1$",
+        #     y_str=f"χ$^2$",
+        #     plot_width=1.5,
+        #     plot_height=1.5,
+        #     kde_bw=1,
+        #     show_legend=False,
+        # )
 
-    #     write_pymol_script(
-    #         mut_df,
-    #         get_file_path(
-    #             f"{mut_class}_{pymol_pml_file}", dir_str=y32_name, dir_path=out_path
-    #         ),
-    #         stick_resids=[12, 32, 61],
-    #         group_col=hb_status_col,
-    #         color_palette=sw1_gtp_color_dict,
-    #         thick_bb=False,
-    #         show_bio=True,
-    #         sup_coord_path=sup_core_path,
-    #         sup_chainid=sup_chainid,
-    #         set_view=mut_view,
-    #         x_hb_resids=[12, 12, 32, 61],
-    #         x_hb_atomids=["OD1", "OD1", "OH", "OE1"],
-    #         y_hb_resids=[32, bio_lig_col, bio_lig_col, 32],
-    #         y_hb_atomids=["OH", gtp_atomids, gtp_atomids, "OH"],
-    #         show_hb=[
-    #             sw1_gtp_wat_color,
-    #             sw1_gtp_wat_color,
-    #             sw1_gtp_dir_color,
-    #             sw1_gtp_dir_color,
-    #         ],
-    #         show_wmhb=[sw1_gtp_wat_color] * 4,
-    #         show_resids=show_resids,
-    #     )
+        print(mut_class,mut_df[hb_status_col].value_counts())
+
+        write_pymol_script(
+            mut_df,
+            get_file_path(
+                f"{mut_class}_{pymol_pml_file}", dir_str=mut_class_col, dir_path=out_path, pre_str=False
+            ),
+            stick_resids=[12, 32, 61],
+            group_col=hb_status_col,
+            color_palette=hb_color_dict,
+            thick_bb=False,
+            show_bio=True,
+            sup_coord_path=sup_core_path,
+            sup_chainid=sup_chainid,
+            set_view=mut_view,
+            x_hb_resids=[12, 12, 32, 61],
+            x_hb_atomids=["OD1", "OD1", "OH", "OE1"],
+            y_hb_resids=[32, bio_lig_col, bio_lig_col, 32],
+            y_hb_atomids=["OH", gtp_atomids, gtp_atomids, "OH"],
+            show_hb=[
+                hb_color_dict[wmhb_name],
+                hb_color_dict[wmhb_name],
+                hb_color_dict[hb_name],
+                hb_color_dict[hb_name],
+            ],
+            show_wmhb=[hb_color_dict[wmhb_name]] * 4,
+            show_resids=show_resids,
+        )
 
 
 def plot_pockets(df, pocket_df, sup_core_path, out_path):
@@ -942,49 +950,6 @@ def plot_pockets(df, pocket_df, sup_core_path, out_path):
                     y_ticks=[0.0, 0.5, 1.0],
                 )
 
-# def plot_table(df, out_path):
-
-#     for group_col in [prot_class_col, match_class_col]:
-
-#         if group_col == prot_class_col:
-#             cont_col = bound_prot_cont_col
-#             mask_lst = [mult_prot_name, other_prot_name, none_prot_name, binder_name, nano_name]
-#         elif group_col == match_class_col:
-#             cont_col = bound_lig_cont_col
-#             mask_lst = [mult_pharm_name, other_pharm_name, none_prot_name]
-
-#         cont_df = mask_unequal(df,group_col,mask_lst)
-
-#         stat_df = pd.DataFrame()
-
-#         i = 0
-        
-#         for index in list(cont_df.index.values):
-
-#             group = cont_df.at[index, group_col]
-
-#             obj_lst = str_to_lst(cont_df.at[index,cont_col],sep_txt=";")
-
-#             for obj in obj_lst:
-#                 cont_lst = str_to_lst(obj.split(':')[1])
-#                 for cont in cont_lst:
-#                     stat_df.at[i , group_col] = group
-#                     stat_df.at[i , cont_col] = cont
-#                     i += 1
-
-#         stat_df = calc_rr(stat_df, group_col, cont_col)
-
-#         stat_df = mask_unequal(stat_df,sig_col,'ns')
-#         stat_df = mask_greater(stat_df,risk_ratio_col,2)
-
-
-#         stat_table_path = get_file_path(
-#                         stat_table_file,
-#                         dir_str=group_col,
-#                         dir_path=out_path,
-#                     )
-
-#         save_table(stat_table_path, stat_df)
 
 def plot_rascore(build_path, out_path=None, num_cpu=1):
 
@@ -1013,6 +978,6 @@ def plot_rascore(build_path, out_path=None, num_cpu=1):
     interf_df[sw2_name] = interf_df[pdb_id_col].map(sw2_dict)
 
     #plot_pymol(df, interf_df, sup_core_path, out_path)
-    # plot_dist(df, dih_dict, sup_core_path, out_path)
-    plot_pockets(df, pocket_df, sup_core_path, out_path)
+    plot_dist(df, dih_dict, sup_core_path, out_path)
+    # plot_pockets(df, pocket_df, sup_core_path, out_path)
     #plot_rama(df, dih_dict, out_path,num_cpu=num_cpu)

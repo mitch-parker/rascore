@@ -35,6 +35,7 @@ from ..functions.color import (
 from .nuc import nf_name, gdp_name, gtp_name, nf_color, gdp_color, gtp_color, nuc_class_lst
 from .pharm import sp2_name, sp12_name
 from .prot import gef_name, binder_name
+from ..functions.coord import hb_name, no_hb_name, wmhb_name
 
 y32_name = "Y32"
 q61_name = "Q61"
@@ -171,3 +172,11 @@ conf_nuc_color_dict = {
 
 resid_color_dict = {y32_name:{y32_in_name: pink_hex, y32_out_name: cyan_hex},
                 y71_name:{y71_in_name: purple_hex, y71_out_name: olive_hex}}
+
+hb_color_dict = {wmhb_name: cyan_hex, hb_name: purple_hex, no_hb_name: pink_hex}
+
+y32_name_lst = list(resid_color_dict[y32_name].keys())
+y71_name_lst = list(resid_color_dict[y71_name].keys())
+
+sw1_name_lst = list(conf_color_dict[sw1_name].keys())
+sw2_name_lst = list(conf_color_dict[sw2_name].keys())

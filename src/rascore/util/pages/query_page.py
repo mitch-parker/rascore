@@ -31,11 +31,12 @@ from ..functions.gui import (
     download_st_file,
     show_st_dataframe,
     write_st_end,
+    reorder_st_cols
 )
 from ..functions.lst import lst_nums
 from ..constants.nuc import nuc_class_lst
 from ..constants.gene import gene_class_lst
-from ..functions.table import lst_col, fix_col, mask_equal
+from ..functions.table import lst_col, fix_col, mask_equal, make_dict
 from ..functions.color import get_lst_colors
 from ..constants.pml import sup_resids, show_resids, sup_pdb_code, sup_chainid, mono_view
 from ..functions.col import (
@@ -74,13 +75,15 @@ from ..functions.path import (
     rascore_str,
 )
 
-from ..constants.conf import sw1_name, sw2_name, y32_name, y71_name, loop_resid_dict, conf_color_dict, sw1_color,sw2_color
+from ..constants.conf import sw1_name, sw2_name, loop_resid_dict, conf_color_dict, sw1_color,sw2_color
 from ..functions.file import (
     entry_table_file,
     sum_table_file,
     pymol_pml_file,
 )
 from ..scripts.write_pymol_script import pymol_color_dict
+
+reverse_col_dict = make_dict(list(rename_col_dict.values()),list(rename_col_dict.keys()))
 
 
 def query_page():
@@ -186,12 +189,15 @@ def query_page():
                     margins=True,
                 )
                 .fillna("")
-                .reset_index()
             )
 
             for col in list(loop_df.columns):
                 loop_df[col] = loop_df[col].map(str)
                 loop_df = fix_col(loop_df, col)
+
+            loop_df = reorder_st_cols(loop_df, loop_name, gene_class_col)
+
+            loop_df = loop_df.reset_index()
 
             show_st_table(loop_df, st_col=table_col)
 
@@ -372,13 +378,18 @@ def query_page():
                             aggfunc="nunique",
                             margins=True,
                         )
-                        .reset_index()
                         .fillna("")
                     )
 
                     for col in list(sum_df.columns):
                         sum_df[col] = sum_df[col].map(str)
                         sum_df = fix_col(sum_df, col)
+
+                
+                    if len(row_lst) == 1 and len(col_lst) == 1:
+                        sum_df = reorder_st_cols(sum_df, reverse_col_dict[row_lst[0]], reverse_col_dict[col_lst[0]])
+
+                    sum_df = sum_df.reset_index()
 
                     show_st_table(sum_df)
 
