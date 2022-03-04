@@ -47,6 +47,7 @@ from ..functions.path import (
     rascore_str,
     cluster_str,
 )
+from ..functions.table import make_dict
 from ..functions.file import result_table_file
 from ..functions.col import (
     rename_col_dict,
@@ -64,6 +65,8 @@ from ..functions.table import (
     lst_col,
     fix_col,
 )
+
+reverse_col_dict = make_dict(list(rename_col_dict.values()),list(rename_col_dict.keys()))
 
 
 def conformation_page():
@@ -298,7 +301,7 @@ def conformation_page():
                         table_df[col] = table_df[col].map(str)
                         table_df = fix_col(table_df, col)
 
-                    table_df = reorder_st_cols(table_df,col,gene_class_col)
+                    table_df = reorder_st_cols(table_df,reverse_col_dict[col],gene_class_col)
                     table_df = table_df.reset_index()
 
                     show_st_table(table_df, st_col=loop_col)
