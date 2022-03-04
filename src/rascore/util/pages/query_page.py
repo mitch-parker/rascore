@@ -182,7 +182,7 @@ def query_page():
             loop_df = (
                 pd.pivot_table(
                     data=rename_st_cols(gene_nuc_df),
-                    index=[rename_col_dict[lcol]],
+                    index=[rename_col_dict[col]],
                     columns=rename_col_dict[gene_class_col],
                     values=rename_col_dict[pdb_id_col],
                     aggfunc="nunique",
