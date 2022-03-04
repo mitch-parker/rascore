@@ -282,13 +282,13 @@ def conformation_page():
                         zoom=1.5,
                     )
 
-                for col in table_col_lst:
+                for table_col in table_col_lst:
                     table_df = (
                         pd.pivot_table(
                             data=rename_st_cols(
                                 mask_equal(loop_df, loop_name, loop_conf)
                             ),
-                            index=col,
+                            index=table_col,
                             columns=rename_col_dict[gene_class_col],
                             values=rename_col_dict[pdb_id_col],
                             aggfunc="nunique",
@@ -301,7 +301,7 @@ def conformation_page():
                         table_df[col] = table_df[col].map(str)
                         table_df = fix_col(table_df, col)
 
-                    table_df = reorder_st_cols(table_df,reverse_col_dict[col],gene_class_col)
+                    table_df = reorder_st_cols(table_df,reverse_col_dict[table_col],gene_class_col)
                     table_df = table_df.reset_index()
 
                     show_st_table(table_df, st_col=loop_col)
