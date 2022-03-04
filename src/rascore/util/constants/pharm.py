@@ -16,8 +16,6 @@
 
 """
 
-from ..scripts.prep_pocket import pocket_bound_name, pocket_unbound_name
-
 sp2_name = "SP2"
 sp12_name = "SP12"
 as_name = "Allosteric Site"
@@ -27,6 +25,9 @@ ps_name = "P110 Site"
 other_pharm_name = "Other"
 mult_pharm_name = "Multiple"
 none_pharm_name = "None"
+
+bound_name = "Bound"
+unbound_name = "Unbound"
 
 acr_name = "Acrylamide"
 sul_name = "Sulfonamide"
@@ -75,8 +76,8 @@ match_class_lst = [
 pocket_class_lst = list()
 
 for pharm_class in pharm_class_lst:
-    pocket_class_lst.append(f"{pharm_class}-{pocket_bound_name}")
-    pocket_class_lst.append(f"{pharm_class}-{pocket_unbound_name}")
+    pocket_class_lst.append(f"{pharm_class}-{bound_name}")
+    pocket_class_lst.append(f"{pharm_class}-{unbound_name}")
 
 sp2_cont = [12, 96, 99]
 sp12_cont = [5, 39, 54]
