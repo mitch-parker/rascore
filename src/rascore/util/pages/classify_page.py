@@ -74,6 +74,9 @@ def classify_page():
         y32_resid = int(left_col.text_input('Y32 Residue',value=32))
         y71_resid = int(right_col.text_input('Y71 Residue',value=71))
 
+        g12_resid = int(left_col.text_input('G12 Residue',value=12))
+        v9_resid = int(right_col.text_input('V9 Residue',value=9))
+
         st.markdown(
             """
         Tab-separated table with columns:
@@ -122,7 +125,10 @@ def classify_page():
                         ].map(path_dict)
                         delete_path(table_path)
 
-                    classify_rascore(classify_input, y32_resid=y32_resid, y71_resid=y71_resid, sw1_resids=sw1_resids, sw2_resids=sw2_resids, out_path=classify_path)
+                    classify_rascore(classify_input, y32_resid=y32_resid, y71_resid=y71_resid, 
+                    g12_resid=g12_resid,v9_resid=v9_resid,
+                    sw1_resids=sw1_resids, sw2_resids=sw2_resids, 
+                    out_path=classify_path)
 
                     st.success("Classified Structures")
 

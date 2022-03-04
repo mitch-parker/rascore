@@ -75,7 +75,7 @@ from ..functions.path import (
     rascore_str,
 )
 
-from ..constants.conf import sw1_name, sw2_name, loop_resid_dict, conf_color_dict, sw1_color,sw2_color
+from ..constants.conf import y32_name, y71_name, sw1_name, sw2_name, loop_resid_dict, conf_color_dict, sw1_color,sw2_color
 from ..functions.file import (
     entry_table_file,
     sum_table_file,
@@ -170,14 +170,14 @@ def query_page():
 
         left_table_col, right_table_col = st.columns(2)
 
-        for loop_name in [sw1_name, sw2_name]:
+        for col in [y32_name, y71_name, sw1_name, sw2_name]:
 
-            if loop_name == sw1_name:
+            if col in [y32_name, sw1_name]:
                 table_col = left_table_col
-            elif loop_name == sw2_name:
+            elif col in [y71_name, sw2_name]:
                 table_col = right_table_col
 
-            table_col.markdown(f"#### {loop_name} Conformations")
+            table_col.markdown(f"#### {rename_col_dict[loop_name]}")
 
             loop_df = (
                 pd.pivot_table(

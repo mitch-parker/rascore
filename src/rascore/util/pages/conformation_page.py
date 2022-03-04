@@ -37,6 +37,7 @@ from ..functions.gui import (
     show_st_structure,
     rename_st_cols,
     show_st_table,
+    reorder_st_cols
 )
 from ..functions.path import (
     get_file_path,
@@ -90,13 +91,15 @@ def conformation_page():
                         aggfunc="nunique",
                         margins=True,
                     )
-                    .reset_index()
                     .fillna("")
                 )
 
     for col in list(sum_df.columns):
         sum_df[col] = sum_df[col].map(str)
         sum_df = fix_col(sum_df, col)
+
+    sum_df = reorder_st_cols(sum_df,sw2_name,sw1_name)
+    sum_df = sum_df.reset_index()
 
     sum_df = sum_df.rename(columns={rename_col_dict[sw2_name]:'Conformation Name'})
 
@@ -288,13 +291,15 @@ def conformation_page():
                             aggfunc="nunique",
                             margins=True,
                         )
-                        .reset_index()
                         .fillna("")
                     )
 
                     for col in list(table_df.columns):
                         table_df[col] = table_df[col].map(str)
                         table_df = fix_col(table_df, col)
+
+                    table_df = reorder_st_cols(table_df,sw2_name,sw1_name)
+                    table_df = table_df.reset_index()
 
                     show_st_table(table_df, st_col=loop_col)
 

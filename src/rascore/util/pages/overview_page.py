@@ -168,49 +168,49 @@ def overview_page():
     """
     )
 
-    st.markdown("---")
+    #st.markdown("---")
 
-    left_col, right_col = st.columns((2, 1.5))
+    # left_col, right_col = st.columns((2, 1.5))
 
-    img = Image.open(
-        get_file_path(
-            "rascore_figure.png",
-            dir_path=get_neighbor_path(__file__, pages_str, data_str),
-        )
-    )
+    # img = Image.open(
+    #     get_file_path(
+    #         "rascore_figure.png",
+    #         dir_path=get_neighbor_path(__file__, pages_str, data_str),
+    #     )
+    # )
 
-    right_col.image(
-        img,
-    )
+    # right_col.image(
+    #     img,
+    # )
 
-    left_col.markdown("#### Currently Identified SW1 and SW2 Conformations")
+    # left_col.markdown("#### Currently Identified SW1 and SW2 Conformations")
 
-    left_col.markdown(
-        """
-    - For clarity and brevity in our classification, we named each SW1 and SW2 conformational 
-    cluster by its loop name and nucleotide state and then added further designations as needed.
-    - For the SW1 conformations, there was a one-to-one correspondence with the nucleotide state, 
-    and we, therefore, labeled these conformations SW1.0P, SW1.2P, and SW1.3P (***panel a***).
-      - These SW1 conformations can be differentiated by position of residue Y32 in SW1, 
-    which has been used previously to classify these conformations.
-      - Previously, hydrolytically-relevant substates of GTP-bound RAS (SW1.3P) have been described based on 
-    differences in hydrogen-bonding (HB) of the hydroxyl (OH) atom of Y32 with the closest γ-phosphate oxygen 
-    (called here O1G) atoms of GTP: direct (hydrolytically incompetent), water-mediated 
-    (prefers intrinsic hydrolysis), and absent (prefers GAP-mediated hydrolysis).
-      - Examination of the distribution of distances between the Y32(OH) atom and the closest 
-    3P(O1G) atom across RAS structures in the GTP-bound cluster (SW1.3P) revealed three peaks at 
-    distances of 3, 4.5, and 7 Å; we associated these peaks with the GTP-bound substates, naming 
-    them SW1.3P-Direct, SW1.3P-WaterHB, and SW1.3P-NoHB, respectively (***panels b and c***).
-    - There were nine SW2 conformations in total (***panels d-f***): 
-      - (*Clusters 1-2*) Previously described "R state" (SW2.3P-R) and "T state" (SW2.3P-T)
-      - (*Cluster 3*) The SW2 conformation found in nucleotide-free structures (which we named 
-    SW2.0P-GEF for its binding to GEFs)
-      - (*Clusters 4-9*) Six previously unclassified druggable conformations, which we named by 
-      their associated bound protein (only SW2.2P-Binder) or inhibitor site (SP12 or SP2) and, in 
-        some cases, an indicator of cluster size order (A or B). 
-    - The SW2 conformations are visualized with residue Y71 displayed since we demonstrated that the 
-    position of this residue relates to RAS druggability. 
-    """
-    )
+    # left_col.markdown(
+    #     """
+    # - For clarity and brevity in our classification, we named each SW1 and SW2 conformational 
+    # cluster by its loop name and nucleotide state and then added further designations as needed.
+    # - For the SW1 conformations, there was a one-to-one correspondence with the nucleotide state, 
+    # and we, therefore, labeled these conformations SW1.0P, SW1.2P, and SW1.3P (***panel a***).
+    #   - These SW1 conformations can be differentiated by position of residue Y32 in SW1, 
+    # which has been used previously to classify these conformations.
+    #   - Previously, hydrolytically-relevant substates of GTP-bound RAS (SW1.3P) have been described based on 
+    # differences in hydrogen-bonding (HB) of the hydroxyl (OH) atom of Y32 with the closest γ-phosphate oxygen 
+    # (called here O1G) atoms of GTP: direct (hydrolytically incompetent), water-mediated 
+    # (prefers intrinsic hydrolysis), and absent (prefers GAP-mediated hydrolysis).
+    #   - Examination of the distribution of distances between the Y32(OH) atom and the closest 
+    # 3P(O1G) atom across RAS structures in the GTP-bound cluster (SW1.3P) revealed three peaks at 
+    # distances of 3, 4.5, and 7 Å; we associated these peaks with the GTP-bound substates, naming 
+    # them SW1.3P-Direct, SW1.3P-WaterHB, and SW1.3P-NoHB, respectively (***panels b and c***).
+    # - There were nine SW2 conformations in total (***panels d-f***): 
+    #   - (*Clusters 1-2*) Previously described "R state" (SW2.3P-R) and "T state" (SW2.3P-T)
+    #   - (*Cluster 3*) The SW2 conformation found in nucleotide-free structures (which we named 
+    # SW2.0P-GEF for its binding to GEFs)
+    #   - (*Clusters 4-9*) Six previously unclassified druggable conformations, which we named by 
+    #   their associated bound protein (only SW2.2P-Binder) or inhibitor site (SP12 or SP2) and, in 
+    #     some cases, an indicator of cluster size order (A or B). 
+    # - The SW2 conformations are visualized with residue Y71 displayed since we demonstrated that the 
+    # position of this residue relates to RAS druggability. 
+    # """
+    # )
 
     write_st_end()
