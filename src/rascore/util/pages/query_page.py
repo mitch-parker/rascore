@@ -172,9 +172,9 @@ def query_page():
 
         for table_col in [y32_name, y71_name, sw1_name, sw2_name]:
 
-            if col in [y32_name, sw1_name]:
+            if table_col in [y32_name, sw1_name]:
                 conf_col = left_conf_col
-            elif col in [y71_name, sw2_name]:
+            elif table_col in [y71_name, sw2_name]:
                 conf_col = right_conf_col
 
             conf_col.markdown(f"#### {rename_col_dict[table_col]}")
