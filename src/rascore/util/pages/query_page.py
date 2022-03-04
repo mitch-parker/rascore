@@ -168,21 +168,21 @@ def query_page():
 
         gene_nuc_df = mask_st_table(gene_df, {nuc_class_col: nuc_class.split(" (")[0]})
 
-        left_table_col, right_table_col = st.columns(2)
+        left_conf_col, right_conf_col = st.columns(2)
 
-        for col in [y32_name, y71_name, sw1_name, sw2_name]:
+        for table_col in [y32_name, y71_name, sw1_name, sw2_name]:
 
             if col in [y32_name, sw1_name]:
-                table_col = left_table_col
+                conf_col = left_conf_col
             elif col in [y71_name, sw2_name]:
-                table_col = right_table_col
+                conf_col = right_conf_col
 
-            table_col.markdown(f"#### {rename_col_dict[col]}")
+            conf_col.markdown(f"#### {rename_col_dict[col]}")
 
             loop_df = (
                 pd.pivot_table(
                     data=rename_st_cols(gene_nuc_df),
-                    index=[rename_col_dict[col]],
+                    index=[rename_col_dict[table_col]],
                     columns=rename_col_dict[gene_class_col],
                     values=rename_col_dict[pdb_id_col],
                     aggfunc="nunique",
@@ -195,13 +195,13 @@ def query_page():
                 loop_df[col] = loop_df[col].map(str)
                 loop_df = fix_col(loop_df, col)
 
-            loop_df = reorder_st_cols(loop_df, col, gene_class_col)
+            loop_df = reorder_st_cols(loop_df, table_col, gene_class_col)
 
             loop_df = loop_df.reset_index()
 
             show_st_table(loop_df, st_col=table_col)
 
-        left_table_col.markdown(
+        left_conf_col.markdown(
             '**Note.** "3P" for GTP or GTP analog-bound, "2P" for GDP-bound, and "0P" for nucleotide-free'
         )
 
