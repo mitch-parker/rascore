@@ -177,12 +177,12 @@ def query_page():
             elif col in [y71_name, sw2_name]:
                 table_col = right_table_col
 
-            table_col.markdown(f"#### {rename_col_dict[loop_name]}")
+            table_col.markdown(f"#### {rename_col_dict[col]}")
 
             loop_df = (
                 pd.pivot_table(
                     data=rename_st_cols(gene_nuc_df),
-                    index=[rename_col_dict[loop_name]],
+                    index=[rename_col_dict[lcol]],
                     columns=rename_col_dict[gene_class_col],
                     values=rename_col_dict[pdb_id_col],
                     aggfunc="nunique",
@@ -195,7 +195,7 @@ def query_page():
                 loop_df[col] = loop_df[col].map(str)
                 loop_df = fix_col(loop_df, col)
 
-            loop_df = reorder_st_cols(loop_df, loop_name, gene_class_col)
+            loop_df = reorder_st_cols(loop_df, col, gene_class_col)
 
             loop_df = loop_df.reset_index()
 
