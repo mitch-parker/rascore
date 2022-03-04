@@ -950,6 +950,65 @@ def plot_pockets(df, pocket_df, sup_core_path, out_path):
                     y_ticks=[0.0, 0.5, 1.0],
                 )
 
+    for loop_name in list(loop_resid_dict.keys()):
+
+        color_dict = conf_color_dict[loop_name].copy()
+
+        for pocket_site in [sp2_name, sp12_name, other_pharm_name]:
+
+            if loop_name == sw1_name:
+                stick_resids = [32]
+            elif loop_name == sw2_name:
+                stick_resids = [71]
+
+            if pocket_site == sp2_name:
+                stick_resids.append(12)
+
+            show_pocket = True
+            if pocket_site != other_pharm_name:
+                show_pocket = pocket_color_dict[pocket_site]
+
+            for pocket_status in [pocket_bound_name, pocket_unbound_name]:
+
+                score_cutoff = 0.5
+
+                fp_df = mask_greater(mask_equal(
+                    mask_equal(
+                        pocket_df,
+                        pocket_site_col,
+                        pocket_site,
+                    ),
+                    pocket_status_col,
+                    pocket_status,
+                ),pocket_score_col,score_cutoff)
+
+                if len(fp_df) > 0:
+   
+                    write_pymol_script(
+                        fp_df,
+                        get_file_path(
+                            f"{loop_name}_{pocket_site}_{pocket_status}_{score_cutoff}_{pymol_pml_file}",
+                            dir_str=f"{pocket_class_col}/{loop_name}",
+                            dir_path=out_path,
+                            pre_str=False
+                        ),
+                        stick_resids=stick_resids,
+                        loop_resids=[loop_resid_dict[loop_name]],
+                        color_palette=color_dict,
+                        group_col=loop_name,
+                        color_group=True,
+                        thick_bb=False,
+                        sup_resids=sup_resids,
+                        sup_coord_path=sup_core_path,
+                        sup_chainid=sup_chainid,
+                        show_bio=True,
+                        show_pocket=show_pocket,
+                        set_view=mono_view,
+                        show_resids=show_resids,
+                        coord_path_col=pocket_path_col,
+                    )
+
+
 
 def plot_rascore(build_path, out_path=None, num_cpu=1):
 
@@ -978,6 +1037,6 @@ def plot_rascore(build_path, out_path=None, num_cpu=1):
     interf_df[sw2_name] = interf_df[pdb_id_col].map(sw2_dict)
 
     #plot_pymol(df, interf_df, sup_core_path, out_path)
-    plot_dist(df, dih_dict, sup_core_path, out_path)
-    # plot_pockets(df, pocket_df, sup_core_path, out_path)
+    #plot_dist(df, dih_dict, sup_core_path, out_path)
+    plot_pockets(df, pocket_df, sup_core_path, out_path)
     #plot_rama(df, dih_dict, out_path,num_cpu=num_cpu)

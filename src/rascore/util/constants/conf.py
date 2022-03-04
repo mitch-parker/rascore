@@ -170,8 +170,8 @@ conf_nuc_color_dict = {
 }
 
 
-resid_color_dict = {y32_name:{y32_in_name: pink_hex, y32_out_name: cyan_hex},
-                y71_name:{y71_in_name: purple_hex, y71_out_name: olive_hex}}
+resid_color_dict = {y32_name:{y32_in_name: pink_hex, y32_out_name: cyan_hex, disorder_name: disorder_color},
+                y71_name:{y71_in_name: purple_hex, y71_out_name: olive_hex, disorder_name: disorder_color}}
 
 hb_color_dict = {wmhb_name: cyan_hex, hb_name: purple_hex, no_hb_name: pink_hex}
 
