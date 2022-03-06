@@ -210,7 +210,7 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None,
             dist_dict = {y32_name: y32_dist, y71_name: y71_dist}
 
             for resid_name in [y32_name, y71_name]:
-                df[resid_name] = df[resid_name].map(str)
+                dist_df[resid_name] = dist_df[resid_name].map(str)
 
             for index in list(dist_df.index.values):
 
