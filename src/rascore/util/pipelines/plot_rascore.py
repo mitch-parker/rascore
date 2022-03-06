@@ -1036,7 +1036,7 @@ def plot_rascore(build_path, out_path=None, num_cpu=1):
     interf_df[sw1_name] = interf_df[pdb_id_col].map(sw1_dict)
     interf_df[sw2_name] = interf_df[pdb_id_col].map(sw2_dict)
 
-    #plot_pymol(df, interf_df, sup_core_path, out_path)
+    plot_pymol(df, interf_df, sup_core_path, out_path)
     #plot_dist(df, dih_dict, sup_core_path, out_path)
-    plot_pockets(df, pocket_df, sup_core_path, out_path)
+    #plot_pockets(df, pocket_df, sup_core_path, out_path)
     #plot_rama(df, dih_dict, out_path,num_cpu=num_cpu)
