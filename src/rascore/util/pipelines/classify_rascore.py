@@ -207,6 +207,8 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None,
                 atom_dist_col_lst=[y32_name, y71_name]
             )
 
+            print(dist_df)
+
             dist_dict = {y32_name: y32_dist, y71_name: y71_dist}
 
             for resid_name in [y32_name, y71_name]:
