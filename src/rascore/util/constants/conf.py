@@ -128,8 +128,8 @@ conf_color_dict = {
         sw1_nf_out_gef_name: nf_color,
         sw1_gdp_out_off_name: gdp_color,
         sw1_gtp_in_on_name: gtp_color,
+        outlier_name: outlier_color,
         disorder_name: disorder_color,
-        outlier_name: outlier_color
     },
     sw2_name: {
         sw2_nf_out_gef_name: light_blue_hex,
@@ -141,8 +141,8 @@ conf_color_dict = {
         sw2_gtp_in_sp12a_name: light_cyan_hex,
         sw2_gtp_out_t_name: light_pink_hex,
         sw2_gtp_in_sp12b_name: light_brown_hex,
+        outlier_name: outlier_color,
         disorder_name: disorder_color,
-        outlier_name: outlier_color
     },
 }
 

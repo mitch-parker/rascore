@@ -439,6 +439,7 @@ rename_col_dict = {
     sw2_col: "SW2 Conformation",
     y32_col: "Y32 Position",
     y71_col: "Y71 Position",
+    hb_status_col:"H-Bond Substate",
     gene_class_col: "RAS Isoform",
     mut_status_col: "Mutation Status",
     nuc_class_col: "Nucleotide State",
