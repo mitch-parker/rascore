@@ -104,7 +104,7 @@ def conformation_page():
     sum_df = reorder_st_cols(sum_df,sw2_name,sw1_name)
     sum_df = sum_df.reset_index()
 
-    sum_df = sum_df.rename(columns={rename_col_dict[sw2_name]:'Conformation Name'})
+    sum_df = sum_df.rename(columns={rename_col_dict[sw2_name]:'Conformation Label'})
 
     show_st_table(sum_df)
 

@@ -7,7 +7,7 @@
 </div>
 
 <a href="https://github.com/mitch-parker/rascore/releases/"><img src="https://img.shields.io/github/release/mitch-parker/rascore?include_prereleases=&sort=semver&color=e78ac3" alt="GitHub release"></a>
-<a href="#license"><img src="https://img.shields.io/badge/License-MIT-e78ac3" alt="License"></a>
+<a href="#license"><img src="https://img.shields.io/badge/License-Apache_2.0-e78ac3" alt="License"></a>
 <a href="https://github.com/mitch-parker/rascore/issues"><img src="https://img.shields.io/github/issues/mitch-parker/rascore" alt="issues - rascore"></a>
 
 # Summary
