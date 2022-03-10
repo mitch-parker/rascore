@@ -112,6 +112,7 @@ bound_prot_cont_col = 'bound_protein_contacts'
 
 pharm_lig_site_col = "pharmacological_ligand_site"
 pharm_lig_match_col = "pharmarmacological_ligand_match"
+pharm_lig_smiles_col = "pharmacological_ligand_smiles"
 
 bound_prot_pfam_col = "bound_protein_pfam"
 bound_prot_site_col = "bound_protein_site"
@@ -390,6 +391,7 @@ order_col_lst = [
     bound_prot_swiss_id_col,
     pharm_lig_site_col,
     pharm_lig_match_col,
+    pharm_lig_smiles_col,
     bound_prot_pfam_col,
     bound_prot_site_col,
     bound_prot_chainid_col,
@@ -462,6 +464,8 @@ rename_col_dict = {
     resolution_col: "Resolution",
     r_factor_col: "R-Factor",
     date_col: "Deposit Date",
+    pocket_score_col: "Druggability Score",
+    pocket_volume_col: "Pocket Volume"
 }
 
 

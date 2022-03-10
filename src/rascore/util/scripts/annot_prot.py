@@ -151,7 +151,7 @@ def annot_prot(
             sort_lst(lst_unique(pfam_lst)), join_txt="|", empty=none_pfam
         )
 
-        df.at[index, bound_prot_cont_col] = lst_to_str(cont_lst, join_txt=";")
+        df.at[index, bound_prot_cont_col] = lst_to_str(cont_lst, join_txt="|")
 
     print("Annotated proteins!")
 

@@ -187,6 +187,7 @@ def pdb_page():
 
 
     style_lst = list()
+    reslabel_lst = list()
     label_lst = list()
 
     opacity = 0
@@ -379,7 +380,7 @@ def pdb_page():
                     {
                         "backgroundColor": "lightgray",
                         "fontColor": "black",
-                        "backgroundOpacity": 0.5,
+                        "backgroundOpacity": 0.8,
                     },
                     {"chain": bound_prot_chainid},
                 ]
@@ -412,7 +413,7 @@ def pdb_page():
             [
                 {
                     "chain": chainid,
-                    "resi": [loop_resids],
+                    "resi": loop_resids,
                 },
                 {
                     "cartoon": {
@@ -428,7 +429,7 @@ def pdb_page():
             [
                 {
                     "chain": chainid,
-                    "resi": [stick_resid],
+                    "resi": stick_resid,
                     "elem": "C",
                 },
                 {"stick": {"color": loop_color, "radius": 0.2}},
@@ -437,16 +438,23 @@ def pdb_page():
 
         style_lst.append(
             [
-                {"chain": chainid, "resi": [stick_resid], "elem": ["O", "N", "H"]},
-                {"stick": {"colorscheme": "Carbon", "radius": 0.2}},
+                {"chain": chainid, "resi": stick_resid, "elem": ["O", "N", "H"]},
+                {"stick": {"colorscheme": "whiteCarbon", "radius": 0.2}},
             ]
         )
+
+        reslabel_lst.append([{"chain": chainid, "resi": stick_resid}, {
+                        "backgroundColor": "lightgray",
+                        "fontColor": "black",
+                        "backgroundOpacity": 0.8,
+                    }])
 
     with right_view_col:
         show_st_structure(
             pdb_code,
             style_lst=style_lst,
             surface_lst=surface_lst,
+            reslabel_lst=reslabel_lst,
             label_lst=label_lst,
             cartoon_style=cartoon_style,
             spin_on=rotate_view,

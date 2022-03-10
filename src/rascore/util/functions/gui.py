@@ -28,6 +28,7 @@ from .file import entry_table_file
 from .table import mask_equal
 from .path import (
     load_table,
+    load_json,
     get_file_path,
     get_dir_path,
     get_neighbor_path,
@@ -130,20 +131,22 @@ def get_html_text(text_color_dict, font_size="medium", font_weight="normal"):
     return html_str
 
 
-def load_st_table(file_path, file_name=None):
+def load_st_table(file_path, file_name=None, json_format=False):
 
     if file_name is None:
         file_name = entry_table_file
 
-    return load_table(
-        get_file_path(
+    file_path = get_file_path(
             file_name,
             dir_path=get_dir_path(
                 dir_path=get_neighbor_path(file_path, pages_str, data_str)
-            ),
-        )
-    )
+            ))
 
+    if json_format:
+        return load_json(file_path)
+    else:
+        return load_table(file_path)
+   
 def mask_st_table(df, col_dict):
 
     mask_df = df.copy()
@@ -273,6 +276,7 @@ def show_st_structure(
     pdb_code,
     style_lst=None,
     label_lst=None,
+    reslabel_lst=None,
     zoom_dict=None,
     surface_lst=None,
     cartoon_style="trace",
@@ -310,6 +314,11 @@ def show_st_structure(
     if label_lst is not None:
         for label in label_lst:
             view.addLabel(label[0], label[1], label[2])
+
+    if reslabel_lst is not None:
+        for reslabel in reslabel_lst:
+            view.addResLabels(reslabel[0], reslabel[1])
+
 
     if zoom_dict is None:
         view.zoomTo()

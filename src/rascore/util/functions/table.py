@@ -692,3 +692,13 @@ def convert_col_percent(df, col):
     df[col] = (df[col] / df[col].sum()) * 100
 
     return df
+
+def str_to_dict(dict_str, return_str=False, return_int=False, return_float=False):
+
+    str_dict = dict()
+
+    for key_val in str_to_lst(dict_str ,sep_txt="|"):
+
+        str_dict[key_val.split(":")[0]] = str_to_lst(key_val.split(":")[1], return_str=return_str, return_int=return_int, return_float=return_float)
+
+    return str_dict

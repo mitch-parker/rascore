@@ -89,7 +89,7 @@ def home_page():
                 "resn": "MOV",
                 "elem": ["N", "O", "H"],
             },
-            {"stick": {"colorscheme": "Carbon", "radius": 0.2}},
+            {"stick": {"colorscheme": "whiteCarbon", "radius": 0.2}},
         ]
     )
 
@@ -149,7 +149,7 @@ def home_page():
         style_lst.append(
             [
                 {"chain": "A", "resi": [stick_resid], "elem": ["O", "N", "H"]},
-                {"stick": {"colorscheme": "Carbon", "radius": 0.2}},
+                {"stick": {"colorscheme": "whiteCarbon", "radius": 0.2}},
             ]
         )
 
@@ -228,18 +228,17 @@ def home_page():
     st.markdown(
         """
         ### Summary
-        *Rascore* is a tool for analyzing RAS protein structures 
-        (KRAS, NRAS, and HRAS) by the conformations of their 
-        catalytic switch 1 (SW1) and switch 2 (SW2) loops. The *Rascore* 
-        database presents an updated analysis of all available 
-        RAS structures in the Protein Data Bank (PDB) with their SW1 and 
+        *Rascore* is a tool for analyzing structures of the RAS protein:
+        KRAS, NRAS, and HRAS. The *Rascore* 
+        database presents a continually updated analysis of all
+        RAS structures in the Protein Data Bank (PDB) with their catalytic SW1 and 
         SW2 loops conformationally classified and their molecular 
         contents annotated (e.g., mutation status, nucleotide state, 
-        bound protein, inhibitor site, etc.). 
+        bound protein, inhibitor site, and others). 
 
-        Details of our RAS conformational classification are 
-        provided on [bioRxiv](https://www.biorxiv.org/content/10.1101/2022.02.02.478568v1) in our 
-        paper: **An expanded classification of active, inactive and druggable RAS 
+        Details of our work are 
+        provided on [bioRxiv](https://www.biorxiv.org/content/10.1101/2022.02.02.478568v1) in the manuscript, 
+        **An expanded classification of active, inactive and druggable RAS 
         conformations.** We hope that researchers will use 
         *Rascore* to gain novel insights into RAS biology and 
         drug discovery. 
@@ -250,7 +249,7 @@ def home_page():
         """
         ### Usage
 
-        To the left, there is a main menu for navigating to 
+        To the left, is a main menu for navigating to 
         each page in the *Rascore* database:
 
         - **Home Page:** We are here!
@@ -259,6 +258,7 @@ def home_page():
         - **Explore Conformations:** Explore RAS conformations by nucleotide state.
         - **Search PDB:** Search for individual PDB entries containing RAS structures.
         - **Query Database:** Query the *Rascore* database by RAS conformations and molecular annotations.
+        - **Compare Inhibitors:** Compare inhibitor-bound RAS structures by individual PDB entries or conformations.
         - **Classify Structures:** Conformationally classify your RAS structures.
         """
     )

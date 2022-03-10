@@ -20,7 +20,7 @@ import pandas as pd
 from tqdm import tqdm
 import concurrent.futures
 
-from ..functions.chem import is_lig_match, get_lig_simi
+from ..functions.chem import get_lig_smiles, is_lig_match, get_lig_simi
 from ..functions.lst import lst_unique, lst_to_str, res_to_lst, type_lst, sort_lst
 from ..functions.lig import lig_col_lst, lig_lst_dict
 from ..functions.coord import (
@@ -41,6 +41,7 @@ from ..functions.col import (
     pharm_lig_col,
     pharm_lig_site_col,
     pharm_lig_match_col,
+    pharm_lig_smiles_col,
     bound_lig_cont_col
 )
 from ..functions.table import get_df_at_index, fix_val
@@ -82,6 +83,7 @@ def build_lig_df(
     cont_lst = list()
     site_lst = list()
     match_lst = list()
+    smiles_lst = list()
 
     for residue in get_residues(structure):
         if is_het(residue):
@@ -121,6 +123,11 @@ def build_lig_df(
                     resid_cont_str += ':'
                     resid_cont_str += lst_to_str(resid_cont_lst)
                     cont_lst.append(resid_cont_str)
+                    
+                    resid_smiles_str = resname
+                    resid_smiles_str += ':'
+                    resid_smiles_str += get_lig_smiles(resname, lig_dir=lig_dir)
+                    smiles_lst.append(resid_smiles_str)
 
                     if site_dict is not None:
                         max_cont = 0
@@ -167,8 +174,8 @@ def build_lig_df(
     df.at[index, pharm_lig_match_col] = lst_to_str(
         sort_lst(lst_unique(match_lst)), join_txt="|", empty=none_match
     )
-
-    df.at[index, bound_lig_cont_col] = lst_to_str(cont_lst, join_txt=";")
+    df.at[index, pharm_lig_smiles_col] = lst_to_str(smiles_lst, join_txt="|")
+    df.at[index, bound_lig_cont_col] = lst_to_str(cont_lst, join_txt="|")
 
     return df
 

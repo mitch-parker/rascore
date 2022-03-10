@@ -65,18 +65,18 @@ def overview_page():
     text_col.markdown("#### Building the Rascore Database")
     text_col.markdown(
         f"""
-    - RAS (KRAS, NRAS, and HRAS) proteins have widespread command of cellular circuitry and are high-priority 
+    - The RAS proteins (KRAS, NRAS, and HRAS) have a widespread command of cellular circuitry and are high-priority 
     drug targets in cancers and other diseases. 
     - Effectively targeting RAS proteins requires an exact understanding of their active, inactive, and 
     druggable conformations, and the structural impact of mutations. 
-    - We analyzed all 699 available human KRAS, NRAS, and HRAS structures in the Protein Data Bank (PDB) to 
-    define a more comprehensive mapping of the RAS conformational landscape. 
+    - In consequence, we analyzed over 700 available human KRAS, NRAS, and HRAS structures in the 
+    Protein Data Bank (PDB) to create a comprehensive map of the RAS conformational landscape. 
       - First, we annotated the molecular contents of each RAS structure, including their mutation status, 
-    nucleotide state and bound protein or inhibitor site (*see right for key terms*). 
-      - Second, we conformationally clustered all RAS structures based on the arrangement of their catalytic 
-    switch 1 (SW1) and switch 2 (SW2) loops, identifying five SW1 and nine SW2 conformations (*see below for details*).
+    nucleotide state and bound protein, or inhibitor site (*see right for key terms*). 
+      - Second, we conformationally classified all RAS structures based on the configurations of their catalytic 
+    switch 1 (SW1) and switch 2 (SW2) loops, identifying three SW1 and nine SW2 conformations.
     - The *Rascore* database presents a continually updated dataset of annotated and conformationally classified 
-    RAS structures from the PDB (*now {len(df)} structures*).
+    RAS structures in the PDB (*now {len(df)} structures*).
     """
     )
 
@@ -147,70 +147,61 @@ def overview_page():
 
     st.markdown("---")
 
-    st.markdown("#### Our Conformational Clustering Algorithm")
+    st.markdown("#### Our Conformational Classification Algorithm")
 
     st.markdown(
         """
-    - We separately clustered the arrangements of SW1 (residues 25-40) and SW2 (residues 56-76)
+    - First, we broadly classified RAS structures based on the spatial positions of residue Y32 relative to the 
+    active site (“Y32in” or “Y32out”) in SW1 and residue Y71 relative to the hydrophobic 
+    core (“Y71in” or “Y71out”) in SW2. 
+    - Second, we separately clustered the configurations of SW1 (residues 25-40) and SW2 (residues 56-76)
     based on their backbone dihedral angle values: φ (phi), ψ (psi), and ω (omega).
-    - In our analysis, we used the Density-Based Spatial Clustering of Applications with Noise (DBSCAN) 
-    algorithm with a distance metric that locates the maximum backbone dihedral difference upon pairwise 
-    comparison of loop residues (previously implemented by our group for other proteins, such as 
-    [kinases](http://dunbrack.fccc.edu/kincore/home) and [antibodies](http://dunbrack2.fccc.edu/PyIgClassify/)).
-      - DBSCAN finds major clusters and removes outliers.
-      - We first separated RAS structures by their nucleotide state (0P, 2P, and 3P) and subsequently 
-    conformationally clustered the well modeled (complete with high electron density scores) SW1 and SW2 
-    loops for each nucleotide state with DBSCAN.
+    - In clustering SW1 and SW2 loops, we used the Density-Based Spatial Clustering of Applications 
+    with Noise (DBSCAN) algorithm with a distance metric that locates the maximum backbone dihedral angle 
+    difference upon pairwise comparison of loop residues (previously implemented by our group for other proteins, 
+    such as [kinases](http://dunbrack.fccc.edu/kincore/home) and [antibodies](http://dunbrack2.fccc.edu/PyIgClassify/)).
+      - DBSCAN clusters points with sufficient numbers of near neighbors and classifies the remainder as outliers. 
+      - We first separated RAS structures by nucleotide state (0P, 2P, and 3P) and spatial class 
+      (Y32in/out for SW1 and Y71in/out for SW2) and, within each group, subsequently clustered the 
+      conformations of completely modeled SW1 and SW2 loops with well-defined electron density using DBSCAN. 
       - We then assigned a small number of poorly or incompletely modeled loops to the clusters obtained from 
-    DBSCAN by using a nearest neighbors (NN) approach.
-      - In the Rascore database, we use our NN approach to conformationally classify additional RAS structures
-    deposited to the PDB.
+        DBSCAN by using a nearest neighbors (NN) approach.
+      - In the Rascore database, we use our NN approach to conformationally classify user uploaded 
+      structures and additional RAS structures deposited to the PDB.
     """
     )
 
-    #st.markdown("---")
+    st.markdown("---")
 
-    # left_col, right_col = st.columns((2, 1.5))
+    st.markdown("#### Overview of Conformational Classification")
 
-    # img = Image.open(
-    #     get_file_path(
-    #         "rascore_figure.png",
-    #         dir_path=get_neighbor_path(__file__, pages_str, data_str),
-    #     )
-    # )
+    st.markdown("""
+    - For clarity and brevity in our expanded RAS conformational classification, 
+    we named each SW1 and SW2 conformation by its *spatial class*, *nucleotide state*, 
+    and a *conformational label* (written in all-capital letters). 
+    - The SW1 conformations are labeled Y32in.3P-ON (GTP-bound state 2), 
+    Y32out.2P-OFF (GDP-bound), and Y32out.0P-GEF (nucleotide-free) (*panel* **A**).
+    - There was no structurally uniform cluster within Y32out.3P structures 
+    that could be called the GTP-bound state 1. 
+    - The only nucleotide-free SW2 conformation was Y32out.0P-GEF (*panel* **B**).
+    - The GTP-bound SW2 conformations included Y71in.3P-R (R state) and Y71out.3P-T (T state), 
+    and two previously unclassified druggable conformations associated with inhibitors at the 
+    SP12 site, which we named Y71in.3P-SP12-A and Y71.3P-SP12-B (*panel* **C**). 
+    - The four GDP-bound SW2 conformations are all named for their predominant binding partners, 
+    which consist of SP2 and SP12 inhibitors and protein binders: Y71out.2P-SP2-A, Y71out.2P-SP2-B, 
+    Y71in.2P-SP12, and Y71out.2P-BINDER (*panel* **D**).
+    - In *panels* **E** and **F**, our SW1 and SW2 conformational clustering (with NN assignments added) are 
+    displayed as Ramachandran maps per residue of each cluster.
+    """)
 
-    # right_col.image(
-    #     img,
-    # )
+    img = Image.open(
+        get_file_path(
+            "rascore_figure.png",
+            dir_path=get_neighbor_path(__file__, pages_str, data_str),
+        )
+    )
 
-    # left_col.markdown("#### Currently Identified SW1 and SW2 Conformations")
+    st.image(img, output_format="PNG")
 
-    # left_col.markdown(
-    #     """
-    # - For clarity and brevity in our classification, we named each SW1 and SW2 conformational 
-    # cluster by its loop name and nucleotide state and then added further designations as needed.
-    # - For the SW1 conformations, there was a one-to-one correspondence with the nucleotide state, 
-    # and we, therefore, labeled these conformations SW1.0P, SW1.2P, and SW1.3P (***panel a***).
-    #   - These SW1 conformations can be differentiated by position of residue Y32 in SW1, 
-    # which has been used previously to classify these conformations.
-    #   - Previously, hydrolytically-relevant substates of GTP-bound RAS (SW1.3P) have been described based on 
-    # differences in hydrogen-bonding (HB) of the hydroxyl (OH) atom of Y32 with the closest γ-phosphate oxygen 
-    # (called here O1G) atoms of GTP: direct (hydrolytically incompetent), water-mediated 
-    # (prefers intrinsic hydrolysis), and absent (prefers GAP-mediated hydrolysis).
-    #   - Examination of the distribution of distances between the Y32(OH) atom and the closest 
-    # 3P(O1G) atom across RAS structures in the GTP-bound cluster (SW1.3P) revealed three peaks at 
-    # distances of 3, 4.5, and 7 Å; we associated these peaks with the GTP-bound substates, naming 
-    # them SW1.3P-Direct, SW1.3P-WaterHB, and SW1.3P-NoHB, respectively (***panels b and c***).
-    # - There were nine SW2 conformations in total (***panels d-f***): 
-    #   - (*Clusters 1-2*) Previously described "R state" (SW2.3P-R) and "T state" (SW2.3P-T)
-    #   - (*Cluster 3*) The SW2 conformation found in nucleotide-free structures (which we named 
-    # SW2.0P-GEF for its binding to GEFs)
-    #   - (*Clusters 4-9*) Six previously unclassified druggable conformations, which we named by 
-    #   their associated bound protein (only SW2.2P-Binder) or inhibitor site (SP12 or SP2) and, in 
-    #     some cases, an indicator of cluster size order (A or B). 
-    # - The SW2 conformations are visualized with residue Y71 displayed since we demonstrated that the 
-    # position of this residue relates to RAS druggability. 
-    # """
-    # )
 
     write_st_end()

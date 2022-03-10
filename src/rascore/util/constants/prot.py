@@ -76,8 +76,6 @@ prot_color_dict = get_lst_colors(
     return_dict=True,
 )
 
-print(prot_color_dict)
-
 prot_color_dict[gef_cdc_name] = prot_color_dict[gef_name]
 prot_color_dict[gef_rem_name] = prot_color_dict[gef_name]
 

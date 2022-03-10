@@ -40,7 +40,7 @@ def main(args):
     classify = args.classify
     build = args.build
     #cluster = args.cluster
-    plot = args.plot
+    #plot = args.plot
     gui = args.gui
 
     out = args.out
@@ -48,7 +48,7 @@ def main(args):
 
     if classify is not None:
 
-        from util.pipelines.classify_rascore import classify_rascore
+        from rascore.util.pipelines.classify_rascore import classify_rascore
 
         classify_rascore(
             file_paths=classify,
@@ -57,8 +57,8 @@ def main(args):
         )
     elif build is not None:
 
-        from util.pipelines.prep_rascore import prep_rascore
-        from util.pipelines.build_rascore import build_rascore
+        from rascore.util.pipelines.prep_rascore import prep_rascore
+        from rascore.util.pipelines.build_rascore import build_rascore
 
         pdbaa_fasta_path = None
         if build is not True:
@@ -78,13 +78,13 @@ def main(args):
     #     prep_rascore(build_path=cluster)
     #     cluster_rascore(cluster, out_path=out, num_cpu=cpu)
 
-    elif plot is not None:
+    # elif plot is not None:
 
-        from util.pipelines.prep_rascore import prep_rascore
-        from util.pipelines.plot_rascore import plot_rascore
+    #     from util.pipelines.prep_rascore import prep_rascore
+    #     from util.pipelines.plot_rascore import plot_rascore
 
-        prep_rascore(build_path=plot)
-        plot_rascore(plot, out_path=out, num_cpu=cpu)
+    #     prep_rascore(build_path=plot)
+    #     plot_rascore(plot, out_path=out, num_cpu=cpu)
 
     elif gui is not None:
         if gui is not True:
@@ -147,13 +147,13 @@ def cli(args=None):
     #     required=False,
     #     help="path to rascore database directory (output files saved to rascore_cluster in current working directory unless an output directory path is specified)",
     # )
-    group.add_argument(
-        "-plot",
-        "--plot",
-        type=str,
-        required=False,
-        help="path to rascore database directory (output files saved to rascore_plot in current working directory unless an output directory path is specified)",
-    )
+    # group.add_argument(
+    #     "-plot",
+    #     "--plot",
+    #     type=str,
+    #     required=False,
+    #     help="path to rascore database directory (output files saved to rascore_plot in current working directory unless an output directory path is specified)",
+    # )
     group.add_argument(
         "-gui",
         "--gui",

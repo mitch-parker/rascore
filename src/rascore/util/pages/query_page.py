@@ -306,8 +306,8 @@ def query_page():
                 label="PyMOL Script Name",
                 value=f"{rascore_str}_{pymol_pml_file}",
             )
-            if st.button(f"Create PyMOL Script"):
-                with st.spinner(text=f"Creating PyMOL Script"):
+            if st.button("Create PyMOL Script"):
+                with st.spinner(text="Creating PyMOL Script"):
                     write_pymol_script(
                         gene_nuc_df,
                         pymol_file_path,

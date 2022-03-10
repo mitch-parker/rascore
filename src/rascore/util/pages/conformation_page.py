@@ -256,7 +256,7 @@ def conformation_page():
                             "resi": stick_resid,
                             "elem": ["O", "N", "H"],
                         },
-                        {"stick": {"colorscheme": "Carbon", "radius": 0.2}},
+                        {"stick": {"colorscheme": "whiteCarbon", "radius": 0.2}},
                     ]
                 )
 
