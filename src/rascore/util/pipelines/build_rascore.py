@@ -652,25 +652,23 @@ def build_rascore(out_path=None, pdbaa_fasta_path=None, num_cpu=1):
 
     print("Downloading updated pdbaa file.")
 
-    # try:
-    #     download_unzip(url=pdbaa_url, path=pdbaa_fasta_path)
-    # except:
-    #     pdbaa_fasta_path_lst = [
-    #         x
-    #         for x in os.listdir(get_dir_path(dir_str=pdbaa_str, dir_path=out_path))
-    #         if pdbaa_fasta_file in x
-    #     ]
-    #     if len(pdbaa_fasta_path_lst) > 0:
-    #         pdbaa_fasta_path = sorted(
-    #             pdbaa_fasta_path_lst,
-    #             reverse=True,
-    #         )[0]
+    try:
+        download_unzip(url=pdbaa_url, path=pdbaa_fasta_path)
+    except:
+        pdbaa_fasta_path_lst = [
+            x
+            for x in os.listdir(get_dir_path(dir_str=pdbaa_str, dir_path=out_path))
+            if pdbaa_fasta_file in x
+        ]
+        if len(pdbaa_fasta_path_lst) > 0:
+            pdbaa_fasta_path = sorted(
+                pdbaa_fasta_path_lst,
+                reverse=True,
+            )[0]
 
-    #         last_date = pdbaa_fasta_path.split(f"_{pdbaa_fasta_file}")[0]
-    #         last_date = last_date.split(f"{pdbaa_str}/")[1]
-    #         print(f"Updated pdbaa file unavailable. Using latest version ({last_date})")
-
-    pdbaa_fasta_path = '/Users/mitchellparker/Desktop/rascore_build/pdbaa/2022-03-01_pdbaa.fasta'
+            last_date = pdbaa_fasta_path.split(f"_{pdbaa_fasta_file}")[0]
+            last_date = last_date.split(f"{pdbaa_str}/")[1]
+            print(f"Updated pdbaa file unavailable. Using latest version ({last_date})")
 
     try:
         search_pdbaa(
