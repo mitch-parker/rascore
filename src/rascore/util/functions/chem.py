@@ -230,8 +230,6 @@ def draw_lig_plot(
     if len(label_lst) != len(lig_lst):
         label_lst = None
 
-    print(label_lst)
-
     mol_lst = [get_lig_mol(x, lig_dir=lig_dir) for x in lig_lst]
 
     final_atom_lst = list()
