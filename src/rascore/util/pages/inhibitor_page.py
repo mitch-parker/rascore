@@ -520,4 +520,10 @@ def inhibitor_page():
 
             show_st_table(cont_df, st_col=left_chem_col)
 
+        with st.expander(f"{pocket_class}: Multiple-to-Multiple Comparison", expanded=True):
+
+            st.markdown(f"#### {pocket_class}: Multiple-to-Multiple Comparison")
+            st.markdown(f"#### IN PROGRESS")
+
+
     write_st_end()
