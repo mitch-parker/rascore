@@ -26,6 +26,7 @@ statsmodels = "0.13.1"
 stmol = "0.0.7"
 streamlit = "1.4.0"
 tqdm = "4.59.0"
+libxrender1 = "1:0.9.10-1"
 
 [tool.poetry.dev-dependencies]
 
