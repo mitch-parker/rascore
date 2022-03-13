@@ -74,8 +74,8 @@ for sc_x in sc_x_lst:
 
 def make_facet_plot(
     plot_df,
-    plot_path,
     x_col,
+    plot_path=None,
     y_col=None,
     rename_x=None,
     x_order=None,
@@ -209,7 +209,7 @@ def make_facet_plot(
             count_cf=count_cf,
         )
         if len(hue_lst) == 1:
-            if type(show_legend) != dict:
+            if type(show_legend) != dict and show_legend == False:
                 show_legend = False
     else:
         hue_lst = type_lst(0)
@@ -894,21 +894,24 @@ def make_facet_plot(
             spine.set_color("black")
             spine.set_linewidth(line_width)
 
-    append_file_path(plot_path)
+    if plot_path is None:
+        return g
+    else:
+        append_file_path(plot_path)
 
-    if 'png' in plot_path:
-        plot_format = 'png'
-    if 'pdf' in plot_path:
-        plot_format = 'pdf'
+        if 'png' in plot_path:
+            plot_format = 'png'
+        if 'pdf' in plot_path:
+            plot_format = 'pdf'
 
-    plt.savefig(
-        plot_path,
-        format=plot_format,
-        bbox_extra_artists=bbox_extra_artists,
-        bbox_inches="tight",
-        pad_inches=0.0,
-        dpi=600,
-    )
-    plt.close()
+        plt.savefig(
+            plot_path,
+            format=plot_format,
+            bbox_extra_artists=bbox_extra_artists,
+            bbox_inches="tight",
+            pad_inches=0.0,
+            dpi=600,
+        )
+        plt.close()
 
-    print("Made facet plot!")
+        print("Made facet plot!")

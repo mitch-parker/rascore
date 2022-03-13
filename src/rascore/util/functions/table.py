@@ -687,9 +687,15 @@ def get_df_at_index(df, index):
     return df.loc[type_lst(index), :]
 
 
-def convert_col_percent(df, col):
+def convert_col_percent(df, col, dec=1, return_frac=False):
 
-    df[col] = (df[col] / df[col].sum()) * 100
+    df[col] = (df[col] / df[col].sum())
+
+    if not return_frac:
+        df[col] = df[col] * 100
+
+
+    df[col] = df[col].apply(lambda x: round(x, dec))
 
     return df
 

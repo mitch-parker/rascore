@@ -27,7 +27,7 @@ from ..functions.col import (pocket_class_col, pdb_id_col, pdb_code_col, id_col,
                             bound_lig_cont_col, chainid_col, pharm_lig_smiles_col, pharm_class_col,
                             nuc_class_col, mut_status_col, prot_class_col, interf_class_col,
                             pocket_lig_col, pharm_lig_col, pocket_score_col, match_class_col, 
-                            bio_lig_col, modelid_col, gene_class_col,
+                            modelid_col, gene_class_col,
                             pocket_volume_col, pharm_lig_col, rename_col_dict)
 from ..functions.file import pocket_table_file, entry_table_file
 from ..functions.path import rascore_str
@@ -42,35 +42,15 @@ import streamlit as st
 
 reverse_col_dict = make_dict(list(rename_col_dict.values()),list(rename_col_dict.keys()))
 
-sp12_bound_name = f"{sp12_name}-{bound_name}"
-sp2_bound_name = f"{sp2_name}-{bound_name}"
-
-mean_name = "Mean"
-max_name = "Max"
-min_name = "Min"
-
-def inhibitor_page():
+def mutation_page():
     
-    st.markdown("## Compare Inhibitors")
+    st.markdown("## Analyze Mutations")
 
     st.markdown("---")
 
     df = load_st_table(__file__)
-    pocket_df = load_st_table(__file__, file_name=pocket_table_file)
 
-    pocket_df = mask_unequal(pocket_df, pocket_lig_col, "STP")
-    df = mask_equal(df, pdb_id_col, lst_col(pocket_df, pdb_id_col))
-
-    st.sidebar.markdown("**Note.** Use [PubChem Draw Tool](https://pubchem.ncbi.nlm.nih.gov/#draw=true) to design and edit SMILES strings.")
-
-    pocket_class = st.sidebar.radio(rename_col_dict[pocket_class_col], [sp12_bound_name, sp2_bound_name])
-    pharm_class = pocket_class.split('-')[0]
-
-    pharm_df = mask_equal(df, pharm_class_col, pharm_class)
-
-    for col in [pocket_score_col, pocket_volume_col]:
-
-        pharm_df[col] = pharm_df[pdb_id_col].map(make_dict(lst_col(pocket_df, pdb_id_col),lst_col(pocket_df,col)))
+    st.sidebar.markdown("**Note.** We recommend comparing mutated structures within identical SW1 and SW2 conformations.")
 
     left_name = "Left"
     right_name = "Right"
@@ -93,189 +73,80 @@ def inhibitor_page():
 
     query_df_dict = dict()
 
+    mut_status_lst = lst_col(df, mut_status_col, unique=True)
+
     for query_name, query_col in query_col_dict.items():
 
-        query_df = pharm_df.copy(deep=True)
+        query_df = df.copy(deep=True)
 
         query_label_dict[query_name] = label_name
 
-        query_col.markdown(f"#### Site Search ({query_name})")
+        mut_status = query_col.selectbox(f"{rename_col_dict[mut_status_col]} ({query_name})", mut_status_lst)
 
-        cont_lst = query_col.multiselect(f"Residue Contacts ({query_name})", res_to_lst("1-189"))
+        mut_status_lst.remove(mut_status)
 
-        if len(cont_lst) > 0:
+        query_df = mask_equal(query_df, mut_status_col, mut_status)
 
-            cont_simi = query_col.slider(f"Residue Contact Simpson Similarity ({query_name})",  min_value=0.0, max_value=1.0, value=0.4)
+        if query_col.checkbox(f"Display Selection Options ({query_name})", value=False):
 
-            query_col.write(f"Searching for Sites ({query_name})")
-            site_bar = query_col.progress(0)
-            site_index_lst = list()
-            for i, index in enumerate(list(query_df.index.values)):
-                site_cont_dict = str_to_dict(query_df.at[index, bound_lig_cont_col], return_int=True)
-                site_cont_lst = site_cont_dict[query_df.at[index, pharm_lig_col]]
-                if calc_simpson(site_cont_lst, cont_lst) >= cont_simi:
-                    site_index_lst.append(index)
+            query_col.markdown(f"#### Conformation Selection ({query_name})")
 
-                site_bar.progress((i + 1)/len(query_df))
+            for col in [sw1_name, sw2_name, y32_name, y71_name]:
 
-            query_df = query_df.loc[site_index_lst, :]
+                mask_lst = query_col.multiselect(f"{rename_col_dict[col]} ({query_name})", lst_col(query_df, col, unique=True))
 
-        if len(query_df) == 0:
-            query_col.warning("Insufficient Number of Structures Based On Site Query")
-        else:
-            query_col.markdown(f"#### Chemistry Search ({query_name})")
+                if len(mask_lst) > 0:
+                    query_df = mask_equal(query_df, col, mask_lst)
 
-            smiles_str = query_col.text_input(f"Comma-Separated SMILES Strings ({query_name})")
+            query_col.markdown(f"#### Annotation Selection ({query_name})")
 
-            if len(smiles_str) > 0:
+            for col in [gene_class_col, nuc_class_col, prot_class_col, pocket_class_col, match_class_col, interf_class_col]:
 
-                smiles_lst = str_to_lst(smiles_str)
+                mask_lst = query_col.multiselect(f"{rename_col_dict[col]} ({query_name})", lst_col(query_df, col, unique=True))
 
-                exact_name = 'Exact'
-                simi_name = 'Similarity'
+                if len(mask_lst) > 0:
+                    query_df = mask_equal(query_df, col, mask_lst)
 
-                match_type = query_col.radio(f"Substructure Match ({query_name})", [exact_name, simi_name])
+            query_df_dict[query_name] = query_df
 
-                if match_type == exact_name:
-                    min_match = query_col.number_input(f"Minimum Matches ({query_name})", min_value=1, max_value=len(smiles_lst), value=1)
+    with st.expander("One-to-One Comparison", expanded=False):
 
-                elif match_type == simi_name:
+        st.markdown("#### One-to-One")
 
-                    min_simi = query_col.slider(f"2D Fingerprint Similarity ({query_name})", min_value=0.0, max_value=1.0, value=0.1)
+        left_info_col, right_info_col = st.columns(2)   
 
-                    if len(smiles_lst) > 1:
-                        simi_method = query_col.radio(f"Similarity Method ({query_name})", [mean_name, max_name, min_name])
+        info_col_dict = {left_name: left_info_col, right_name: right_info_col}   
 
-                query_col.write(f"Searching for Chemistries ({query_name})")
-                chem_bar = query_col.progress(0.0)
-                chem_index_lst = list()
-                for i, index in enumerate(list(query_df.index.values)):
-                    chem_smiles_dict = str_to_dict(query_df.at[index, pharm_lig_smiles_col], return_str=True)
-                    chem_smiles= chem_smiles_dict[query_df.at[index, pharm_lig_col]][0]
-                    if match_type == exact_name:
-                        if is_lig_match(pharm_lig=chem_smiles,matches=smiles_lst) >= min_match:
-                            chem_index_lst.append(index)
-                    elif match_type == simi_name:
-                        lig_simi_lst = [get_lig_simi(chem_smiles, x) for x in smiles_lst]
-                        if len(smiles_lst) == 1:
-                            lig_simi = lig_simi_lst[0]
-                        else:
-                            if simi_method == mean_name:
-                                lig_simi = np.mean(lig_simi_lst)
-                            elif simi_method == max_name:
-                                lig_simi = np.max(lig_simi_lst)
-                            elif simi_method == min_name:
-                                lig_simi = np.min(lig_simi_lst)
+        pdb_name_dict = dict()
+        pdb_df_dict = dict()
 
-                        if lig_simi >= min_simi:
-                            chem_index_lst.append(index)
+        for query_name, query_df in query_df_dict.items():
 
-                    chem_bar.progress((i + 1)/len(query_df))
+            pdb_id_lst = [x.upper() for x in lst_col(query_df, pdb_id_col) if x.upper() not in list(pdb_name_dict.values())]
 
-                    query_df = query_df.loc[chem_index_lst, :]
-
-            if len(query_df) == 0:
-                query_col.warning("Insufficient Number of Structures Based On Chemistry Search")
-            else:
-                query_df_dict[query_name] = query_df
-                if query_col.checkbox(f"Display Selection Options ({query_name})", value=False):
-
-                    query_col.markdown(f"#### Conformation Selection ({query_name})")
-
-                    for col in [sw1_name, sw2_name, y32_name, y71_name]:
-
-                        mask_lst = query_col.multiselect(f"{rename_col_dict[col]} ({query_name})", lst_col(query_df, col, unique=True))
-
-                        if len(mask_lst) > 0:
-                            query_df = mask_equal(query_df, col, mask_lst)
-
-                    query_col.markdown(f"#### Annotation Selection ({query_name})")
-
-                    for col in [gene_class_col, nuc_class_col, mut_status_col, prot_class_col, match_class_col, interf_class_col]:
-
-                        mask_lst = query_col.multiselect(f"{rename_col_dict[col]} ({query_name})", lst_col(query_df, col, unique=True))
-
-                        if len(mask_lst) > 0:
-                            query_df = mask_equal(query_df, col, mask_lst)
-
-                    query_df_dict[query_name] = query_df
-
-    if len(query_df_dict.keys()) == 2:
-
-        left_df = query_df_dict[left_name]
-        right_df = query_df_dict[right_name]
-
-        left_lst = lst_col(left_df, pdb_id_col, unique=True)
-        right_lst = lst_col(right_df, pdb_id_col, unique=True)
-
-        many_df = pd.concat([left_df, right_df], sort=False)
-        many_df = many_df.drop_duplicates()
-        many_df = many_df.reset_index(drop=True)
-
-        both_name = "Both Labels"
-
-        for index in list(many_df.index.values):
-
-            pdb_id = many_df.at[index, pdb_id_col]
-
-            if pdb_id in left_lst and pdb_id in right_lst:
-                label = both_name
-            elif pdb_id in left_lst:
-                label = left_name
-            elif pdb_id in right_lst:
-                label = right_name
-
-            many_df.at[index, id_col] = label
-
-        with st.expander("One-to-One Comparison", expanded=False):
-
-            st.markdown("#### One-to-One")
-
-            left_info_col, right_info_col = st.columns(2)   
-
-            info_col_dict = {left_name: left_info_col, right_name: right_info_col}   
-
-            pdb_name_dict = dict()
-            pdb_df_dict = dict()
-
-            for query_name, query_df in query_df_dict.items():
-
-                pdb_id_lst = [x.upper() for x in lst_col(query_df, pdb_id_col) if x.upper() not in list(pdb_name_dict.values())]
-
-                info_col = info_col_dict[query_name]
+            info_col = info_col_dict[query_name]
             
-                pdb_upper = info_col.selectbox(f"PDB ID ({query_name})", pdb_id_lst)
+            pdb_upper = info_col.selectbox(f"PDB ID ({query_name})", pdb_id_lst)
 
-                pdb_code = pdb_upper[:4].lower()
-                chainid = pdb_upper[4:5]
+            pdb_code = pdb_upper[:4].lower()
+            chainid = pdb_upper[4:5]
 
-                pdb_id = f"{pdb_code}{chainid}"
+            pdb_id = f"{pdb_code}{chainid}"
              
-                pdb_df = mask_equal(query_df, pdb_id_col, pdb_id)
+            pdb_df = mask_equal(query_df, pdb_id_col, pdb_id)
                 
-                pdb_name_dict[query_name] = pdb_upper
-                pdb_df_dict[query_name] = pdb_df
+            pdb_name_dict[query_name] = pdb_upper
+            pdb_df_dict[query_name] = pdb_df
 
-                pdb_code = pdb_df[pdb_code_col].iloc[0]
-                chainid = pdb_df[chainid_col].iloc[0]
-                gene_class = pdb_df[gene_class_col].iloc[0]
-                nuc_class = pdb_df[nuc_class_col].iloc[0]
-                bio_lig = pdb_df[bio_lig_col].iloc[0]
-                pharm_lig = pdb_df[pharm_lig_col].iloc[0]
-                match_class = pdb_df[match_class_col].iloc[0]
-                smiles_dict = str_to_dict(pdb_df[pharm_lig_smiles_col].iloc[0], return_str=True)
-                cont_dict = str_to_dict(pdb_df[bound_lig_cont_col].iloc[0], return_int=True)
+            pdb_code = pdb_df[pdb_code_col].iloc[0]
+            chainid = pdb_df[chainid_col].iloc[0]
+            gene = pdb_df[gene_class_col].iloc[0]
+            
+            info_col.markdown(f" ##### PDB: [{pdb_code.upper()}](https://www.rcsb.org/structure/{pdb_code}) ({gene}) - Chain {chainid}")
 
-                smiles = smiles_dict[pharm_lig][0]
-
-                info_col.markdown(f" ##### PDB: [{pdb_code.upper()}](https://www.rcsb.org/structure/{pdb_code}) ({gene_class}) - Chain {chainid}")
-
-                info_col.markdown(f"**{rename_col_dict[bio_lig_col]}:** [{bio_lig}](https://www.rcsb.org/ligand/{bio_lig}) ({nuc_class})")
-                info_col.markdown(f"**{rename_col_dict[pharm_lig_col]}:** [{pharm_lig}](https://www.rcsb.org/ligand/{pharm_lig}) ({match_class})")
-                info_col.markdown(f"**SMILES:** {smiles}")
                 
-                for col in [pocket_score_col, pocket_volume_col]:
-                    info_col.markdown(f"**{rename_col_dict[col]}:** {round(float(pdb_df[col].iloc[0]),2)}")
+            for col in [pocket_score_col, pocket_volume_col]:
+                info_col.markdown(f"**{rename_col_dict[col]}:** {round(float(pdb_df[col].iloc[0]),2)}")
 
             st.markdown("---")
 
@@ -355,7 +226,7 @@ def inhibitor_page():
                         [
                             {
                                 "chain": chainid,
-                                "resn": [pharm_lig],
+                                "resn": [lig],
                                 "elem": "C",
                             },
                             {"stick": {"color": pharm_color_dict[pharm_class], "radius": 0.2}},
@@ -367,7 +238,7 @@ def inhibitor_page():
                     [
                         {
                             "chain": chainid,
-                            "resn": [pharm_lig],
+                            "resn": [lig],
                         },
                         {"stick": {"radius": 0.2}},
                     ]
@@ -398,26 +269,26 @@ def inhibitor_page():
                     style_lst.append(
                         [
                             {"chain": chainid,
-                                "resi": cont_dict[pharm_lig],
+                                "resi": cont_dict[lig],
                                 "elem": "C",},
                             {"stick": {"colorscheme": "amino", "radius": 0.2}},
                         ]
                     ) 
                     style_lst.append(
                             [
-                                {"chain": chainid, "resi": cont_dict[pharm_lig]},
+                                {"chain": chainid, "resi": cont_dict[lig]},
                                 {"stick": {"radius": 0.2}},
                             ]
                         )
                     surface_lst.append(
                     [
                         {"opacity": surf_trans,"colorscheme": "amino"},
-                        {"chain": chainid, "resi": cont_dict[pharm_lig], "hetflag": False},
+                        {"chain": chainid, "resi": cont_dict[lig], "hetflag": False},
                     ]
                 )
 
                 else:
-                    for resid in cont_dict[pharm_lig]:
+                    for resid in cont_dict[lig]:
 
                         resid_color = "white"
                         if int(resid) in sw1_resid_lst:
@@ -449,7 +320,7 @@ def inhibitor_page():
                     reslabel_lst.append(
                             [
                                 {"chain": chainid,
-                                "resi": cont_dict[pharm_lig]},
+                                "resi": cont_dict[lig]},
                                 {
                                     "backgroundColor": "lightgray",
                                     "fontColor": "black",
@@ -497,7 +368,7 @@ def inhibitor_page():
                         reslabel_lst=reslabel_lst,
                         surface_lst=surface_lst,
                         cartoon_style=cartoon_style,
-                        zoom_dict={"chain": chainid, "resn": pharm_lig},
+                        zoom_dict={"chain": chainid, "resn": lig},
                         zoom=0.7,
                         width=400,
                         height=300,
@@ -569,7 +440,7 @@ def inhibitor_page():
             smiles_1 = smiles_dict_1[lig_1][0]
             smiles_2 = smiles_dict_2[lig_2][0]
 
-            right_chem_col.markdown("#### Inhibitor Chemistry")
+            right_chem_col.markdown("#### Chemistry Comparison")
 
             mcs = get_lig_mcs([smiles_1, smiles_2])
 
@@ -592,7 +463,7 @@ def inhibitor_page():
             
             cont_df = pd.DataFrame()
 
-            left_site_col.markdown("#### Inhibitor Site")
+            left_site_col.markdown("#### Site Comparison")
 
             left_site_col.markdown(f"**Residue Contact Similarity (Simpson):** {round(calc_simpson(cont_lst_1, cont_lst_2),2)}")
 
@@ -766,10 +637,10 @@ def inhibitor_page():
 
             for index in list(many_df.index.values):
                 
-                pharm_lig = many_df.at[index, pharm_lig_col]
+                lig = many_df.at[index, pharm_lig_col]
                 cont_dict = str_to_dict(many_df.at[index, bound_lig_cont_col], return_int=True)
 
-                cont_lst = cont_dict[pharm_lig]
+                cont_lst = cont_dict[lig]
 
                 label = many_df.at[index, id_col]
                 label_name = f"{label} (N={count_dict[label]})"
@@ -800,7 +671,7 @@ def inhibitor_page():
 
             left_table_col, right_table_col = st.columns(2)
 
-            right_table_col.markdown("##### Inhibitor Site")
+            right_table_col.markdown("##### Site Comparison")
 
             show_st_table(cont_df, st_col=right_table_col)
 
@@ -829,6 +700,22 @@ def inhibitor_page():
                 loop_df = loop_df.reset_index()
 
                 show_st_table(loop_df, st_col=left_table_col)
+
+        #     right_table_col.markdown("##### Chemistry Comparison")
+
+        # index_lst = list(many_df.index.values)
+
+        # chem_df = pd.DataFrame()
+        # compare_bar = st.progress(0)
+        # for i, index_1 in enumerate(index_lst):
+        #     smiles_1_dict = str_to_dict(many_df.at[index_1, pharm_lig_smiles_col], return_str=True)
+        #     smiles_1 = smiles_1_dict[many_df.at[index_1, pharm_lig_col]][0]
+        #     for index_2 in index_lst:
+        #         smiles_2_dict = str_to_dict(many_df.at[index_2, pharm_lig_smiles_col], return_str=True)
+        #         smiles_2 = smiles_2_dict[many_df.at[index_2, pharm_lig_col]][0]
+        #         chem_df.at[index_1, index_2] = get_lig_simi(smiles_1, smiles_2)
+        #     compare_bar.progress((i + 1)/len(index_lst))
+
 
 
         with st.expander("Entries Table", expanded=False):

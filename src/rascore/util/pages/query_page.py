@@ -37,7 +37,7 @@ from ..functions.lst import lst_nums
 from ..constants.nuc import nuc_class_lst
 from ..constants.gene import gene_class_lst
 from ..functions.table import lst_col, fix_col, mask_equal, make_dict
-from ..functions.color import get_lst_colors
+from ..functions.color import get_lst_colors, get_hex
 from ..constants.pml import sup_resids, show_resids, sup_pdb_code, sup_chainid, mono_view
 from ..functions.col import (
     rename_col_dict,
@@ -88,7 +88,7 @@ reverse_col_dict = make_dict(list(rename_col_dict.values()),list(rename_col_dict
 
 def query_page():
 
-    st.markdown("# Query Database")
+    st.markdown("## Query Database")
 
     st.markdown("---")
 
@@ -177,7 +177,7 @@ def query_page():
             elif table_col in [y71_name, sw2_name]:
                 conf_col = right_conf_col
 
-            conf_col.markdown(f"#### {rename_col_dict[table_col]}")
+            conf_col.markdown(f"##### {rename_col_dict[table_col]}")
 
             loop_df = (
                 pd.pivot_table(
@@ -200,10 +200,6 @@ def query_page():
             loop_df = loop_df.reset_index()
 
             show_st_table(loop_df, st_col=conf_col)
-
-        left_conf_col.markdown(
-            '**Note.** "3P" for GTP or GTP analog-bound, "2P" for GDP-bound, and "0P" for nucleotide-free'
-        )
 
         with st.expander("PyMOL Script", expanded=False):
 
@@ -237,9 +233,7 @@ def query_page():
                 rename_col = rename_col_dict[col]
                 color = None
                 if rename_col in show_lst:
-                    color = left_pymol_col.text_input(
-                        f"{rename_col} Color", value=pymol_color_dict[col]
-                    )
+                    color = left_pymol_col.color_picker(f"{rename_col} Color", get_hex(pymol_color_dict[col]))
                 show_color_dict[col] = color
 
             style_dict = {"Ribbon": False, "Trace": True}
@@ -281,14 +275,10 @@ def query_page():
                         i = 0
                         for group, color in group_color_palette.items():
                             if i == 0:
-                                color_palette[group] = left_color_col.text_input(
-                                    f"{group} Color", value=color
-                                )
+                                color_palette[group] = left_color_col.color_picker(f"{group} Color", get_hex(color))
                                 i += 1
                             elif i == 1:
-                                color_palette[group] = right_color_col.text_input(
-                                    f"{group} Color", value=color
-                                )
+                                color_palette[group] = right_color_col.color_picker(f"{group} Color", get_hex(color))
                                 i = 0
             else:
                 color_palette = [sw1_color,sw2_color]

@@ -46,7 +46,7 @@ from ..pipelines.classify_rascore import classify_rascore
 
 def classify_page():
 
-    st.markdown("# Classify Structures")
+    st.markdown("## Classify Structures")
 
     st.markdown("---")
 

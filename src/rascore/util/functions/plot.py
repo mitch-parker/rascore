@@ -174,7 +174,7 @@ def make_legend_plot(
 def make_venn_plot(
     lst_1,
     lst_2,
-    plot_path,
+    plot_path=None,
     label_1=None,
     label_2=None,
     color_1=None,
@@ -218,28 +218,32 @@ def make_venn_plot(
 
     for text in v.subset_labels:
 
-        if text.get_text() == "0\n(0%)":
-            text.set_text("")
-        else:
-            text.set_fontsize(font_size * 0.75)
-            text.set_color(count_color)
-            bbox_extra_artists += (text,)
+        if text is not None:
+            if text.get_text() == "0\n(0%)":
+                text.set_text("")
+            else:
+                text.set_fontsize(font_size * 0.75)
+                text.set_color(count_color)
+                bbox_extra_artists += (text,)
 
     if plot_title is not None:
         title = fig.suptitle(plot_title, fontsize=font_size)
         bbox_extra_artists += (title,)
 
-    append_file_path(plot_path)
+    if plot_path is None:
+        return fig
+    else:
+        append_file_path(plot_path)
 
-    plt.savefig(
-        plot_path,
-        format="pdf",
-        bbox_extra_artists=bbox_extra_artists,
-        bbox_inches="tight",
-        pad_inches=0.0,
-        dpi=600,
-    )
-    plt.close()
+        plt.savefig(
+            plot_path,
+            format="pdf",
+            bbox_extra_artists=bbox_extra_artists,
+            bbox_inches="tight",
+            pad_inches=0.0,
+            dpi=600,
+        )
+        plt.close()
 
 
 def make_stacked_barplot(

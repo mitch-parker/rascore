@@ -29,7 +29,7 @@ from ..constants.pharm import (
 from ..constants.prot import other_prot_name, none_prot_name, prot_color_dict
 from ..functions.lig import lig_lst_dict
 from ..functions.table import extract_int, lst_col
-from ..functions.lst import str_to_lst
+from ..functions.lst import str_to_lst, lst_nums, res_to_lst
 from ..functions.gui import (
     load_st_table,
     show_st_table,
@@ -79,7 +79,7 @@ def pdb_page():
 
     df = load_st_table(__file__)
 
-    st.sidebar.markdown("## PDB Selection")
+    st.sidebar.markdown("### PDB Selection")
 
     pdb_code = st.sidebar.selectbox(
         "Entry", [x.upper() for x in lst_col(df, pdb_code_col, unique=True)]
@@ -90,16 +90,16 @@ def pdb_page():
     chainid_df = mask_st_table(pdb_df, {chainid_col: chainid})
 
     st.markdown(
-        f"### PDB: [{pdb_code}](https://www.rcsb.org/structure/{pdb_code}) ({chainid_df.at[0,gene_class_col]}) - Chain {chainid}"
+        f"#### PDB: [{pdb_code}](https://www.rcsb.org/structure/{pdb_code}) ({chainid_df.at[0,gene_class_col]}) - Chain {chainid}"
     )
 
     left_col, right_col = st.columns(2)
 
-    left_col.markdown("#### General Information")
+    left_col.markdown("##### General Information")
     for col in [method_col, resolution_col, r_factor_col, space_col, date_col]:
         left_col.markdown(f"**{rename_col_dict[col]}:** {chainid_df.at[0,col]}")
 
-    right_col.markdown("#### Molecular Annotations")
+    right_col.markdown("##### Molecular Annotations")
 
     annot_df = pd.DataFrame()
     for i, col in enumerate(
@@ -130,7 +130,7 @@ def pdb_page():
         elif col in [sw2_col, y71_col]:
             color = sw2_color
 
-        st_col_lst[i].markdown(f"#### {rename_col_dict[col]}")
+        st_col_lst[i].markdown(f"##### {rename_col_dict[col]}")
         st_col_lst[i].markdown(get_html_text({chainid_df.at[0, col]:color}, 
         font_size="large"),unsafe_allow_html=True)
 
@@ -139,7 +139,7 @@ def pdb_page():
     left_check_col, right_check_col = st.columns(2)
     left_view_col, right_view_col = st.columns(2)
 
-    left_check_col.markdown("#### Bound Ligands")
+    left_check_col.markdown("##### Bound Ligands")
 
     lig_check_dict = dict()
     for col in [
@@ -161,7 +161,7 @@ def pdb_page():
     if len(lig_check_dict.keys()) == 0:
         left_check_col.write("No bound ligands.")
 
-    right_check_col.markdown("#### Mutation Sites")
+    right_check_col.markdown("##### Mutation Sites")
 
     mut_check_dict = dict()
     for mut in str_to_lst(chainid_df.at[0, mut_status_col]):
@@ -171,9 +171,13 @@ def pdb_page():
     if len(mut_check_dict.keys()) == 0:
         right_check_col.write("Not Mutated.")
 
-    left_view_col.markdown("#### Viewer Settings")
+    left_view_col.markdown("##### Viewer Settings")
 
     style_dict = {"Ribbon": "oval", "Trace": "trace"}
+
+    stick_lst = left_view_col.multiselect("Displayed Residues", lst_nums(1, 166), default=[32, 71])
+
+    label_resids = left_view_col.checkbox("Label Residues", value=True)
 
     cartoon_style = style_dict[
         left_view_col.radio("Cartoon Style", ["Ribbon", "Trace"])
@@ -223,15 +227,14 @@ def pdb_page():
         )
         if mut in list(mut_check_dict.keys()):
             if mut_check_dict[mut]:
-                label_lst.append(
+                reslabel_lst.append(
                     [
-                        mut,
+                        {"chain": chainid, "resi": [extract_int(mut)]},
                         {
                             "backgroundColor": "lightgray",
                             "fontColor": "black",
                             "backgroundOpacity": 0.5,
                         },
-                        {"chain": chainid, "resi": [extract_int(mut)], "atom": "CA"},
                     ]
                 )
 
@@ -282,17 +285,16 @@ def pdb_page():
 
                 if lig_col in list(lig_check_dict.keys()):
                     if lig_check_dict[lig_col][lig]:
-                        label_lst.append(
+                        reslabel_lst.append(
                             [
-                                lig,
+                                  {
+                                    "chain": chainid,
+                                    "resn": lig,
+                                },
                                 {
                                     "backgroundColor": "lightgray",
                                     "fontColor": "black",
                                     "backgroundOpacity": 0.5,
-                                },
-                                {
-                                    "chain": chainid,
-                                    "resn": lig,
                                 },
                             ]
                         )
@@ -325,9 +327,8 @@ def pdb_page():
                     {
                         "chain": chainid,
                         "resn": [pharm_lig],
-                        "elem": ["N", "O", "H"],
                     },
-                    {"stick": {"colorscheme": "lightgrayCarbon", "radius": 0.2}},
+                    {"stick": {"radius": 0.2}},
                 ]
             )
 
@@ -397,10 +398,8 @@ def pdb_page():
 
         if loop_name == sw1_name:
             loop_color = sw1_color
-            stick_resid = 32
         elif loop_name == sw2_name:
             loop_color = sw2_color
-            stick_resid = 71
 
         surface_lst.append(
             [
@@ -425,29 +424,39 @@ def pdb_page():
             ]
         )
 
+    for stick in stick_lst:
+
+        if int(stick) in res_to_lst(loop_resid_dict[sw1_name]):
+            color = sw1_color
+        elif int(stick) in res_to_lst(loop_resid_dict[sw2_name]):
+            color = sw2_color
+        else:
+            color = "white"
+
         style_lst.append(
             [
                 {
                     "chain": chainid,
-                    "resi": stick_resid,
+                    "resi": stick,
                     "elem": "C",
                 },
-                {"stick": {"color": loop_color, "radius": 0.2}},
+                {"stick": {"color": color, "radius": 0.2}},
             ]
         )
 
         style_lst.append(
             [
-                {"chain": chainid, "resi": stick_resid, "elem": ["O", "N", "H"]},
-                {"stick": {"colorscheme": "whiteCarbon", "radius": 0.2}},
+                {"chain": chainid, "resi": stick},
+                {"stick": {"radius": 0.2}},
             ]
         )
 
-        reslabel_lst.append([{"chain": chainid, "resi": stick_resid}, {
-                        "backgroundColor": "lightgray",
-                        "fontColor": "black",
-                        "backgroundOpacity": 0.8,
-                    }])
+        if label_resids:
+            reslabel_lst.append([{"chain": chainid, "resi": stick}, {
+                            "backgroundColor": "lightgray",
+                            "fontColor": "black",
+                            "backgroundOpacity": 0.8,
+                        }])
 
     with right_view_col:
         show_st_structure(

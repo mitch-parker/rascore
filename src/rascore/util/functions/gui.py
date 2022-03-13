@@ -23,6 +23,7 @@ from random import randint
 import streamlit as st
 import py3Dmol
 from stmol import showmol
+from io import BytesIO
 
 from .file import entry_table_file
 from .table import mask_equal
@@ -111,6 +112,15 @@ def save_st_file(st_file):
     with open(st_file_path, "wb") as file:
         file.write(st_file.getbuffer())
     return st_file_path
+
+def show_st_fig(fig, st_col=None):
+
+    byt = BytesIO()
+    fig.savefig(byt, format="png")
+    if st_col is None:
+        st.image(byt)
+    else:
+        st_col.image(byt)
 
 
 def get_html_text(text_color_dict, font_size="medium", font_weight="normal"):

@@ -73,7 +73,7 @@ def conformation_page():
 
     df = load_st_table(__file__)
 
-    st.markdown("# Explore Conformations")
+    st.markdown("## Explore Conformations")
     st.markdown("---")
 
     st.sidebar.markdown(
@@ -165,7 +165,7 @@ def conformation_page():
                 else:
                     conf_str = f"{loop_name} Conformation (Only 1)"
 
-                loop_col.markdown(f"#### {conf_str}")
+                loop_col.markdown(f"##### {conf_str}")
 
                 loop_conf = loop_col.selectbox("Conformation Name", conf_lst)
 
@@ -254,9 +254,8 @@ def conformation_page():
                         {
                             "chain": chainid,
                             "resi": stick_resid,
-                            "elem": ["O", "N", "H"],
                         },
-                        {"stick": {"colorscheme": "whiteCarbon", "radius": 0.2}},
+                        {"stick": {"radius": 0.2}},
                     ]
                 )
 
@@ -265,19 +264,18 @@ def conformation_page():
                         pdb_code,
                         zoom_dict={"chain": chainid, "resi": [loop_resids]},
                         style_lst=style_lst,
-                        label_lst=[
+                        reslabel_lst=[
                             [
-                                f"Y{stick_resid}",
+                                {"chain": chainid, "resi": stick_resid},
                                 {
                                     "backgroundColor": "lightgray",
                                     "fontColor": "black",
                                     "backgroundOpacity": 0.5,
                                 },
-                                {"chain": chainid, "resi": stick_resid, "atom": "OH"},
                             ]
                         ],
                         cartoon_style=cartoon_style,
-                        width=450,
+                        width=400,
                         height=300,
                         zoom=1.5,
                     )
