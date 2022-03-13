@@ -62,21 +62,21 @@ def overview_page():
 
     text_col, leg_1_col, leg_2_col = st.columns((2, 0.75, 0.75))
 
-    text_col.markdown("#### Building the Rascore Database")
+    text_col.markdown("#### Introduction to the Rascore Database")
     text_col.markdown(
         f"""
-    - The RAS proteins (KRAS, NRAS, and HRAS) have a widespread command of cellular circuitry and are high-priority 
-    drug targets in cancers and other diseases. 
-    - Effectively targeting RAS proteins requires an exact understanding of their active, inactive, and 
-    druggable conformations, and the structural impact of mutations. 
+    - For many human cancers and tumor-associated diseases, mutations in the RAS isoforms (KRAS, NRAS, and HRAS) 
+    are the most common oncogenic alterations, making these proteins high-priority therapeutic targets. 
+    - Effectively targeting the RAS isoforms requires an exact understanding of 
+    their active, inactive, and druggable conformations.  
     - In consequence, we analyzed over 700 available human KRAS, NRAS, and HRAS structures in the 
     Protein Data Bank (PDB) to create a comprehensive map of the RAS conformational landscape. 
       - First, we annotated the molecular contents of each RAS structure, including their mutation status, 
-    nucleotide state and bound protein, or inhibitor site (*see right for key terms*). 
-      - Second, we conformationally classified all RAS structures based on the configurations of their catalytic 
-    switch 1 (SW1) and switch 2 (SW2) loops, identifying three SW1 and nine SW2 conformations.
-    - The *Rascore* database presents a continually updated dataset of annotated and conformationally classified 
-    RAS structures in the PDB (*now {len(df)} structures*).
+    nucleotide state, and bound protein or inhibitor site (*see right for key terms*). 
+      - Second, we conformationally classified all available RAS structures based on the configurations 
+      of their catalytic switch 1 (SW1) and switch 2 (SW2) loops, identifying three SW1 and nine SW2 conformations.
+    - The *Rascore* database presents a continually updated dataset of RAS structures in the PDB that are
+    conformationally classified and annotated for their molecular contents (*now {len(df)} structures*).
     """
     )
 
@@ -156,27 +156,27 @@ def overview_page():
     core (“Y71in” or “Y71out”) in SW2. 
     - Second, we separately clustered the configurations of SW1 (residues 25-40) and SW2 (residues 56-76)
     based on their backbone dihedral angle values: φ (phi), ψ (psi), and ω (omega).
-    - In clustering SW1 and SW2 loops, we used the Density-Based Spatial Clustering of Applications 
+    - In clustering RAS SW1 and SW2 loops, we used the Density-Based Spatial Clustering of Applications 
     with Noise (DBSCAN) algorithm with a distance metric that locates the maximum backbone dihedral angle 
     difference upon pairwise comparison of loop residues (previously implemented by our group for other proteins, 
     such as [kinases](http://dunbrack.fccc.edu/kincore/home) and [antibodies](http://dunbrack2.fccc.edu/PyIgClassify/)).
       - DBSCAN clusters points with sufficient numbers of near neighbors and classifies the remainder as outliers. 
       - We first separated RAS structures by nucleotide state (0P, 2P, and 3P) and spatial class 
       (Y32in/out for SW1 and Y71in/out for SW2) and, within each group, subsequently clustered the 
-      conformations of completely modeled SW1 and SW2 loops with well-defined electron density using DBSCAN. 
+      conformations of completely modeled SW1 and SW2 loops with well-defined electron density. 
       - We then assigned a small number of poorly or incompletely modeled loops to the clusters obtained from 
-        DBSCAN by using a nearest neighbors (NN) approach.
+        DBSCAN by using a nearest neighbors (NN) approach that we developed.
       - In the Rascore database, we use our NN approach to conformationally classify user uploaded 
-      structures and additional RAS structures deposited to the PDB.
+        structures and additional RAS structures deposited to the PDB.
     """
     )
 
     st.markdown("---")
 
-    st.markdown("#### Overview of Conformational Classification")
+    st.markdown("#### Summary of the Current RAS Conformational Landscape")
 
     st.markdown("""
-    - For clarity and brevity in our expanded RAS conformational classification, 
+    - For clarity and brevity in our RAS conformational classification, 
     we named each SW1 and SW2 conformation by its *spatial class*, *nucleotide state*, 
     and a *conformational label* (written in all-capital letters). 
     - The SW1 conformations are labeled Y32in.3P-ON (GTP-bound state 2), 
@@ -190,8 +190,8 @@ def overview_page():
     - The four GDP-bound SW2 conformations are all named for their predominant binding partners, 
     which consist of SP2 and SP12 inhibitors and protein binders: Y71out.2P-SP2-A, Y71out.2P-SP2-B, 
     Y71in.2P-SP12, and Y71out.2P-BINDER (*panel* **D**).
-    - In *panels* **E** and **F**, our SW1 and SW2 conformational clustering (with NN assignments added) are 
-    displayed as Ramachandran maps per residue of each cluster.
+    - In *panels* **E** and **F**, our original SW1 and SW2 conformational clustering (with NN assignments added) 
+    are displayed as Ramachandran maps per residue of each cluster.
     """)
 
     img = Image.open(

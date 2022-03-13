@@ -18,154 +18,24 @@
 
 import streamlit as st
 
-from ..constants.pharm import pharm_color_dict, sp2_name
-from ..constants.conf import loop_resid_dict, sw1_name, sw2_name, sw1_color, sw2_color
-from ..functions.gui import write_st_end, create_st_button, show_st_structure
+from ..functions.table import mask_equal
+from ..functions.col import pdb_code_col
+from ..functions.gui import load_st_table, write_st_end, create_st_button, show_st_structure
 
 
 def home_page():
 
-    style_lst = list()
-    surface_lst = list()
-
-    opacity = 1
-
-    surface_lst = [
-        [
-            {"opacity": opacity, "color": "white"},
-            {"chain": "A", "hetflag": False},
-        ]
-    ]
-
-    style_lst.append(
-        [
-            {
-                "resn": "GDP",
-            },
-            {
-                "stick": {
-                    "colorscheme": "whiteCarbon",
-                    "radius": 0.2,
-                }
-            },
-        ]
-    )
-
-    style_lst.append(
-        [
-            {
-                "resn": "MG",
-            },
-            {
-                "sphere": {
-                    "color": "chartreuse",
-                    "radius": 0.8,
-                }
-            },
-        ]
-    )
-
-    style_lst.append(
-        [
-            {"chain": "A", "resi": 12, "atom": "CA"},
-            {"sphere": {"color": "red", "radius": 0.8}},
-        ]
-    )
-
-    style_lst.append(
-        [
-            {
-                "chain": "A",
-                "resn": "MOV",
-                "elem": "C",
-            },
-            {"stick": {"color": pharm_color_dict[sp2_name], "radius": 0.2}},
-        ]
-    )
-    style_lst.append(
-        [
-            {
-                "chain": "A",
-                "resn": "MOV",
-            },
-            {"stick": {"radius": 0.2}},
-        ]
-    )
-
-    style_lst.append(
-        [
-            {
-                "chain": "A",
-                "resi": 12,
-            },
-            {"stick": {"colorscheme": "lightgrayCarbon", "radius": 0.2}},
-        ]
-    )
-
-    for loop_name, loop_resids in loop_resid_dict.items():
-
-        if loop_name == sw1_name:
-            loop_color = sw1_color
-            stick_resid = 32
-        elif loop_name == sw2_name:
-            loop_color = sw2_color
-            stick_resid = 71
-
-        surface_lst.append(
-            [
-                {"opacity": opacity, "color": loop_color},
-                {"chain": "A", "resi": loop_resids, "hetflag": False},
-            ]
-        )
-
-        style_lst.append(
-            [
-                {
-                    "chain": "A",
-                    "resi": [loop_resids],
-                },
-                {
-                    "cartoon": {
-                        "style": "oval",
-                        "color": loop_color,
-                        "thickness": 0.2,
-                    }
-                },
-            ]
-        )
-
-        style_lst.append(
-            [
-                {
-                    "chain": "A",
-                    "resi": [stick_resid],
-                    "elem": "C",
-                },
-                {"stick": {"color": loop_color, "radius": 0.2}},
-            ]
-        )
-
-        style_lst.append(
-            [
-                {"chain": "A", "resi": [stick_resid]},
-                {"stick": {"radius": 0.2}},
-            ]
-        )
-
     left_col, right_col = st.columns(2)
 
-    with left_col:
-        show_st_structure(
-            "6oim",
-            style_lst=style_lst,
-            surface_lst=surface_lst,
-            cartoon_style="oval",
-            spin_on=True,
-            zoom_dict={"chain": "A"},
+    df = load_st_table(__file__)
+
+    show_st_structure(mask_equal(df, pdb_code_col, "6oim"),
             zoom=1.2,
             width=400,
             height=300,
-        )
+            surface_trans=1,
+            spin_on=True,
+            st_col=left_col)
 
     right_col.markdown("# Rascore")
     right_col.markdown("### A tool for analyzing RAS protein structures")
@@ -229,11 +99,11 @@ def home_page():
         ### Summary
         *Rascore* is a tool for analyzing structures of the RAS protein family
         (KRAS, NRAS, and HRAS). The *Rascore* 
-        database presents a continually updated analysis of all
+        database presents a continually updated analysis of all available
         RAS structures in the Protein Data Bank (PDB) with their catalytic SW1 and 
         SW2 loops conformationally classified and their molecular 
         contents annotated (e.g., mutation status, nucleotide state, 
-        bound protein, inhibitor site, and others). 
+        bound protein, inhibitor site). 
 
         Details of our work are 
         provided on [bioRxiv](https://www.biorxiv.org/content/10.1101/2022.02.02.478568v2) in the manuscript, 
@@ -248,18 +118,18 @@ def home_page():
         """
         ### Usage
 
-        To the left, is a main menu for navigating to 
+        To the left, is a dropdown main menu for navigating to 
         each page in the *Rascore* database:
 
         - **Home Page:** We are here!
         - **Database Overview:** Overview of the *Rascore* database, molecular annotations, 
         and RAS conformational classification.
         - **Search PDB:** Search for individual PDB entries containing RAS structures.
-        - **Explore Conformations:** Explore RAS SW1 and SW2 conformations by nucleotide state.
+        - **Explore Conformations:** Explore RAS SW1 and SW2 conformations found in the PDB by nucleotide state.
         - **Analyze Mutations:** Analyze the structural impact of RAS mutations by comparing WT and mutated structures.
-        - **Compare Inhibitors:** Compare inhibitor-bound RAS structures by compound binding site and chemical substructures.
+        - **Compare Inhibitors:** Compare inhibitor-bound RAS structures by compound binding site and chemical substructure.
         - **Query Database:** Query the *Rascore* database by conformations and molecular annotations.
-        - **Classify Structures:** Conformationally classify and annotate uploaded RAS structures.
+        - **Classify Structures:** Conformationally classify and annotate the molecular contents of uploaded RAS structures.
         """
     )
     st.markdown("---")

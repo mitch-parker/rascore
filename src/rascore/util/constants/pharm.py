@@ -16,6 +16,8 @@
 
 """
 
+from ..functions.color import gray_hex
+
 sp2_name = "SP2"
 sp12_name = "SP12"
 as_name = "Allosteric Site"
@@ -42,14 +44,14 @@ sp2_color = "#d95f02"
 sp12_color = "#1b9e77"
 other_pharm_color = "#66a61e"
 mult_pharm_color = "#e6ab02"
-none_pharm_color = "#a6761d"
+none_pharm_color = gray_hex
 
 pharm_color_dict = {
     sp2_name: sp2_color,
     sp12_name: sp12_color,
-    other_pharm_name: other_pharm_color,
     mult_pharm_name: mult_pharm_color,
-    none_pharm_name: none_pharm_color,
+    other_pharm_name: other_pharm_color,
+    none_pharm_name: none_pharm_color
 }
 
 pharm_class_lst = [

@@ -27,15 +27,16 @@ from ..functions.col import (pocket_class_col, pdb_id_col, pdb_code_col, id_col,
                             bound_lig_cont_col, chainid_col, pharm_lig_smiles_col, pharm_class_col,
                             nuc_class_col, mut_status_col, prot_class_col, interf_class_col,
                             pocket_lig_col, pharm_lig_col, pocket_score_col, match_class_col, 
-                            bio_lig_col, modelid_col, gene_class_col,
+                            bio_lig_col, modelid_col, gene_class_col, bound_prot_swiss_id_col,
                             pocket_volume_col, pharm_lig_col, rename_col_dict)
 from ..functions.file import pocket_table_file, entry_table_file
 from ..functions.path import rascore_str
 from ..constants.pharm import sp2_name, sp12_name, bound_name, pharm_color_dict
 from ..constants.conf import loop_resid_dict, loop_color_dict, sw1_name, sw2_name, y32_name, y71_name
 from ..functions.gui import (load_st_table, show_st_dataframe, write_st_end,
-                            show_st_structure, show_st_table, get_html_text, 
-                            download_st_df, rename_st_cols, reorder_st_cols)
+                            show_st_structure, show_st_table, get_html_text,
+                            download_st_df, rename_st_cols, reorder_st_cols,
+                            ribbon_name, trace_name, standard_name, aa_name)
 from ..functions.lst import calc_simpson, res_to_lst,lst_unique, str_to_lst, lst_nums
 
 import streamlit as st
@@ -254,20 +255,30 @@ def inhibitor_page():
                 pdb_code = pdb_df[pdb_code_col].iloc[0]
                 chainid = pdb_df[chainid_col].iloc[0]
                 gene_class = pdb_df[gene_class_col].iloc[0]
-                nuc_class = pdb_df[nuc_class_col].iloc[0]
-                bio_lig = pdb_df[bio_lig_col].iloc[0]
+                mut_status = pdb_df[mut_status_col].iloc[0]
                 pharm_lig = pdb_df[pharm_lig_col].iloc[0]
-                match_class = pdb_df[match_class_col].iloc[0]
                 smiles_dict = str_to_dict(pdb_df[pharm_lig_smiles_col].iloc[0], return_str=True)
                 cont_dict = str_to_dict(pdb_df[bound_lig_cont_col].iloc[0], return_int=True)
 
                 smiles = smiles_dict[pharm_lig][0]
 
-                info_col.markdown(f" ##### PDB: [{pdb_code.upper()}](https://www.rcsb.org/structure/{pdb_code}) ({gene_class}) - Chain {chainid}")
+                info_col.markdown(f"##### PDB: [{pdb_code.upper()}](https://www.rcsb.org/structure/{pdb_code}) (Chain {chainid}) - {gene_class}({mut_status})")
 
-                info_col.markdown(f"**{rename_col_dict[bio_lig_col]}:** {bio_lig} ({nuc_class})")
-                info_col.markdown(f"**{rename_col_dict[pharm_lig_col]}:** [{pharm_lig}](https://www.rcsb.org/ligand/{pharm_lig}) ({match_class})")
-                info_col.markdown(f"**SMILES:** {smiles}")
+                col_pair_dict = {nuc_class_col: bio_lig_col, match_class_col: pharm_lig_col, prot_class_col: bound_prot_swiss_id_col}
+                for col_1, col_2 in col_pair_dict.items():
+                    val_1 = pdb_df[col_1].iloc[0]
+                    val_2 = pdb_df[col_2].iloc[0]
+                    col_str = f"**{rename_col_dict[col_1]}:** {val_1}"
+                    if val_1 != "None":
+                        if col_2 in [bio_lig_col, pharm_lig_col] and val_2 != "None":
+                            col_str += f" ([{val_2}](https://www.rcsb.org/ligand/{val_2}))"
+                        elif col_2 in [bound_prot_swiss_id_col] and val_2 != "None":
+                            col_str += f" ([{val_2}](https://www.uniprot.org/uniprot/{val_2}))"
+                        else:
+                            col_str += f" ({val_2})"
+                    info_col.markdown(col_str)
+
+                info_col.markdown(f"**SMILES String:** {smiles}")
                 
                 for col in [pocket_score_col, pocket_volume_col]:
                     info_col.markdown(f"**{rename_col_dict[col]}:** {round(float(pdb_df[col].iloc[0]),2)}")
@@ -280,22 +291,22 @@ def inhibitor_page():
 
             label_resids = left_set_col.checkbox("Label Residues",value=True)
 
-            style_dict = {"Ribbon": "oval", "Trace": "trace"}
-
-            scheme_dict = {"Standard": False, "Amino Acid": True}
-            amino_scheme = scheme_dict[
-                left_set_col.radio("Residue Color Scheme", ["Standard", "Amino Acid"])
+        
+            scheme_dict = {standard_name: False, aa_name: True}
+            aa_scheme = scheme_dict[
+                left_set_col.radio("Residue Color Scheme", [standard_name, aa_name])
             ]
 
+            style_dict = {ribbon_name: "oval", trace_name: "trace"}
             cartoon_style = style_dict[
-                left_set_col.radio("Cartoon Style", ["Ribbon", "Trace"])
+                left_set_col.radio("Cartoon Style", [ribbon_name, trace_name])
             ]
 
             cartoon_trans = right_set_col.slider(
                 "Cartoon Transparency", min_value=0.0, max_value=1.0, value=0.5
             )
 
-            surf_trans = right_set_col.slider(
+            surface_trans = right_set_col.slider(
                 "Surface Transparency", min_value=0.0, max_value=1.0, value=0.7
             )
 
@@ -307,203 +318,27 @@ def inhibitor_page():
                 
                 pdb_df = pdb_df_dict[query_name] 
                 
-                pdb_code = pdb_df[pdb_code_col].iloc[0]
-                chainid = pdb_df[chainid_col].iloc[0]
                 pharm_lig = pdb_df[pharm_lig_col].iloc[0]   
                 cont_dict = str_to_dict(pdb_df[bound_lig_cont_col].iloc[0], return_int=True)
 
                 view_col = view_col_dict[query_name]
 
-                style_lst = list()
-                reslabel_lst = list()
-                surface_lst = list()
-
-                style_lst.append(
-                    [
-                        {
-                            "chain": chainid,
-                            "invert": True,
-                        },
-                        {
-                            "cartoon": {
-                                "color": "white",
-                                "style": cartoon_style,
-                                "thickness": 0.2,
-                                "opacity": 0,
-                            }
-                        },
-                    ]
-                )
-
-                style_lst.append(
-                    [
-                        {
-                            "chain": chainid,
-                        },
-                        {
-                            "cartoon": {
-                                "color": "white",
-                                "style": cartoon_style,
-                                "thickness": 0.2,
-                                "opacity": cartoon_trans,
-                            }
-                        },
-                    ]
-                )  
-
-                style_lst.append(
-                        [
-                            {
-                                "chain": chainid,
-                                "resn": [pharm_lig],
-                                "elem": "C",
-                            },
-                            {"stick": {"color": pharm_color_dict[pharm_class], "radius": 0.2}},
-                        ]
-                    )
-
-
-                style_lst.append(
-                    [
-                        {
-                            "chain": chainid,
-                            "resn": [pharm_lig],
-                        },
-                        {"stick": {"radius": 0.2}},
-                    ]
-                )
-
-                if sp2_name in pocket_class:
-                    style_lst.append(
-                        [
-                            {
-                                "chain": chainid,
-                                "resi": 12,
-                            },
-                            {"stick": {"colorscheme": "lightgrayCarbon", "radius": 0.2}},
-                        ]
-                    )
-
-                surface_lst = [
-                [
-                    {"opacity": surf_trans, "color": "white"},
-                    {"chain": chainid, "hetflag": False},
-                ]
-                ]
-
-
-                if amino_scheme:
-                    style_lst.append(
-                        [
-                            {"chain": chainid,
-                                "resi": cont_dict[pharm_lig],
-                                "elem": "C",},
-                            {"stick": {"colorscheme": "amino", "radius": 0.2}},
-                        ]
-                    ) 
-                    style_lst.append(
-                            [
-                                {"chain": chainid, "resi": cont_dict[pharm_lig]},
-                                {"stick": {"radius": 0.2}},
-                            ]
-                        )
-                    surface_lst.append(
-                    [
-                        {"opacity": surf_trans,"colorscheme": "amino"},
-                        {"chain": chainid, "resi": cont_dict[pharm_lig], "hetflag": False},
-                    ]
-                )
-
-                else:
-                    for resid in cont_dict[pharm_lig]:
-
-                        resid_color = "white"
-                        if int(resid) in sw1_resid_lst:
-                            resid_color = loop_color_dict[sw1_name]
-                        if int(resid) in sw2_resid_lst:
-                            resid_color = loop_color_dict[sw2_name]
-
-
-                        style_lst.append(
-                        [
-                            {
-                                "chain": chainid,
-                                "resi": [resid],
-                                "elem": "C",
-                            },
-                            {"stick": {"color": resid_color, "radius": 0.2}},
-                        ]
-                    )
-
-                        style_lst.append(
-                            [
-                                {"chain": chainid, "resi": [resid]},
-                                {"stick": {"radius": 0.2}},
-                            ]
-                        )
-
-                if label_resids:
-
-                    reslabel_lst.append(
-                            [
-                                {"chain": chainid,
-                                "resi": cont_dict[pharm_lig]},
-                                {
-                                    "backgroundColor": "lightgray",
-                                    "fontColor": "black",
-                                    "backgroundOpacity": 0.5,
-                                },
-                            ]
-                        )
-                
-                if not amino_scheme:
-                    for loop_name, loop_resids in loop_resid_dict.items():
-
-                        loop_color = loop_color_dict[loop_name]
-
-                    
-                        surface_lst.append(
-                        [
-                            {"opacity": surf_trans, "color": loop_color},
-                            {"chain": chainid, "resi": loop_resids, "hetflag": False},
-                        ]
-                    )
-
-                        style_lst.append(
-                            [
-                                {
-                                    "chain": chainid,
-                                    "resi": [loop_resids],
-                                },
-                                {
-                                    "cartoon": {
-                                        "style": cartoon_style,
-                                        "color": loop_color,
-                                        "thickness": 0.2,
-                                        "opacity": cartoon_trans,
-                                    }
-                                },
-                            ]
-                        )
-
-                        
-
-                with view_col:
-                    show_st_structure(
-                        pdb_code,
-                        style_lst=style_lst,
-                        reslabel_lst=reslabel_lst,
-                        surface_lst=surface_lst,
+                show_st_structure(pdb_df,
+                        stick_resids=cont_dict[pharm_lig],
+                        label_resids=label_resids, 
                         cartoon_style=cartoon_style,
-                        zoom_dict={"chain": chainid, "resn": pharm_lig},
+                        cartoon_trans=cartoon_trans, 
+                        surface_trans=surface_trans,
+                        aa_scheme=aa_scheme,
+                        zoom_resids={"resn":pharm_lig},
                         zoom=0.7,
                         width=400,
-                        height=300,
-                    )
+                        height=400,
+                        st_col=view_col)
 
                 label_size = "medium"
 
-                if not amino_scheme:
+                if not aa_scheme:
 
                     for col in [sw1_name, sw2_name, y32_name, y71_name]:
 
@@ -517,36 +352,6 @@ def inhibitor_page():
                         label_str += get_html_text({pdb_df[col].iloc[0]: label_color}, font_size=label_size)
 
                         view_col.markdown(label_str, unsafe_allow_html=True)
-
-            if amino_scheme:
-
-                aa_type_dict = {'Aromatic':['PHE', 'TYR', 'TRP'],
-                'Acidic':['ASP','GLU'],
-                'Basic':['LYS', 'ARG','HIS'],
-                'Nonpolar':['ILE', 'VAL', 'LEU', 'MET','PRO', 'GLY', 'ALA'],
-                'Polar':['ASN','GLN','SER','THR', 'CYS']}
-
-                aa_color_dict = {'ASP':'#E60A0A','GLU':'#E60A0A','CYS':'#E6E600','MET':'#E6E600',
-                                'LYS':'#145AFF','ARG':'#145AFF','SER':'#FA9600','THR':'#FA9600',
-                                'PHE':'#3232AA','TYR':'#3232AA','ASN':'#00DCDC','GLN':'#00DCDC',
-                                'GLY':'#C8C8C8','LEU':'#0F820F','VAL':'#0F820F','ILE':'#0F820F',
-                                'ALA':'#C8C8C8','TRP':'#B45AB4','HIS':'#8282D2','PRO':'#DC9682'}
-
-
-                aa_font_size = "medium"
-
-                for aa_type, aa_lst in aa_type_dict.items():
-
-                    aa_str = get_html_text({f"{aa_type}: ": "#31333F"}, font_weight='bold', font_size=aa_font_size)
-
-                    for i, aa_name in enumerate(aa_lst): 
-
-                        aa_str += get_html_text({aa_name:aa_color_dict[aa_name]}, font_size=aa_font_size)
-
-                        if i != len(aa_lst) - 1:
-                            aa_str += get_html_text({", ":"#31333F"}, font_size=aa_font_size)
-        
-                    st.markdown(aa_str, unsafe_allow_html=True)
 
             st.markdown("---")
 

@@ -78,7 +78,7 @@ def conformation_page():
 
     st.sidebar.markdown(
         """
-    **Note.** Only structures with completely modeled loops from original clustering are displayed.
+    **Note.** Only structures with completely modeled loops from our original clustering are displayed.
     Tables below structures include updated counts from *Rascore* database.
     """
     )
@@ -147,16 +147,14 @@ def conformation_page():
 
                 if loop_name == sw1_name:
                     cluster_df = sw1_df.copy(deep=True)
-                    stick_resid = 32
                     loop_col = sw1_col
 
                 elif loop_name == sw2_name:
                     cluster_df = sw2_df.copy(deep=True)
-                    stick_resid = 71
                     loop_col = sw2_col
 
 
-                loop_df = mask_equal(nuc_df, loop_name, [x for x in lst_col(nuc_df,loop_name,unique=True) if outlier_name not in x and disorder_name not in x])
+                loop_df = mask_equal(nuc_df, loop_name, [x for x in lst_col(nuc_df, loop_name,unique=True) if outlier_name not in x and disorder_name not in x])
 
                 conf_lst = get_col_most_common(loop_df, loop_name)
 
@@ -169,11 +167,13 @@ def conformation_page():
 
                 loop_conf = loop_col.selectbox("Conformation Name", conf_lst)
 
+                conf_df = mask_equal(loop_df,loop_name,loop_conf)
+
                 pdb_id = loop_col.selectbox(
                     "PDB ID",
                     [
                         x.upper()
-                        for x in lst_col(mask_equal(loop_df,loop_name,loop_conf), pdb_id_col)
+                        for x in lst_col(conf_df, pdb_id_col)
                         if x in lst_col(cluster_df, pdb_id_col)
                     ],
                 )
@@ -181,104 +181,27 @@ def conformation_page():
                 pdb_code = pdb_id[:4].lower()
                 chainid = pdb_id[4:5]
 
-                style_lst = list()
+                pdb_df = mask_equal(conf_df, pdb_id_col, f"{pdb_code}{chainid}")
 
-                loop_color = conf_color_dict[loop_name][loop_conf]
+                if loop_name == sw1_name:
+                    sw1_color = conf_color_dict[loop_name][loop_conf]
+                    sw2_color = "white"
+                    stick_resids = 32
+                elif loop_name == sw2_name:
+                    sw1_color = "white"
+                    sw2_color = conf_color_dict[loop_name][loop_conf]
+                    stick_resids = 71
 
-                cartoon_style = "oval"
-
-                style_lst.append(
-                    [
-                        {
-                            "chain": chainid,
-                            "invert": True,
-                        },
-                        {
-                            "cartoon": {
-                                "color": "white",
-                                "style": cartoon_style,
-                                "thickness": 0.2,
-                                "opacity": 0,
-                            }
-                        },
-                    ]
-                )
-
-                bio_lig = lst_col(
-                    mask_equal(df, pdb_id_col, f"{pdb_code}{chainid}"), bio_lig_col
-                )[0]
-                style_lst.append(
-                    [
-                        {   
-                            "chain": chainid,
-                            "resn": bio_lig,
-                        },
-                        {
-                            "stick": {
-                                "colorscheme": "whiteCarbon",
-                                "radius": 0.2,
-                            }
-                        },
-                    ]
-                )
-
-                style_lst.append(
-                    [
-                        {
-                            "chain": chainid,
-                            "resi": loop_resids,
-                        },
-                        {
-                            "cartoon": {
-                                "style": cartoon_style,
-                                "color": loop_color,
-                                "thickness": 0.2,
-                            }
-                        },
-                    ]
-                )
-
-                style_lst.append(
-                    [
-                        {
-                            "chain": chainid,
-                            "resi": stick_resid,
-                            "elem": "C",
-                        },
-                        {"stick": {"color": loop_color, "radius": 0.2}},
-                    ]
-                )
-
-                style_lst.append(
-                    [
-                        {
-                            "chain": chainid,
-                            "resi": stick_resid,
-                        },
-                        {"stick": {"radius": 0.2}},
-                    ]
-                )
-
-                with loop_col:
-                    show_st_structure(
-                        pdb_code,
-                        zoom_dict={"chain": chainid, "resi": [loop_resids]},
-                        style_lst=style_lst,
-                        reslabel_lst=[
-                            [
-                                {"chain": chainid, "resi": stick_resid},
-                                {
-                                    "backgroundColor": "lightgray",
-                                    "fontColor": "black",
-                                    "backgroundOpacity": 0.5,
-                                },
-                            ]
-                        ],
-                        cartoon_style=cartoon_style,
-                        width=400,
-                        height=300,
-                        zoom=1.5,
-                    )
+                show_st_structure(pdb_df,
+                    stick_resids=stick_resids,
+                    label_resids=True, 
+                    zoom_resids=loop_resids,
+                    sw1_color=sw1_color,
+                    sw2_color=sw2_color,
+                    zoom=1.5,
+                    width=400,
+                    height=300,
+                    st_col=loop_col)
 
                 for table_col in table_col_lst:
                     table_df = (

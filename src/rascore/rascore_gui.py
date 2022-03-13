@@ -29,7 +29,7 @@ from util.pages.home_page import home_page
 from util.pages.overview_page import overview_page
 from util.pages.pdb_page import pdb_page
 from util.pages.conformation_page import conformation_page
-#from util.pages.mutation_page import mutation_page
+from util.pages.mutation_page import mutation_page
 from util.pages.inhibitor_page import inhibitor_page
 from util.pages.query_page import query_page
 from util.pages.classify_page import classify_page
@@ -53,7 +53,7 @@ class MultiApp:
         st.set_page_config(page_title="rascore", page_icon=img, layout="wide")
 
         st.sidebar.markdown("## Main Menu")
-        app = st.sidebar.radio(
+        app = st.sidebar.selectbox(
             "Select a Page", self.apps, format_func=lambda app: app["title"]
         )
         st.sidebar.markdown("---")
@@ -62,11 +62,11 @@ class MultiApp:
 
 app = MultiApp()
 
-#app.add_app("Analyze Mutations", mutation_page)
 app.add_app("Home Page", home_page)
 app.add_app("Database Overview", overview_page)
 app.add_app("Search PDB", pdb_page)
 app.add_app("Explore Conformations", conformation_page)
+app.add_app("Analyze Mutations", mutation_page)
 app.add_app("Compare Inhibitors", inhibitor_page)
 app.add_app("Query Database", query_page)
 app.add_app("Classify Structures", classify_page)

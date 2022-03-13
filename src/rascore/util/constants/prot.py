@@ -50,25 +50,14 @@ prot_class_dict = {
     none_prot_name: [none_prot_name],
 }
 
-prot_class_lst = [
-    effector_name,
-    gap_name,
-    gef_cdc_name,
-    gef_rem_name,
-    binder_name,
-    nano_name,
-    other_prot_name,
-    mult_prot_name,
-    none_prot_name,
-]
-
-prot_color_dict = get_lst_colors(
+temp_color_dict = get_lst_colors(
     [
         effector_name,
         gap_name,
         gef_name,
         binder_name,
         nano_name,
+        mult_prot_name,
         other_prot_name,
         none_prot_name,
     ],
@@ -76,9 +65,23 @@ prot_color_dict = get_lst_colors(
     return_dict=True,
 )
 
-prot_color_dict[gef_cdc_name] = prot_color_dict[gef_name]
-prot_color_dict[gef_rem_name] = prot_color_dict[gef_name]
+temp_color_dict[gef_cdc_name] = temp_color_dict[gef_name]
+temp_color_dict[gef_rem_name] = temp_color_dict[gef_name]
 
+prot_class_lst = [
+    effector_name,
+    gef_cdc_name,
+    gef_rem_name,
+    gap_name,
+    nano_name,
+    binder_name,
+    mult_prot_name,
+    other_prot_name,
+    none_prot_name]
+
+prot_color_dict = dict()
+for prot_class in prot_class_lst:
+    prot_color_dict[prot_class] = temp_color_dict[prot_class]
 
 prot_pfam_dict = {
     "APOA1_HUMAN": "Nanodisc",

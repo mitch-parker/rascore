@@ -17,25 +17,29 @@
 """
 
 import pandas as pd
-import numpy as np
 
+from ..scripts.build_dih_table import build_dih_table
 from ..scripts.make_facet_plot import make_facet_plot
-from ..functions.color import change_hex_alpha, get_hex, gray_hex
-from ..functions.table import (build_col_count_dict, mask_equal, lst_col, mask_unequal, 
-                            extract_int, str_to_dict, fix_col, make_dict)
-from ..functions.col import (pocket_class_col, pdb_id_col, pdb_code_col, id_col,
-                            bound_lig_cont_col, chainid_col, pharm_lig_smiles_col,
+from ..functions.lig import lig_lst_dict
+from ..functions.color import red_hex, gray_hex
+from ..functions.table import ( build_col_count_dict, mask_equal, lst_col,
+                            extract_int, fix_col, make_dict)
+from ..functions.col import (pocket_class_col, pdb_id_col, pdb_code_col,
+                            chainid_col, bound_prot_swiss_id_col, pharm_class_col, bound_prot_chainid_col,
                             nuc_class_col, mut_status_col, prot_class_col, interf_class_col,
-                            bio_lig_col, pharm_lig_col, pocket_score_col, match_class_col, 
-                            modelid_col, gene_class_col,
-                            pocket_volume_col, pharm_lig_col, rename_col_dict)
-from ..functions.file import entry_table_file
+                            bio_lig_col, ion_lig_col, mem_lig_col, pharm_lig_col, match_class_col, 
+                            modelid_col, gene_class_col, prot_class_col,
+                            phi_col, psi_col, chi1_col, chi2_col,
+                            pharm_lig_col, rename_col_dict)
+from ..functions.file import entry_table_file, dih_json_file
 from ..functions.path import rascore_str
+from ..constants.pharm import pharm_color_dict, sp2_name, other_pharm_name, none_pharm_name
+from ..constants.prot import prot_color_dict, none_prot_name, other_prot_name
 from ..constants.conf import loop_resid_dict, loop_color_dict, sw1_name, sw2_name, y32_name, y71_name, sw1_color, sw2_color
 from ..functions.gui import (load_st_table, show_st_dataframe, write_st_end,
                             show_st_structure, show_st_table, get_html_text, 
                             download_st_df, rename_st_cols, reorder_st_cols)
-from ..functions.lst import calc_simpson, res_to_lst,lst_unique, lst_nums, str_to_lst
+from ..functions.lst import res_to_lst, lst_nums, str_to_lst
 
 import streamlit as st
 
@@ -52,13 +56,18 @@ def mutation_page():
 
     df = load_st_table(__file__)
 
-    st.sidebar.markdown("**Note.** We recommend comparing mutated structures with identical SW1 and SW2 conformations.")
+    st.sidebar.markdown("""**Note.** We recommend comparing mutated structures with 
+    identical SW1 and SW2 conformations and molecular annotations.
+    """)
 
     left_name = "Left"
     right_name = "Right"
 
     a_name = "G12D"
     b_name = "G12V"
+
+    left_color = red_hex
+    right_color = gray_hex
 
     left_query_col, right_query_col = st.columns(2)
 
@@ -102,7 +111,9 @@ def mutation_page():
 
         query_df_dict[query_name] = query_df
 
-    with st.expander("One-to-One Comparison", expanded=True):
+    mut_df = pd.concat([query_df_dict[left_name], query_df_dict[right_name]], sort=False)
+
+    with st.expander("One-to-One Comparison", expanded=False):
 
         st.markdown("#### One-to-One")
 
@@ -133,42 +144,52 @@ def mutation_page():
 
             pdb_code = pdb_df[pdb_code_col].iloc[0]
             chainid = pdb_df[chainid_col].iloc[0]
-            gene_class = pdb_df[gene_class_col].iloc[0]
-            nuc_class = pdb_df[nuc_class_col].iloc[0]
-            bio_lig = pdb_df[bio_lig_col].iloc[0]
-            pharm_lig = pdb_df[pharm_lig_col].iloc[0]
-            match_class = pdb_df[match_class_col].iloc[0]
+            gene_class = pdb_df[gene_class_col].iloc[0]      
 
             mut_status = pdb_df[mut_status_col].iloc[0]
-            mut_site_lst = [extract_int(x) for x in str_to_lst(mut_status)]
 
-            info_col.markdown(f" ##### PDB: [{pdb_code.upper()}](https://www.rcsb.org/structure/{pdb_code}) ({gene_class}) - Chain {chainid}")
+            info_col.markdown(f"##### PDB: [{pdb_code.upper()}](https://www.rcsb.org/structure/{pdb_code}) (Chain {chainid}) - {gene_class}({mut_status})")
 
-            info_col.markdown(f"**{rename_col_dict[bio_lig_col]}:** {bio_lig} ({nuc_class})")
-            info_col.markdown(f"**{rename_col_dict[pharm_lig_col]}:** {pharm_lig} ({match_class})")
-            
+            col_pair_dict = {nuc_class_col: bio_lig_col, match_class_col: pharm_lig_col, prot_class_col: bound_prot_swiss_id_col}
+            for col_1, col_2 in col_pair_dict.items():
+                val_1 = pdb_df[col_1].iloc[0]
+                val_2 = pdb_df[col_2].iloc[0]
+                col_str = f"**{rename_col_dict[col_1]}:** {val_1}"
+                if val_1 != "None":
+                    if col_2 in [bio_lig_col, pharm_lig_col] and val_2 != "None":
+                        col_str += f" ([{val_2}](https://www.rcsb.org/ligand/{val_2}))"
+                    elif col_2 in [bound_prot_swiss_id_col] and val_2 != "None":
+                        col_str += f" ([{val_2}](https://www.uniprot.org/uniprot/{val_2}))"
+                    else:
+                        col_str += f" ({val_2})"
+                info_col.markdown(col_str)
+           
         st.markdown("---")
 
         st.markdown("##### Viewer Settings") 
 
         left_set_col, right_set_col = st.columns(2)  
 
-        resid_lst = left_set_col.multiselect("Displayed Residues", lst_nums(1, 189))
+        left_color = left_set_col.color_picker(label=f"{left_name} Color", value=left_color)
+        right_color = left_set_col.color_picker(label=f"{right_name} Color", value=right_color)
 
-        label_resids = left_set_col.checkbox("Label Residues",value=True)
+        stick_resid_lst = left_set_col.multiselect("Displayed Residues (Mutations Always Shown)", lst_nums(1, 189), default=[12, 13, 32, 61])
+
+        label_muts = left_set_col.checkbox("Label Mutations",value=True)
+        label_resids = left_set_col.checkbox("Label Residues",value=False)
 
         style_dict = {"Ribbon": "oval", "Trace": "trace"}
 
         cartoon_style = style_dict[
-            left_set_col.radio("Cartoon Style", ["Ribbon", "Trace"])
+            right_set_col.radio("Cartoon Style", ["Ribbon", "Trace"])
         ]
 
         cartoon_trans = right_set_col.slider(
             "Cartoon Transparency", min_value=0.0, max_value=1.0, value=0.5
         )
 
-        surf_trans = right_set_col.slider(
-            "Surface Transparency", min_value=0.0, max_value=1.0, value=0.0
+        surface_trans = right_set_col.slider(
+            "Surface Transparency (Mutations Only)", min_value=0.0, max_value=1.0, value=0.5
         )
 
         left_view_col, right_view_col = st.columns(2)   
@@ -181,141 +202,144 @@ def mutation_page():
 
             pdb_code = pdb_df[pdb_code_col].iloc[0]
             chainid = pdb_df[chainid_col].iloc[0]
-            bio_lig = pdb_df[bio_lig_col].iloc[0]
 
             mut_status = pdb_df[mut_status_col].iloc[0]
-            mut_site_lst = [extract_int(x) for x in str_to_lst(mut_status)]
+            
+            mut_resid_lst = list()
+            if mut_status != "WT":
+                mut_resid_lst = [extract_int(x) for x in str_to_lst(mut_status)]
+
+            if mut_status == left_name:
+                mut_color = left_color
+            elif mut_status == right_name:
+                mut_color = right_color
 
             view_col = view_col_dict[query_name]
 
-            mut_status = pdb_df[mut_status_col].iloc[0]
-            mut_site_lst = [extract_int(x) for x in str_to_lst(mut_status)]
-
-            style_lst = list()
-            reslabel_lst = list()
-            surface_lst = list()
-
-            style_lst.append(
-                [
-                    {
-                        "chain": chainid,
-                        "invert": True,
-                    },
-                    {
-                        "cartoon": {
-                            "color": "white",
-                            "style": cartoon_style,
-                            "thickness": 0.2,
-                            "opacity": 0,
-                        }
-                    },
-                ]
-            )
-
-            style_lst.append(
-                [
-                    {
-                        "chain": chainid,
-                    },
-                    {
-                        "cartoon": {
-                            "color": "white",
-                            "style": cartoon_style,
-                            "thickness": 0.2,
-                            "opacity": cartoon_trans,
-                        }
-                    },
-                ]
-            )  
-            
-
-            surface_lst = [
-            [
-                {"opacity": surf_trans, "color": "white"},
-                {"chain": chainid, "hetflag": False},
-            ]
-        ]
-        
-            for loop_name, loop_resids in loop_resid_dict.items():
-
-                loop_color = loop_color_dict[loop_name]
-
-                surface_lst.append(
-                [
-                    {"opacity": surf_trans, "color": loop_color},
-                    {"chain": chainid, "resi": loop_resids, "hetflag": False},
-                ]
-            )
-
-                style_lst.append(
-                    [
-                        {
-                            "chain": chainid,
-                            "resi": [loop_resids],
-                        },
-                        {
-                            "cartoon": {
-                                "style": cartoon_style,
-                                "color": loop_color,
-                                "thickness": 0.2,
-                                "opacity": cartoon_trans,
-                            }
-                        },
-                    ]
-                )
-
-            stick_lst = mut_site_lst + resid_lst
-
-            for stick in stick_lst:
-                
-                if stick in mut_site_lst:
-                    color = "red"
-                elif int(stick) in res_to_lst(loop_resid_dict[sw1_name]):
-                    color = sw1_color
-                elif int(stick) in res_to_lst(loop_resid_dict[sw2_name]):
-                    color = sw2_color
-                else:
-                    color = "white"
-
-                style_lst.append(
-                    [
-                        {
-                            "chain": chainid,
-                            "resi": stick,
-                            "elem": "C",
-                        },
-                        {"stick": {"color": color, "radius": 0.2}},
-                    ]
-                )
-
-                style_lst.append(
-                    [
-                        {"chain": chainid, "resi": stick},
-                        {"stick": {"radius": 0.2}},
-                    ]
-                )
-
-                if label_resids:
-                    reslabel_lst.append([{"chain": chainid, "resi": stick}, {
-                                    "backgroundColor": "lightgray",
-                                    "fontColor": "black",
-                                    "backgroundOpacity": 0.8,
-                                }])
-
-                    
-
-            with view_col:
-                show_st_structure(
-                    pdb_code,
-                    style_lst=style_lst,
-                    reslabel_lst=reslabel_lst,
-                    surface_lst=surface_lst,
+            show_st_structure(pdb_df,
+                    mut_resids=mut_resid_lst,
+                    stick_resids=stick_resid_lst,
+                    label_resids=label_resids, 
+                    label_muts=label_muts,
+                    mut_color=mut_color,
                     cartoon_style=cartoon_style,
-                    zoom_dict={"chain": chainid, "resi": mut_site_lst},
-                    zoom=1,
+                    cartoon_trans=cartoon_trans, 
+                    mut_trans=surface_trans,
+                    zoom_resids=mut_resid_lst + stick_resid_lst,
+                    zoom=0.7,
                     width=400,
-                    height=300,
+                    height=400,
+                    st_col=view_col)
+            
+            label_size = "medium"
+
+            for col in [sw1_name, sw2_name, y32_name, y71_name]:
+
+                label_str = get_html_text({f"{rename_col_dict[col]}: ": "#31333F"}, font_weight='bold', font_size=label_size)
+
+                if col in [y32_name, sw1_name]:
+                    label_color = loop_color_dict[sw1_name]
+                elif col in [y71_name, sw2_name]:
+                    label_color = loop_color_dict[sw2_name]
+
+                label_str += get_html_text({pdb_df[col].iloc[0]: label_color}, font_size=label_size)
+
+                view_col.markdown(label_str, unsafe_allow_html=True)
+
+    with st.expander("Many-to-Many Comparison", expanded=False):
+
+        st.markdown("#### Many-to-Many")
+
+        count_dict = build_col_count_dict(df, mut_status_col)
+
+        left_plot_col, middle_plot_col, right_plot_col = st.columns(3)
+
+        left_color = left_plot_col.color_picker(label=f"{left_name} (N={count_dict[left_name]})", value=left_color)
+        right_color = left_plot_col.color_picker(label=f"{right_name} (N={count_dict[right_name]})", value=right_color)
+
+        marker_size = left_plot_col.number_input("Marker Size", min_value=1, max_value=50, value=5)
+
+        bb_name = "Backbone Dihedrals (Phi vs. Psi)"
+        sc_name = "Side Chain Dihedrals (Chi1 vs. Chi2)"
+
+        plot_type = middle_plot_col.radio("Plot Type", [bb_name, sc_name])
+
+        dih_resids = middle_plot_col.selectbox("Dihedral Residue", lst_nums(1,166), index=31)
+
+        bb_resids = None
+        chi1_resids = None
+        chi2_resids = None
+
+        if plot_type == bb_name:
+            bb_resids = dih_resids
+            x_col = phi_col
+            y_col = psi_col
+        elif plot_type == sc_name:
+            chi1_resids = dih_resids
+            chi2_resids = dih_resids
+            x_col = chi1_col
+            y_col = chi2_col
+
+        if middle_plot_col.button("Plot Dihedrals"):
+
+            with st.spinner("Preparing Dihedrals"):
+
+                dih_dict = load_st_table(__file__, file_name=dih_json_file, json_format=True)
+
+                mut_df = build_dih_table(mut_df, dih_dict, bb_resids=bb_resids, 
+                                            chi1_resids=chi1_resids,
+                                            chi2_resids=chi2_resids)
+
+            fig = make_facet_plot(
+                        mut_df,
+                        x_col=x_col,
+                        y_col=y_col,
+                        show_legend=False,
+                        hue_col=mut_status_col,
+                        hue_order=[left_name, right_name],
+                        hue_palette={left_name: left_color, right_name: right_color},
+                        plot_width=3,
+                        plot_height=3,
+                        font_size=12,
+                        marker_size=marker_size,
+                    )
+
+            right_plot_col.pyplot(fig)
+
+        st.markdown("---")
+
+        left_conf_col, right_conf_col = st.columns(2)
+
+        for table_col in [y32_name, y71_name, sw1_name, sw2_name]:
+
+            if table_col in [y32_name, sw1_name]:
+                conf_col = left_conf_col
+            elif table_col in [y71_name, sw2_name]:
+                conf_col = right_conf_col
+
+            conf_col.markdown(f"##### {rename_col_dict[table_col]}")
+
+            loop_df = (
+                pd.pivot_table(
+                    data=rename_st_cols(mut_df),
+                    index=[rename_col_dict[table_col]],
+                    columns=rename_col_dict[mut_status_col],
+                    values=rename_col_dict[pdb_id_col],
+                    aggfunc="nunique",
+                    margins=True,
                 )
+                .fillna("")
+            )
+
+            for col in list(loop_df.columns):
+                loop_df[col] = loop_df[col].map(str)
+                loop_df = fix_col(loop_df, col)
+
+            loop_df = reorder_st_cols(loop_df, table_col, mut_status_col)
+
+            loop_df = loop_df.reset_index()
+
+            show_st_table(loop_df, st_col=conf_col)
 
         #     st.markdown("---")
 
@@ -602,7 +626,7 @@ def mutation_page():
 
         st.markdown(f"##### Entries Table")
 
-        show_df = rename_st_cols(df)
+        show_df = rename_st_cols(mut_df)
 
         del show_df[rename_col_dict[pdb_id_col]]
         del show_df[rename_col_dict[modelid_col]]
