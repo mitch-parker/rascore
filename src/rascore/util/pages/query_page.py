@@ -109,7 +109,7 @@ def query_page():
     mask_df = df.copy(deep=True)
 
     st.sidebar.markdown(
-        "**Note.** Selections dynamically update from top to bottom. Multiple selections possible."
+        "**Note.** Selections dynamically update from top to bottom. Multiple selections are possible."
     )
 
     st.sidebar.markdown("## Conformation Selection")
