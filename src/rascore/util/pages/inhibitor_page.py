@@ -36,7 +36,7 @@ from ..constants.conf import loop_resid_dict, loop_color_dict, sw1_name, sw2_nam
 from ..functions.gui import (load_st_table, show_st_dataframe, write_st_end,
                             show_st_structure, show_st_table, get_html_text, 
                             download_st_df, rename_st_cols, reorder_st_cols)
-from ..functions.lst import calc_simpson, res_to_lst,lst_unique, str_to_lst
+from ..functions.lst import calc_simpson, res_to_lst,lst_unique, str_to_lst, lst_nums
 
 import streamlit as st
 
@@ -48,6 +48,9 @@ sp2_bound_name = f"{sp2_name}-{bound_name}"
 mean_name = "Mean"
 max_name = "Max"
 min_name = "Min"
+
+sw1_resid_lst = res_to_lst(loop_resid_dict[sw1_name])
+sw2_resid_lst = res_to_lst(loop_resid_dict[sw2_name])
 
 def inhibitor_page():
     
@@ -78,16 +81,10 @@ def inhibitor_page():
     a_name = "Group A"
     b_name = "Group B"
 
-    query_label_dict = {left_name: a_name, right_name: b_name}
-
-    for query_name, label_name in query_label_dict.items():
-
-        query_label_dict[query_name] = st.sidebar.text_input(label=f"{query_name} Label", value=label_name)
-
-    left_name = query_label_dict[left_name]
-    right_name = query_label_dict[right_name]
-
     left_query_col, right_query_col = st.columns(2)
+
+    left_name = st.sidebar.text_input(label=f"{left_name} Label", value=a_name)
+    right_name = st.sidebar.text_input(label=f"{right_name} Label", value=b_name)
 
     query_col_dict = {left_name: left_query_col, right_name: right_query_col}
 
@@ -97,11 +94,9 @@ def inhibitor_page():
 
         query_df = pharm_df.copy(deep=True)
 
-        query_label_dict[query_name] = label_name
-
         query_col.markdown(f"#### Site Search ({query_name})")
 
-        cont_lst = query_col.multiselect(f"Residue Contacts ({query_name})", res_to_lst("1-189"))
+        cont_lst = query_col.multiselect(f"Residue Contacts ({query_name})", lst_nums(1, 189))
 
         if len(cont_lst) > 0:
 
@@ -270,7 +265,7 @@ def inhibitor_page():
 
                 info_col.markdown(f" ##### PDB: [{pdb_code.upper()}](https://www.rcsb.org/structure/{pdb_code}) ({gene_class}) - Chain {chainid}")
 
-                info_col.markdown(f"**{rename_col_dict[bio_lig_col]}:** [{bio_lig}](https://www.rcsb.org/ligand/{bio_lig}) ({nuc_class})")
+                info_col.markdown(f"**{rename_col_dict[bio_lig_col]}:** {bio_lig} ({nuc_class})")
                 info_col.markdown(f"**{rename_col_dict[pharm_lig_col]}:** [{pharm_lig}](https://www.rcsb.org/ligand/{pharm_lig}) ({match_class})")
                 info_col.markdown(f"**SMILES:** {smiles}")
                 
@@ -283,7 +278,7 @@ def inhibitor_page():
 
             left_set_col, right_set_col = st.columns(2)  
 
-            show_cont = left_set_col.checkbox("Label Residues",value=True)
+            label_resids = left_set_col.checkbox("Label Residues",value=True)
 
             style_dict = {"Ribbon": "oval", "Trace": "trace"}
 
@@ -311,6 +306,11 @@ def inhibitor_page():
             for query_name, query_df in query_df_dict.items():
                 
                 pdb_df = pdb_df_dict[query_name] 
+                
+                pdb_code = pdb_df[pdb_code_col].iloc[0]
+                chainid = pdb_df[chainid_col].iloc[0]
+                pharm_lig = pdb_df[pharm_lig_col].iloc[0]   
+                cont_dict = str_to_dict(pdb_df[bound_lig_cont_col].iloc[0], return_int=True)
 
                 view_col = view_col_dict[query_name]
 
@@ -389,10 +389,8 @@ def inhibitor_page():
                     {"opacity": surf_trans, "color": "white"},
                     {"chain": chainid, "hetflag": False},
                 ]
-            ]
+                ]
 
-                sw1_resid_lst = res_to_lst(loop_resid_dict[sw1_name])
-                sw2_resid_lst = res_to_lst(loop_resid_dict[sw2_name])
 
                 if amino_scheme:
                     style_lst.append(
@@ -444,7 +442,7 @@ def inhibitor_page():
                             ]
                         )
 
-                if show_cont:
+                if label_resids:
 
                     reslabel_lst.append(
                             [

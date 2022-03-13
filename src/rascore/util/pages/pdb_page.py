@@ -70,6 +70,8 @@ from ..functions.col import (
     date_col,
 )
 
+sw1_resid_lst = res_to_lst(loop_resid_dict[sw1_name])
+sw2_resid_lst = res_to_lst(loop_resid_dict[sw2_name])
 
 def pdb_page():
 
@@ -175,7 +177,7 @@ def pdb_page():
 
     style_dict = {"Ribbon": "oval", "Trace": "trace"}
 
-    stick_lst = left_view_col.multiselect("Displayed Residues", lst_nums(1, 166), default=[32, 71])
+    stick_lst = left_view_col.multiselect("Displayed Residues", lst_nums(1, 189), default=[32, 71])
 
     label_resids = left_view_col.checkbox("Label Residues", value=True)
 
@@ -426,9 +428,9 @@ def pdb_page():
 
     for stick in stick_lst:
 
-        if int(stick) in res_to_lst(loop_resid_dict[sw1_name]):
+        if int(stick) in sw1_resid_lst:
             color = sw1_color
-        elif int(stick) in res_to_lst(loop_resid_dict[sw2_name]):
+        elif int(stick) in sw2_resid_lst:
             color = sw2_color
         else:
             color = "white"

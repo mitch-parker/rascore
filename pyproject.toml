@@ -4,7 +4,6 @@ version = "0.2.2"
 description = "A tool for analyzing RAS protein structures"
 authors = ["mitch-parker <mip34@drexel.edu>"]
 license = "Apache License 2.0"
-packages = []
 
 [tool.poetry.dependencies]
 python = "3.8"
@@ -15,7 +14,7 @@ matplotlib = "3.3.4"
 matplotlib_venn = "0.11.6"
 numpy = "1.21"
 pandas = "1.3.5"
-Pillow = "9.0.0"
+Pillow = "9.0.1"
 py3Dmol = "1.8.0"
 pyfiglet = "0.8.post1"
 rdkit_pypi = "2021.9.5.1"
