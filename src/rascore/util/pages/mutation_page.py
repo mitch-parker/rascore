@@ -250,7 +250,7 @@ def mutation_page():
 
         st.markdown("#### Many-to-Many")
 
-        count_dict = build_col_count_dict(df, mut_status_col)
+        count_dict = build_col_count_dict(mut_df, mut_status_col)
 
         left_plot_col, middle_plot_col, right_plot_col = st.columns(3)
 
