@@ -120,7 +120,7 @@ def inhibitor_page():
                 site_cont_lst = site_cont_dict[query_df.at[index, pharm_lig_col]]
 
                 if match_type == exact_name:
-                    if len([x for x in site_cont_lst if x in cont_lst]) >= min_match:
+                    if len([x for x in cont_lst if x in site_cont_lst]) >= min_match:
                         site_index_lst.append(index)
                 else:
                     if calc_simpson(site_cont_lst, cont_lst) >= min_simi:
