@@ -50,6 +50,9 @@ mean_name = "Mean"
 max_name = "Max"
 min_name = "Min"
 
+exact_name = 'Exact'
+simi_name = 'Similarity'
+
 sw1_resid_lst = res_to_lst(loop_resid_dict[sw1_name])
 sw2_resid_lst = res_to_lst(loop_resid_dict[sw2_name])
 
@@ -101,16 +104,27 @@ def inhibitor_page():
 
         if len(cont_lst) > 0:
 
-            cont_simi = query_col.slider(f"Residue Contact Simpson Similarity ({query_name})",  min_value=0.0, max_value=1.0, value=0.4)
+            match_type = query_col.radio(f"Site Match ({query_name})", [exact_name, simi_name])
+
+            if match_type == exact_name:
+                min_match = query_col.number_input(f"Minimum Residue Contact Matches ({query_name})", min_value=1, max_value=len(cont_lst), value=1)
+            elif match_type == simi_name:
+                min_simi = query_col.slider(f"Residue Contact Simpson Similarity ({query_name})", min_value=0.0, max_value=1.0, value=0.4)
 
             query_col.write(f"Searching for Sites ({query_name})")
+
             site_bar = query_col.progress(0)
             site_index_lst = list()
             for i, index in enumerate(list(query_df.index.values)):
                 site_cont_dict = str_to_dict(query_df.at[index, bound_lig_cont_col], return_int=True)
                 site_cont_lst = site_cont_dict[query_df.at[index, pharm_lig_col]]
-                if calc_simpson(site_cont_lst, cont_lst) >= cont_simi:
-                    site_index_lst.append(index)
+
+                if match_type == exact_name:
+                    if len([x for x in site_cont_lst if x in cont_lst]) >= min_match:
+                        site_index_lst.append(index)
+                else:
+                    if calc_simpson(site_cont_lst, cont_lst) >= min_simi:
+                        site_index_lst.append(index)
 
                 site_bar.progress((i + 1)/len(query_df))
 
@@ -127,13 +141,10 @@ def inhibitor_page():
 
                 smiles_lst = str_to_lst(smiles_str)
 
-                exact_name = 'Exact'
-                simi_name = 'Similarity'
-
-                match_type = query_col.radio(f"Substructure Match ({query_name})", [exact_name, simi_name])
+                match_type = query_col.radio(f"Chemistry Match ({query_name})", [exact_name, simi_name])
 
                 if match_type == exact_name:
-                    min_match = query_col.number_input(f"Minimum Matches ({query_name})", min_value=1, max_value=len(smiles_lst), value=1)
+                    min_match = query_col.number_input(f"Minimum SMILES String Matches ({query_name})", min_value=1, max_value=len(smiles_lst), value=1)
 
                 elif match_type == simi_name:
 
