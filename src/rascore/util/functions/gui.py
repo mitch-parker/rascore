@@ -740,7 +740,7 @@ def show_st_structure(df,
         else:
             zoom_dict["resi"] = zoom_resids
 
-    end_str = f"Powered by [Streamlit](https://github.com/napoles-uach/streamlit_3dmol) and [Py3DMol](https://github.com/avirshup/py3dmol) (PDB: {pdb_code.upper()})."
+    end_str = f"Powered by [Streamlit](https://github.com/napoles-uach/streamlit_3dmol) and [Py3DMol](https://github.com/avirshup/py3dmol) (PDB: [{pdb_code.upper()}](https://www.rcsb.org/structure/{pdb_code}))."
 
     if st_col is None:
         show_st_3dmol(
