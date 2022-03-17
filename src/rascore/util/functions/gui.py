@@ -740,6 +740,8 @@ def show_st_structure(df,
         else:
             zoom_dict["resi"] = zoom_resids
 
+    end_str = "Powered by [Streamlit](https://github.com/napoles-uach/streamlit_3dmol) + [Py3DMol](https://github.com/avirshup/py3dmol)."
+
     if st_col is None:
         show_st_3dmol(
             pdb_code,
@@ -754,7 +756,7 @@ def show_st_structure(df,
             width=width,
             height=height,
         )
-        st.markdown("Powered by [Streamlit](https://github.com/napoles-uach/streamlit_3dmol) + [Py3DMol](https://github.com/avirshup/py3dmol)", unsafe_allow_html=True)
+        st.markdown(end_str, unsafe_allow_html=True)
 
     else:
         with st_col:
@@ -771,7 +773,7 @@ def show_st_structure(df,
                 width=width,
                 height=height,
             )                 
-        st_col.markdown("Powered by [Streamlit](https://github.com/napoles-uach/streamlit_3dmol) + [Py3DMol](https://github.com/avirshup/py3dmol)", unsafe_allow_html=True)
+        st_col.markdown(end_str, unsafe_allow_html=True)
 
     if show_legend:
         if aa_scheme:
