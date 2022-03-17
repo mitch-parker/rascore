@@ -754,6 +754,7 @@ def show_st_structure(df,
             width=width,
             height=height,
         )
+        st.markdown(f"Powered by [Streamlit](https://github.com/napoles-uach/streamlit_3dmol) + [Py3DMol](https://github.com/avirshup/py3dmol)", unsafe_allow_html=True)
 
     else:
         with st_col:
@@ -769,7 +770,8 @@ def show_st_structure(df,
                 zoom=zoom,
                 width=width,
                 height=height,
-            )
+            )                 
+        st_col.markdown(legend_str, unsafe_allow_html=True)
 
     if show_legend:
         if aa_scheme:
