@@ -225,7 +225,6 @@ def query_page():
                 [rename_col_dict[x] for x in pymol_lst],default=[rename_col_dict[bio_lig_col],rename_col_dict[pharm_lig_col]]
             )
 
-
             left_pymol_col, right_pymol_col = st.columns(2)
 
             show_color_dict = dict()
@@ -234,6 +233,7 @@ def query_page():
                 color = None
                 if rename_col in show_lst:
                     color = left_pymol_col.color_picker(f"{rename_col} Color", get_hex(pymol_color_dict[col]))
+
                 show_color_dict[col] = color
 
             style_dict = {"Ribbon": False, "Trace": True}

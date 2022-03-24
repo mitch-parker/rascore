@@ -258,6 +258,7 @@ def write_pymol_script(
     color_atomic=True,
     show_resids=None,
     cartoon_transp=0,
+    surface_transp=0,
     show_bio=None,
     show_ion=None,
     show_pharm=None,
@@ -468,6 +469,9 @@ def write_pymol_script(
 
         chain_sele = f"model {obj} and chain {chainid}"
 
+        if surface_transp > 0:
+            pymol_file.write(f"show surface, {chain_sele}\n")
+
         if show_prot is not None and show_prot != False:
             if prot_chainid_col != bound_interf_chainid_col:
                 if prot_chainid != "None":
@@ -485,7 +489,7 @@ def write_pymol_script(
         hide_style = "cartoon"
         if style_ribbon:
             hide_style = "ribbon"
-        pymol_file.write(f"hide {hide_style}, not resi {show_resids}\n")
+        pymol_file.write(f"hide {hide_style}, not resi {show_resids}\n")       
 
     if stick_resids is not None:
         for stick_resid in stick_resid_lst:
@@ -517,6 +521,9 @@ def write_pymol_script(
 
             pymol_file.write(f"show sticks, {stick_sele}\n")
 
+    if surface_transp > 0:
+        pymol_file.write(f"set surface_color, {polymer_color}, (all)\n")
+
     if loop_resids is not None:
         for loop_range in loop_resid_lst:
 
@@ -540,6 +547,10 @@ def write_pymol_script(
                     pymol_file.write(f"hide cartoon,{loop_sele}\n")
                     if thick_bb:
                         pymol_file.write(f"show sticks, bb. and {loop_sele}\n")
+
+                if surface_transp > 0:
+                    pymol_file.write(f"set surface_color, {loop_range}_color, {loop_sele}\n")
+
             else:
                 for group in group_lst:
                     group_loop_sele = f"{group}_{loop_sele}"
@@ -559,6 +570,9 @@ def write_pymol_script(
                             pymol_file.write(
                                 f"show sticks, bb. and {group_loop_sele}\n"
                             )
+
+                    if surface_transp > 0:
+                        pymol_file.write(f"set surface_color, {group}_color, {group_loop_sele}\n")
 
                 pymol_file.write(f"group {loop_sele}, *_{loop_sele}\n")
 
@@ -902,6 +916,8 @@ def write_pymol_script(
         pymol_file.write("remove hydrogens\n")
 
     pymol_file.write(f"set cartoon_transparency, {cartoon_transp}\n")
+
+    pymol_file.write(f"set transparency, {surface_transp}\n")
 
     pymol_file.write("hide labels\n")
 

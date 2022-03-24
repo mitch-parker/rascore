@@ -18,8 +18,14 @@
 
 import pandas as pd
 import streamlit as st
+from random import randint
 
-from ..constants.conf import sw1_color, sw2_color, sw1_name, sw2_name, loop_resid_dict
+from ..constants.conf import (sw1_color, sw2_color, sw1_name, sw2_name, 
+                            loop_resid_dict, sw1_resids, sw2_resids)
+from ..constants.prot import prot_color_dict
+from ..constants.pharm import pharm_color_dict
+from ..constants.pml import sup_resids, show_resids
+from ..scripts.write_pymol_script import write_pymol_script
 from ..functions.table import extract_int, lst_col, str_to_dict
 from ..functions.lst import str_to_lst, lst_nums, res_to_lst
 from ..functions.gui import (
@@ -29,11 +35,15 @@ from ..functions.gui import (
     show_st_structure,
     write_st_end,
     get_html_text,
+    download_st_file,
+    get_neighbor_path,
     ribbon_name,
     trace_name,
     standard_name,
     aa_name,
 )
+from ..functions.file import pymol_pml_file
+from ..functions.path import pages_str, data_str, delete_path, get_file_path, path_exists
 from ..functions.col import (
     rename_col_dict,
     pdb_code_col,
@@ -60,11 +70,13 @@ from ..functions.col import (
     bound_prot_chainid_col,
     bound_lig_cont_col,
     bound_prot_cont_col,
+    pharm_class_col,
     sw1_col,
     sw2_col,
     y32_col,
     y71_col,
     date_col,
+    core_path_col
 )
 
 sw1_resid_lst = res_to_lst(loop_resid_dict[sw1_name])
@@ -228,9 +240,11 @@ def pdb_page():
     aa_scheme = scheme_dict[left_view_col.radio("Color Scheme", [standard_name, aa_name])]
 
     style_dict = {ribbon_name: "oval", trace_name: "trace"}
-    cartoon_style = style_dict[
-        left_view_col.radio("Cartoon Style", [ribbon_name, trace_name])
-    ]
+    pymol_style_dict = {ribbon_name: False, trace_name: True}
+
+    bb_style = left_view_col.radio("Cartoon Style", [ribbon_name, trace_name])
+    cartoon_style = style_dict[bb_style]
+    pymol_cartoon_style = pymol_style_dict[bb_style]
 
     cartoon_trans = left_view_col.slider(
         "Cartoon Transparency", min_value=0.0, max_value=1.0, value=cartoon_trans
@@ -263,5 +277,61 @@ def pdb_page():
                         width=500,
                         height=500,
                         st_col=right_view_col)
+
+
+    coord_path_col = pdb_code_col
+    if len(
+        [x for x in lst_col(chainid_df, core_path_col) if path_exists(x)]
+    ) == len(chainid_df):
+        coord_path_col = core_path_col
+    
+    pymol_file_name = right_view_col.text_input(
+        label="PyMOL Script Name",
+        value=f"{pdb_code}_{chainid}_{pymol_pml_file}",
+    )
+
+    fetch_path = right_view_col.text_input(
+                label="Fetch Path (e.g., /Users/mitch-parker/rascore)",
+            )
+
+    pymol_file_path = get_file_path(
+        f"{pymol_pml_file}_{randint(0,3261994)}",
+        dir_path=get_neighbor_path(__file__, pages_str, data_str),
+    )
+
+    if right_view_col.button("Create PyMOL Script"):
+        with st.spinner(text="Creating PyMOL Script"):
+            write_pymol_script(
+                chainid_df,
+                pymol_file_path,
+                stick_resids=stick_resids,
+                loop_resids=[sw1_resids, sw2_resids],
+                style_ribbon=pymol_cartoon_style,
+                thick_bb=False,
+                color_group=False,
+                color_palette=[sw1_color, sw2_color],
+                show_bio=True,
+                show_ion=True,
+                show_pharm=pharm_color_dict[chainid_df[pharm_class_col].iloc[0]],
+                show_chem=True,
+                show_mod=True,
+                show_mem=True,
+                show_prot=prot_color_dict[chainid_df[prot_class_col].iloc[0]],
+                sup_resids=sup_resids,
+                show_resids=show_resids,
+                cartoon_transp=1-cartoon_trans,
+                surface_transp=1-surface_trans,
+                coord_path_col=coord_path_col,
+                fetch_path=fetch_path,
+            )
+
+        download_st_file(
+            pymol_file_path,
+            pymol_file_name,
+            f"Download PyMOL Script",
+            st_col=right_view_col
+        )
+
+        delete_path(pymol_file_path)
 
     write_st_end()
