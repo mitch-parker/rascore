@@ -258,7 +258,7 @@ def write_pymol_script(
     color_atomic=True,
     show_resids=None,
     cartoon_transp=0,
-    surface_transp=0,
+    surface_transp=1,
     show_bio=None,
     show_ion=None,
     show_pharm=None,
@@ -469,7 +469,7 @@ def write_pymol_script(
 
         chain_sele = f"model {obj} and chain {chainid}"
 
-        if surface_transp > 0:
+        if surface_transp < 1:
             pymol_file.write(f"show surface, {chain_sele}\n")
 
         if show_prot is not None and show_prot != False:
@@ -521,7 +521,7 @@ def write_pymol_script(
 
             pymol_file.write(f"show sticks, {stick_sele}\n")
 
-    if surface_transp > 0:
+    if surface_transp < 1:
         pymol_file.write(f"set surface_color, {polymer_color}, (all)\n")
 
     if loop_resids is not None:
@@ -548,7 +548,7 @@ def write_pymol_script(
                     if thick_bb:
                         pymol_file.write(f"show sticks, bb. and {loop_sele}\n")
 
-                if surface_transp > 0:
+                if surface_transp < 1:
                     pymol_file.write(f"set surface_color, {loop_range}_color, {loop_sele}\n")
 
             else:
@@ -571,7 +571,7 @@ def write_pymol_script(
                                 f"show sticks, bb. and {group_loop_sele}\n"
                             )
 
-                    if surface_transp > 0:
+                    if surface_transp < 1:
                         pymol_file.write(f"set surface_color, {group}_color, {group_loop_sele}\n")
 
                 pymol_file.write(f"group {loop_sele}, *_{loop_sele}\n")
