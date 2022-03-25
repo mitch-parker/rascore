@@ -10,18 +10,18 @@
 <a href="#license"><img src="https://img.shields.io/badge/License-Apache_2.0-e78ac3" alt="License"></a>
 <a href="https://github.com/mitch-parker/rascore/issues"><img src="https://img.shields.io/github/issues/mitch-parker/rascore" alt="issues - rascore"></a>
 
-# Summary
+## Summary
 
 *Rascore* is a tool for analyzing structures of the RAS protein family (KRAS, NRAS, and HRAS). In addition, *Rascore* can be used to build an updatable database of all available RAS structures in the Protein Data Bank (PDB) with their catalytic switch 1 (SW1) and switch 2 (SW2) loopsconformationally classified and their 
 molecular contents annotated (e.g., mutation status, nucleotide state, bound protein, inhibitor site). 
 
 Details of our work are provided on [bioRxiv](https://www.biorxiv.org/content/10.1101/2022.02.02.478568v2) in the manuscript, **Defining An Expanded RAS Conformational Landscape Based on Over 700 Experimentally Determined Structures of KRAS, NRAS, and HRAS.** We hope that researchers will use *Rascore* to gain novel insights into RAS biology and drug discovery. 
 
-# Web Database
+## Web Database
 
 A continually updated version of the *Rascore* database is hosted at http://dunbrack.fccc.edu/rascore/ or https://share.streamlit.io/mitch-parker/rascore/main/src/rascore/rascore_gui.py.
 
-# Local Installation
+## Local Installation
 
 **Quickstart commands for environment setup with [Anaconda](https://www.anaconda.com/products/individual):**
 
@@ -37,11 +37,11 @@ conda install -c conda-forge fpocket=4.0.0
 
 (Additional for macOS: pip install PyQt5)
 
-# Usage
+## Usage
 
 *Note.* Must activate Anaconda enironment with command "conda activate rascore_env" before running.
 
-### 1) Conformationally classify RAS structures:
+#### 1) Conformationally classify RAS structures:
 
 **rascore -classify [path to coordinate files] -out [output directory path]**
 
@@ -50,17 +50,17 @@ conda install -c conda-forge fpocket=4.0.0
     - Line-separated list file
     - Tab-separated table file with columns core_path (coordinate path), modelid (optional, model number), chainid (chain identifier), nucleotide_class (optional, nucleotide state)
 
-### 2) Build the Rascore database from the PDB:
+#### 2) Build the Rascore database from the PDB:
 
 **rascore -build [optional, path to pdbaa file] -out [output directory path]**
 
 - Takes 1 hour to build from scratch and requires 3 GB of storage.
 
-### 3) Run the Rascore database application locally:
+#### 3) Run the Rascore database application locally:
 
 **rascore -gui [optional, path to the Rascore database directory] -out [output directory path]**
 
-# Authors
+## Authors
 
 Please feel free to contact us with any issues, comments, or questions.
 
@@ -74,12 +74,12 @@ Please feel free to contact us with any issues, comments, or questions.
 - Email: <roland.dunbrack@fccc.edu>
 - GitHub: https://github.com/DunbrackLab
 
-# Funding
+## Funding
 
 - NIH F30 GM142263 (to M.P.)
 - NIH R35 GM122517 (to R.D.)
 
-# License
+##s License
 Apache License 2.0
 
 
