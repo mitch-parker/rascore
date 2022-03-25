@@ -17,10 +17,12 @@
 """
 
 import streamlit as st
+from PIL import Image
 
 from ..functions.table import mask_equal
 from ..functions.col import pdb_code_col
-from ..functions.gui import load_st_table, write_st_end, create_st_button, show_st_structure
+from ..functions.path import pages_str, data_str, get_file_path
+from ..functions.gui import load_st_table, write_st_end, create_st_button, show_st_structure, get_neighbor_path
 
 
 def home_page():
@@ -114,7 +116,19 @@ def home_page():
         """
     )
 
-    st.markdown(
+    left_col, right_col = st.columns(2)
+
+    img = Image.open(
+        get_file_path(
+            "rascore_abstract.png",
+            dir_path=get_neighbor_path(__file__, pages_str, data_str),
+        )
+    )
+
+    right_col.image(img, output_format="PNG")
+
+
+    left_col.markdown(
         """
         ### Usage
 
@@ -134,7 +148,9 @@ def home_page():
     )
     st.markdown("---")
 
-    st.markdown(
+    left_info_col, right_info_col = st.columns(2)
+
+    left_info_col.markdown(
         f"""
         ### Authors
         Please feel free to contact us with any issues, comments, or questions.
@@ -152,9 +168,7 @@ def home_page():
         unsafe_allow_html=True,
     )
 
-    st.markdown("---")
-
-    st.markdown(
+    right_info_col.markdown(
         """
         ### Funding
 
@@ -163,7 +177,7 @@ def home_page():
          """
     )
 
-    st.markdown(
+    right_info_col.markdown(
         """
         ### License
         Apache License 2.0
