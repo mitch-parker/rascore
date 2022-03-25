@@ -102,8 +102,8 @@ def home_page():
         *Rascore* is a tool for analyzing structures of the RAS protein family
         (KRAS, NRAS, and HRAS). The *Rascore* 
         database presents a continually updated analysis of all available
-        RAS structures in the Protein Data Bank (PDB) with their catalytic SW1 and 
-        SW2 loops conformationally classified and their molecular 
+        RAS structures in the Protein Data Bank (PDB) with their catalytic switch 1 (SW1) 
+        and switch 2 (SW2) loops conformationally classified and their molecular 
         contents annotated (e.g., mutation status, nucleotide state, 
         bound protein, inhibitor site). 
 
