@@ -28,8 +28,7 @@ from ..constants.pml import sup_resids, show_resids
 from ..scripts.write_pymol_script import write_pymol_script
 from ..functions.table import extract_int, lst_col, str_to_dict
 from ..functions.lst import str_to_lst, lst_nums, res_to_lst
-from ..functions.download import download_file
-from ..scripts.prep_coord import prep_coord
+#from ..scripts.prep_coord import prep_coord
 from ..functions.gui import (
     load_st_table,
     show_st_table,
@@ -324,25 +323,25 @@ def pdb_page():
 
     if left_get_col.button("Prepare Coordinate File"):
         with st.spinner(text="Preparing Coordinate File"):
-            if file_source == rcsb_name:
-                urllib.request.urlretrieve(f"https://files.rcsb.org/download/{pdb_code}.{file_format}", coord_file_path)
-            elif file_source == renum_name:
+            #if file_source == rcsb_name:
+            urllib.request.urlretrieve(f"https://files.rcsb.org/download/{pdb_code}.{file_format}", coord_file_path)
+            # elif file_source == renum_name:
 
-                coord_dir = f"{data_dir}/{rascore_str}_{randint(0,3261994)}"
+            #     coord_dir = f"{data_dir}/{rascore_str}_{randint(0,3261994)}"
 
-                prep_coord(
-                    pdb_id_lst=[f"{pdb_code.lower()}{chainid}"],
-                    renum_script_path=renum_script_path,
-                    coord_table_path=get_file_path(entry_table_file, dir_path=coord_dir),
-                    core_dir=coord_dir,
-                    rcsb_dir=coord_dir,
-                    sifts_dir=coord_dir,
-                    renum_dir=coord_dir,
-                )
+                # prep_coord(
+                #     pdb_id_lst=[f"{pdb_code.lower()}{chainid}"],
+                #     renum_script_path=renum_script_path,
+                #     coord_table_path=get_file_path(entry_table_file, dir_path=coord_dir),
+                #     core_dir=coord_dir,
+                #     rcsb_dir=coord_dir,
+                #     sifts_dir=coord_dir,
+                #     renum_dir=coord_dir,
+                # )
 
-                copy_path(get_core_path(pdb_code.lower(), chainid, dir_path=coord_dir, return_pdb=return_pdb), coord_file_path)
+                # copy_path(get_core_path(pdb_code.lower(), chainid, dir_path=coord_dir, return_pdb=return_pdb), coord_file_path)
 
-                delete_path(coord_dir)
+                # delete_path(coord_dir)
     
         download_st_file(
             coord_file_path,
