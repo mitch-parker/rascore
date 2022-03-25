@@ -21,8 +21,6 @@ Details of our work are provided on [bioRxiv](https://www.biorxiv.org/content/10
 
 A continually updated version of the *Rascore* database is hosted at http://dunbrack.fccc.edu/rascore/ or https://share.streamlit.io/mitch-parker/rascore/main/src/rascore/rascore_gui.py.
 
-![alt text](https://github.com/mitch-parker/rascore/blob/main/src/rascore/util/data/rascore_abstract.png)
-
 ## Local Installation
 
 **Quickstart commands for environment setup with [Anaconda](https://www.anaconda.com/products/individual):**
