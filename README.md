@@ -64,12 +64,12 @@ conda install -c conda-forge fpocket=4.0.0
 
 Please feel free to contact us with any issues, comments, or questions.
 
-### Mitchell Parker [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/bukotsunikki.svg?style=social&label=Follow%20%40Mitch_P)](https://twitter.com/Mitch_P)
+#### Mitchell Parker [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/bukotsunikki.svg?style=social&label=Follow%20%40Mitch_P)](https://twitter.com/Mitch_P)
 
 - Email: <mip34@drexel.edu> or <mitchell.parker@fccc.edu>
 - GitHub: https://github.com/mitch-parker
 
-### Roland Dunbrack [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/bukotsunikki.svg?style=social&label=Follow%20%40RolandDunbrack)](https://twitter.com/RolandDunbrack)
+#### Roland Dunbrack [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/bukotsunikki.svg?style=social&label=Follow%20%40RolandDunbrack)](https://twitter.com/RolandDunbrack)
 
 - Email: <roland.dunbrack@fccc.edu>
 - GitHub: https://github.com/DunbrackLab
