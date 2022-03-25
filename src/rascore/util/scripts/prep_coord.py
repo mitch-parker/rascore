@@ -771,11 +771,13 @@ def prep_coord(
     delete_path("log_corrected.tsv")
     delete_path("log_translator.tsv")
 
-    sifts_path_lst = [
-        get_sifts_path(pdb_code, dir_path=sifts_dir) for pdb_code in pdb_code_lst
-    ]
+    if sifts_json_path is not None:
+        
+        sifts_path_lst = [
+            get_sifts_path(pdb_code, dir_path=sifts_dir) for pdb_code in pdb_code_lst
+        ]
 
-    build_sifts_map(sifts_path_lst, sifts_json_path, num_cpu=num_cpu)
+        build_sifts_map(sifts_path_lst, sifts_json_path, num_cpu=num_cpu)
 
     df = run_pdb_chain(
         pdb_id_lst,

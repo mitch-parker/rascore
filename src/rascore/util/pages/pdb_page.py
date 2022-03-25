@@ -15,10 +15,10 @@
    limitations under the License.
 
 """
-
 import pandas as pd
 import streamlit as st
 from random import randint
+import urllib.request
 
 from ..constants.conf import (sw1_color, sw2_color, sw1_name, sw2_name, 
                             loop_resid_dict, sw1_resids, sw2_resids)
@@ -28,6 +28,8 @@ from ..constants.pml import sup_resids, show_resids
 from ..scripts.write_pymol_script import write_pymol_script
 from ..functions.table import extract_int, lst_col, str_to_dict
 from ..functions.lst import str_to_lst, lst_nums, res_to_lst
+from ..functions.download import download_file
+from ..scripts.prep_coord import prep_coord
 from ..functions.gui import (
     load_st_table,
     show_st_table,
@@ -42,8 +44,9 @@ from ..functions.gui import (
     standard_name,
     aa_name,
 )
-from ..functions.file import pymol_pml_file
-from ..functions.path import pages_str, data_str, delete_path, get_file_path, path_exists
+
+from ..functions.file import entry_table_file, pymol_pml_file
+from ..functions.path import rascore_str, pages_str, data_str, delete_path, get_file_path, path_exists, copy_path, get_core_path
 from ..functions.col import (
     rename_col_dict,
     pdb_code_col,
@@ -278,6 +281,78 @@ def pdb_page():
                         height=500,
                         st_col=right_view_col)
 
+    st.markdown("---")
+
+    left_get_col, right_get_col = st.columns(2)
+
+    pdb_name = "PDB"
+    cif_name = "mmCIF"
+    rcsb_name = "RCSB"
+    renum_name = "PDBrenum"
+
+    data_dir = get_neighbor_path(__file__, pages_str, data_str)
+
+    renum_script_path = f"{get_neighbor_path(__file__, pages_str, renum_name)}/{renum_name}.py"
+
+    left_get_col.markdown("##### Download Coordinate File")
+    right_get_col.markdown("##### Download PyMOL Script")
+
+    format_dict = {cif_name:"cif", pdb_name: "pdb"}
+    return_dict = {cif_name: False, pdb_name: True}
+
+    file_format = left_get_col.radio("File Format", [cif_name, pdb_name])
+
+    return_pdb = return_dict[file_format]
+    file_format = format_dict[file_format]
+
+    file_source = left_get_col.radio("File Source", [renum_name, rcsb_name])
+
+    if file_source == rcsb_name:
+        file_str = f"{pdb_code}.{file_format}"
+    elif file_source == renum_name:
+        file_str = f"{pdb_code}_{chainid}.{file_format}"
+    
+    coord_file_name = left_get_col.text_input(
+        label="Coordinate File Name",
+        value=file_str,
+    )
+
+    coord_file_path = get_file_path(
+        f"{coord_file_name}_{randint(0,3261994)}",
+        dir_path=data_dir,
+    )
+
+    if left_get_col.button("Prepare Coordinate File"):
+        with st.spinner(text="Preparing Coordinate File"):
+            if file_source == rcsb_name:
+                urllib.request.urlretrieve(f"https://files.rcsb.org/download/{pdb_code}.{file_format}", coord_file_path)
+            elif file_source == renum_name:
+
+                coord_dir = f"{data_dir}/{rascore_str}_{randint(0,3261994)}"
+
+                prep_coord(
+                    pdb_id_lst=[f"{pdb_code.lower()}{chainid}"],
+                    renum_script_path=renum_script_path,
+                    coord_table_path=get_file_path(entry_table_file, dir_path=coord_dir),
+                    core_dir=coord_dir,
+                    rcsb_dir=coord_dir,
+                    sifts_dir=coord_dir,
+                    renum_dir=coord_dir,
+                )
+
+                copy_path(get_core_path(pdb_code.lower(), chainid, dir_path=coord_dir, return_pdb=return_pdb), coord_file_path)
+
+                delete_path(coord_dir)
+    
+        download_st_file(
+            coord_file_path,
+            coord_file_name,
+            f"Download Coordinate File",
+            st_col=left_get_col
+        )
+
+        delete_path(coord_file_path)
+
 
     coord_path_col = pdb_code_col
     if len(
@@ -285,21 +360,21 @@ def pdb_page():
     ) == len(chainid_df):
         coord_path_col = core_path_col
     
-    pymol_file_name = right_view_col.text_input(
+    pymol_file_name = right_get_col.text_input(
         label="PyMOL Script Name",
         value=f"{pdb_code}_{chainid}_{pymol_pml_file}",
     )
 
-    fetch_path = right_view_col.text_input(
+    fetch_path = right_get_col.text_input(
                 label="Fetch Path (e.g., /Users/mitch-parker/rascore)",
             )
 
     pymol_file_path = get_file_path(
         f"{pymol_pml_file}_{randint(0,3261994)}",
-        dir_path=get_neighbor_path(__file__, pages_str, data_str),
+        dir_path=data_dir,
     )
 
-    if right_view_col.button("Create PyMOL Script"):
+    if right_get_col.button("Create PyMOL Script"):
         with st.spinner(text="Creating PyMOL Script"):
             write_pymol_script(
                 chainid_df,
@@ -329,7 +404,7 @@ def pdb_page():
             pymol_file_path,
             pymol_file_name,
             f"Download PyMOL Script",
-            st_col=right_view_col
+            st_col=right_get_col
         )
 
         delete_path(pymol_file_path)
