@@ -23,6 +23,7 @@ import gzip
 from tqdm import tqdm
 import concurrent.futures
 from Bio.PDB import Select
+import pymol2
 
 from ..functions.coord import (
     load_coord,
@@ -474,7 +475,6 @@ def isolate_chains(
     sifts_dir=None,
     renum_dir=None,
     resid_cont_dict=None,
-    make_pdb=True,
     add_h=False,
     add_h_his=False,
     bound_chainid_dict=None,
@@ -594,18 +594,17 @@ def isolate_chains(
                 if update_cif:
                     chain_sele = ChainSelect(sele_dict[modelid])
                     save_coord(cif_path, structure[int(modelid)], sele=chain_sele)
-                    
-                if make_pdb:
-                    if update_pdb:
-                        pymol_obj = f"{pdb_code}{chainid}"
 
-                        if all_models:
-                            pymol_obj += str(modelid)
+                if update_pdb:
+                    pymol_obj = f"{pdb_code}{chainid}"
 
-                        with pymol2.PyMOL() as pymol:
-                            cmd = pymol.cmd
-                            cmd.load(cif_path, pymol_obj)
-                            cmd.save(pdb_path, pymol_obj)
+                    if all_models:
+                        pymol_obj += str(modelid)
+
+                    with pymol2.PyMOL() as pymol:
+                        cmd = pymol.cmd
+                        cmd.load(cif_path, pymol_obj)
+                        cmd.save(pdb_path, pymol_obj)
 
                 if add_h:
                     pdb_h_path = get_core_path(
@@ -656,7 +655,6 @@ def run_pdb_chain(
     sifts_dir=None,
     renum_dir=None,
     resid_cont_dict=None,
-    make_pdb=True,
     add_h=False,
     add_h_his=False,
     bound_chainid_dict=None,
@@ -695,7 +693,6 @@ def run_pdb_chain(
                         sifts_dir=sifts_dir,
                         renum_dir=renum_dir,
                         resid_cont_dict=resid_cont_dict,
-                        make_pdb=make_pdb,
                         add_h=add_h,
                         add_h_his=add_h_his,
                         bound_chainid_dict=bound_chainid_dict,
@@ -717,7 +714,6 @@ def run_pdb_chain(
                     sifts_dir=sifts_dir,
                     renum_dir=renum_dir,
                     resid_cont_dict=resid_cont_dict,
-                    make_pdb=make_pdb,
                     add_h=add_h,
                     add_h_his=add_h_his,
                     bound_chainid_dict=bound_chainid_dict,
@@ -753,7 +749,6 @@ def prep_coord(
     renum_dir=None,
     sifts_json_path=None,
     resid_cont_dict=None,
-    make_pdb=True,
     add_h=False,
     add_h_his=False,
     bound_chainid_dict=None,
@@ -762,7 +757,6 @@ def prep_coord(
     update_coords=False,
     num_cpu=1,
 ):
-
     pdb_code_lst = build_pdb_code_lst(pdb_id_lst)
 
     run_pdb_renum(
@@ -785,9 +779,6 @@ def prep_coord(
 
         build_sifts_map(sifts_path_lst, sifts_json_path, num_cpu=num_cpu)
 
-    if make_pdb:
-        import pymol2
-
     df = run_pdb_chain(
         pdb_id_lst,
         core_dir=core_dir,
@@ -795,7 +786,6 @@ def prep_coord(
         sifts_dir=sifts_dir,
         renum_dir=renum_dir,
         resid_cont_dict=resid_cont_dict,
-        make_pdb=make_pdb,
         add_h=add_h,
         add_h_his=add_h_his,
         bound_chainid_dict=bound_chainid_dict,
