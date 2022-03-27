@@ -301,7 +301,7 @@ def pdb_page():
 
     #file_format = left_get_col.radio("File Format", [cif_name, pdb_name])
 
-    file_format = "cif"
+    file_format = cif_name
 
     return_pdb = return_dict[file_format]
     file_format = format_dict[file_format]
