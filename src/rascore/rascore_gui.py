@@ -54,7 +54,7 @@ class MultiApp:
 
         st.sidebar.markdown("## Main Menu")
         app = st.sidebar.selectbox(
-            "Select a Page", self.apps, format_func=lambda app: app["title"]
+            "Select Page", self.apps, format_func=lambda app: app["title"]
         )
         st.sidebar.markdown("---")
         app["function"]()
