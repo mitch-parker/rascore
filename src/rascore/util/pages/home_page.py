@@ -172,8 +172,8 @@ def home_page():
         """
         ### Funding
 
-        - NIH F30 GM142263 (to M.P.)
-        - NIH R35 GM122517 (to R.D.)
+        - NIH NIGMS F30 GM142263 (to M.P.)
+        - NIH NIGMS R35 GM122517 (to R.D.)
          """
     )
 

@@ -76,10 +76,10 @@ Please feel free to contact us with any issues, comments, or questions.
 
 ## Funding
 
-- NIH F30 GM142263 (to M.P.)
-- NIH R35 GM122517 (to R.D.)
+- NIH NIGMS F30 GM142263 (to M.P.)
+- NIH NIGMS R35 GM122517 (to R.D.)
 
-##s License
+## License
 Apache License 2.0
 
 
