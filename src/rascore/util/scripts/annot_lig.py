@@ -119,17 +119,14 @@ def build_lig_df(
 
 
                 if is_pharm:
-                    resid_cont_str = resname
-                    resid_cont_str += ':'
-                    resid_cont_str += lst_to_str(resid_cont_lst)
-                    cont_lst.append(resid_cont_str)
-                    
-                    resid_smiles_str = resname
-                    resid_smiles_str += ':'
-                    resid_smiles_str += get_lig_smiles(resname, lig_dir=lig_dir)
-                    smiles_lst.append(resid_smiles_str)
-
+                
                     if site_dict is not None:
+                        
+                        resid_cont_str = resname
+                        resid_cont_str += ':'
+                        resid_cont_str += lst_to_str(resid_cont_lst)
+                        cont_lst.append(resid_cont_str)
+
                         max_cont = 0
                         pharm_site = other_site
                         for site_name, site_cont_lst in site_dict.items():
@@ -140,6 +137,12 @@ def build_lig_df(
                         site_lst.append(pharm_site)
 
                     if match_dict is not None:
+
+                        resid_smiles_str = resname
+                        resid_smiles_str += ':'
+                        resid_smiles_str += get_lig_smiles(resname, lig_dir=lig_dir)
+                        smiles_lst.append(resid_smiles_str)
+
                         if pharm_site in list(match_dict.keys()):
                             pharm_match = other_match
                             match_name_lst = list()
