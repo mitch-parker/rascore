@@ -19,7 +19,7 @@
 import streamlit as st
 from random import randint
 
-from ..functions.col import id_col, core_path_col
+from ..functions.col import id_col, core_path_col, pharm_lig_site_col, pocket_class_col
 from ..functions.path import (
     delete_path,
     get_file_path,
@@ -139,6 +139,8 @@ def classify_page():
                     df = load_table(result_file_path)
 
                     df[id_col] = df[id_col].map(id_dict)
+
+                    df = df.rename(columns={pharm_lig_site_col: pocket_class_col})
 
                     df = rename_st_cols(df)
 
