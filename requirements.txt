@@ -1,6 +1,6 @@
 Bio==1.3.3
 lxml==4.6.5
-matplotlib==3.5.1
+matplotlib==3.3.4
 matplotlib_venn==0.11.6
 numpy==1.21.0
 pandas==1.3.5
