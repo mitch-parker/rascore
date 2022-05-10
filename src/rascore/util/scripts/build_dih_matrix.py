@@ -21,7 +21,7 @@ from tqdm import tqdm
 import itertools
 import math
 
-from ..functions.lst import type_lst
+from ..functions.lst import type_lst, lst_inter
 from ..functions.table import extract_int, get_col_val_lst, get_val_col, order_rows
 from ..functions.col import phi_col, psi_col, dih_col_lst
 from ..functions.path import save_matrix
@@ -94,7 +94,7 @@ def calc_dih_dist(i, j, i_df, j_df, flip_diff=180):
 
     for dih_col in dih_col_lst:
 
-        resid_dict[dih_col] = get_col_val_lst(i_df, dih_col)
+        resid_dict[dih_col] = lst_inter(get_col_val_lst(i_df, dih_col), get_col_val_lst(j_df, dih_col))
 
     norm_dict = dict()
     flip_dict = dict()

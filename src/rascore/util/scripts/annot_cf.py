@@ -188,7 +188,7 @@ def annot_cf(coord_paths, cf_table_path=None, min_simi=0.05, data=None, num_cpu=
     if data is not None:
         df_col_lst = list(data.columns)
 
-        for col in [cf_col]:
+        for col in [cf_col, space_col, len_a_col, len_b_col, len_c_col, ang_a_col, ang_b_col, ang_g_col]:
             if col in df_col_lst:
                 del data[col]
 

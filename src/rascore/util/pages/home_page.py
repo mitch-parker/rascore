@@ -45,7 +45,7 @@ def home_page():
     right_col.markdown("**Fox Chase Cancer Center**")
 
     database_link_dict = {
-        "bioRxiv Paper": "https://www.biorxiv.org/content/10.1101/2022.02.02.478568v2",
+        "Cancer Research Paper": "https://aacrjournals.org/cancerres/article/doi/10.1158/0008-5472.CAN-22-0804/696349/Delineating-The-RAS-Conformational-LandscapeThe",
         "GitHub Page": "https://github.com/mitch-parker/rascore",
         "RCSB Protein Data Bank": "https://www.rcsb.org",
     }
@@ -108,9 +108,9 @@ def home_page():
         bound protein, inhibitor site). 
 
         Details of our work are 
-        provided on [bioRxiv](https://www.biorxiv.org/content/10.1101/2022.02.02.478568v2) in the manuscript, 
-        **Defining An Expanded RAS Conformational Landscape Based on Over 700 Experimentally 
-        Determined Structures of KRAS, NRAS, and HRAS.** We hope that researchers will use 
+        provided in the [*Cancer Research*](https://aacrjournals.org/cancerres/article/doi/10.1158/0008-5472.CAN-22-0804/696349/Delineating-The-RAS-Conformational-LandscapeThe)
+        paper, **Delineating The RAS Conformational Landscape**.
+        We hope that researchers will use 
         *Rascore* to gain novel insights into RAS biology and 
         drug discovery. 
         """

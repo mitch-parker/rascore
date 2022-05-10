@@ -57,7 +57,7 @@ def overview_page():
     st.markdown("---")
 
     st.sidebar.markdown(
-        "**Note.** See our [bioRxiv](https://www.biorxiv.org/content/10.1101/2022.02.02.478568v2) paper for additional details."
+        "**Note.** See our [*Cancer Research*](https://aacrjournals.org/cancerres/article/doi/10.1158/0008-5472.CAN-22-0804/696349/Delineating-The-RAS-Conformational-LandscapeThe) paper for additional details."
     )
 
     text_col, leg_1_col, leg_2_col = st.columns((2, 0.75, 0.75))

@@ -20,7 +20,7 @@ import pandas as pd
 from tqdm import tqdm
 
 from ..functions.coord import load_coord, calc_atom_dist, wmhb_name, no_hb_name
-from ..functions.lst import type_lst, lst_nums, lst_to_str
+from ..functions.lst import type_lst, lst_nums, lst_to_str, str_to_lst
 from ..functions.col import (
     get_dist_col,
     core_path_col,
@@ -207,7 +207,7 @@ def get_index_dist(
 
         for i, resid in enumerate(resid_lst):
             if type(resid) == str:
-                resid = df.at[index, resid]
+                resid = str_to_lst(df.at[index, resid])[0]
             resid_lst[i] = resid
 
         result = calc_atom_dist(

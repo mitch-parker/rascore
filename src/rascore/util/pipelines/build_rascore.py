@@ -23,7 +23,7 @@ from datetime import datetime
 
 from ..pipelines.classify_rascore import classify_rascore
 
-from ..constants.conf import sw1_name, sw2_name, y32_name, y71_name, loop_resid_dict
+from ..constants.conf import sw1_name, sw2_name, y32_name, y71_name
 from ..constants.nuc import nuc_class_dict, gtp_name
 from ..constants.gene import uniprot_acc_lst, swiss_id_lst, gene_class_dict
 from ..constants.mut import mut_class_lst, other_mut_name
@@ -74,6 +74,7 @@ from ..functions.path import (
     get_dir_path,
     copy_path,
     load_json,
+    path_exists,
     save_table,
     save_json,
     get_file_path,
@@ -167,6 +168,7 @@ def update_prep(out_path=None, past_df=None, num_cpu=1):
     if delete_paths:
         delete_path(sifts_json_path)
         delete_path(dih_json_path)
+        past_df = None
 
     if len(df) > 0:
         pdb_id_lst = lst_col(df, pdb_id_col, unique=True)
@@ -216,6 +218,7 @@ def update_prep(out_path=None, past_df=None, num_cpu=1):
                     == 0
                 ):
                     df = pd.concat([df, past_df], sort=False)
+                    df = df.reset_index(drop=True)
                     save_table(entry_table_path, df)
         except:
             if past_df is not None:
@@ -337,6 +340,7 @@ def update_annot(pdbaa_fasta_path, out_path=None, past_df=None, num_cpu=1):
         ):
             df[complete_col] = str(False)
             df = pd.concat([df, past_df], sort=False)
+            df = df.reset_index(drop=True)
             save_table(entry_table_path, df)
 
         rcsb_path_lst = lst_col(df, rcsb_path_col, unique=True)
@@ -358,13 +362,14 @@ def update_interf(out_path=None, past_df=None, num_cpu=1):
     df = load_table(entry_table_path)
 
     delete_paths = True
-    if past_df is not None and interf_class_col in list(past_df.columns):
+    if past_df is not None and interf_class_col in list(past_df.columns) and path_exists(interf_json_path) and path_exists(interf_table_path):
         df = mask_unequal(df, pdb_id_col, lst_col(past_df, pdb_id_col))
         delete_paths = False
 
     if delete_paths:
         delete_path(interf_json_path)
         delete_path(interf_table_path)
+        past_df = None
 
     if len(df) > 0:
         xray_df = mask_equal(df, method_col, "XRAY")
@@ -402,6 +407,7 @@ def update_interf(out_path=None, past_df=None, num_cpu=1):
         past_interf_df = load_table(interf_table_path)
         if past_interf_df is not None and interf_class_col in list(past_df.columns):
             interf_df = pd.concat([interf_df, past_interf_df], sort=False)
+            interf_df = interf_df.reset_index(drop=True)
         save_table(interf_table_path, interf_df)
 
         interf_pdb_id_lst = lst_col(interf_df, pdb_id_col)
@@ -411,10 +417,10 @@ def update_interf(out_path=None, past_df=None, num_cpu=1):
             .fillna(none_dimer_name)
         )
 
-        if past_df is not None:
-            if interf_class_col in list(past_df.columns):
-                df[complete_col] = str(False)
-                df = pd.concat([df, past_df], sort=False)
+        if past_df is not None and interf_class_col in list(past_df.columns):
+            df[complete_col] = str(False)
+            df = pd.concat([df, past_df], sort=False)
+            df = df.reset_index(drop=True)
 
         save_table(entry_table_path, df)
 
@@ -428,14 +434,14 @@ def update_pocket(out_path=None, past_df=None, num_cpu=1):
     df = load_table(entry_table_path)
 
     delete_paths = True
-    if past_df is not None:
-        if pocket_class_col in list(past_df.columns):
-            df = mask_unequal(df, pdb_id_col, lst_col(past_df, pdb_id_col))
-            delete_paths = False
+    if past_df is not None and pocket_class_col in list(past_df.columns) and path_exists(pocket_json_path) and path_exists(pocket_table_path):
+        df = mask_unequal(df, pdb_id_col, lst_col(past_df, pdb_id_col))
+        delete_paths = False
 
     if delete_paths:
         delete_path(pocket_json_path)
         delete_path(pocket_table_path)
+        past_df = None
 
     if len(df) > 0:
         coord_path_lst = [x.replace(".cif", ".pdb") for x in lst_col(df, core_path_col)]
@@ -460,10 +466,10 @@ def update_pocket(out_path=None, past_df=None, num_cpu=1):
             pocket_dict = merge_dicts([pocket_dict, past_pocket_dict])
         save_json(pocket_json_path, pocket_dict)
 
-        if past_df is not None:
-            if pocket_class_col in list(past_df.columns):
-                df[complete_col] = str(False)
-                df = pd.concat([df, past_df], sort=False)
+        if past_df is not None and pocket_class_col in list(past_df.columns):
+            df[complete_col] = str(False)
+            df = pd.concat([df, past_df], sort=False)
+            df = df.reset_index(drop=True)
 
         temp_df = build_pocket_table(
             df=df,
@@ -481,6 +487,7 @@ def update_pocket(out_path=None, past_df=None, num_cpu=1):
             bound_df[pocket_type_col] = pharm_name
             bound_df[pocket_site_col] = pharm_name
             pocket_df = pd.concat([pocket_df, bound_df], sort=False)
+            pocket_df = pocket_df.reset_index(drop=True)
 
             search_cont_lst = lst_col(bound_df, pocket_cont_col)
             search_cont_lst = [str_to_lst(x) for x in search_cont_lst]
@@ -499,6 +506,7 @@ def update_pocket(out_path=None, past_df=None, num_cpu=1):
                 )
                 unbound_df[pocket_site_col] = pharm_name
                 pocket_df = pd.concat([pocket_df, unbound_df], sort=False)
+                pocket_df = pocket_df.reset_index(drop=True)
 
         other_df = mask_unequal(
             temp_df, pocket_id_col, lst_col(pocket_df, pocket_id_col)
@@ -509,6 +517,7 @@ def update_pocket(out_path=None, past_df=None, num_cpu=1):
         other_df[pocket_site_col] = other_pharm_name
 
         pocket_df = pd.concat([pocket_df, other_df], sort=False)
+        pocket_df = pocket_df.reset_index(drop=True)
 
         save_table(pocket_table_path, pocket_df)
 
@@ -617,6 +626,7 @@ def update_classify(out_path=None, past_df=None, num_cpu=1):
             ):
                 df[complete_col] = str(False)
                 df = pd.concat([df, past_df], sort=False)
+                df = df.reset_index(drop=True)
 
         save_table(entry_table_path, df)
 
@@ -713,7 +723,7 @@ def build_rascore(out_path=None, pdbaa_fasta_path=None, num_cpu=1):
     ref_df = df.set_index(pdb_id_col)
 
     pocket_df = load_table(pocket_table_path)
-    interf_df = load_table(pocket_table_path)
+    interf_df = load_table(interf_table_path)
 
     for col in list(ref_df.columns):
         if col not in list(pocket_df.columns):

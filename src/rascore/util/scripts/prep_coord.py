@@ -57,6 +57,7 @@ from ..functions.path import (
     search_dir,
     append_path,
     delete_path,
+    load_json,
     core_str,
     sifts_str,
     rcsb_str,
@@ -170,93 +171,96 @@ def run_pdb_renum(
 
 
 def get_sifts_dict(sifts_path):
+    
+    try:
+        tree = ET.parse(gzip.open(sifts_path, "rt"))
+        root = tree.getroot()
+        base = "{http://www.ebi.ac.uk/pdbe/docs/sifts/eFamily.xsd}"
 
-    tree = ET.parse(gzip.open(sifts_path, "rt"))
-    root = tree.getroot()
-    base = "{http://www.ebi.ac.uk/pdbe/docs/sifts/eFamily.xsd}"
+        sifts_dict = dict()
+        uniprot_dict = dict()
 
-    sifts_dict = dict()
-    uniprot_dict = dict()
+        pdb_chainid_lst = list()
+        uniprot_chainid_lst = list()
 
-    pdb_chainid_lst = list()
-    uniprot_chainid_lst = list()
+        for entity in root:
+            if entity.tag == (str(base) + "entity"):
+                for segment in entity:
+                    if segment.tag == (str(base) + "segment"):
+                        for listResidue in segment:
+                            if listResidue.tag == (str(base) + "listResidue"):
+                                for residue in listResidue:
+                                    if residue.tag == (str(base) + "residue"):
+                                        if residue.get("dbSource") == "PDBe":
 
-    for entity in root:
-        if entity.tag == (str(base) + "entity"):
-            for segment in entity:
-                if segment.tag == (str(base) + "segment"):
-                    for listResidue in segment:
-                        if listResidue.tag == (str(base) + "listResidue"):
-                            for residue in listResidue:
-                                if residue.tag == (str(base) + "residue"):
-                                    if residue.get("dbSource") == "PDBe":
+                                            pdbe_resid = residue.get("dbResNum")
 
-                                        pdbe_resid = residue.get("dbResNum")
+                                            pdb_resid = "null"
+                                            uniprot_resid = "null"
 
-                                        pdb_resid = "null"
-                                        uniprot_resid = "null"
+                                            no_uniprot = True
 
-                                        no_uniprot = True
+                                            for crossRefDb in residue:
+                                                if crossRefDb.get("dbSource") == "PDB":
+                                                    pdb_code = crossRefDb.get(
+                                                        "dbAccessionId"
+                                                    )
+                                                    chainid = crossRefDb.get("dbChainId")
 
-                                        for crossRefDb in residue:
-                                            if crossRefDb.get("dbSource") == "PDB":
-                                                pdb_code = crossRefDb.get(
-                                                    "dbAccessionId"
+                                                    if chainid not in pdb_chainid_lst:
+                                                        pdb_chainid_lst.append(chainid)
+
+                                                    pdb_resid = crossRefDb.get("dbResNum")
+
+                                                if crossRefDb.get("dbSource") == "UniProt":
+
+                                                    if chainid not in uniprot_chainid_lst:
+                                                        uniprot_chainid_lst.append(chainid)
+
+                                                    no_uniprot = False
+                                                    uniprot_resid = crossRefDb.get(
+                                                        "dbResNum"
+                                                    )
+
+                                            if no_uniprot:
+                                                uniprot_resid = str(
+                                                    get_str_num(pdbe_resid) + 50000
                                                 )
-                                                chainid = crossRefDb.get("dbChainId")
 
-                                                if chainid not in pdb_chainid_lst:
-                                                    pdb_chainid_lst.append(chainid)
+                                                if chainid not in list(uniprot_dict.keys()):
+                                                    uniprot_dict[chainid] = dict()
 
-                                                pdb_resid = crossRefDb.get("dbResNum")
+                                                uniprot_dict[chainid][
+                                                    uniprot_resid
+                                                ] = pdb_resid
 
-                                            if crossRefDb.get("dbSource") == "UniProt":
-
-                                                if chainid not in uniprot_chainid_lst:
-                                                    uniprot_chainid_lst.append(chainid)
-
-                                                no_uniprot = False
-                                                uniprot_resid = crossRefDb.get(
-                                                    "dbResNum"
-                                                )
-
-                                        if no_uniprot:
-                                            uniprot_resid = str(
-                                                get_str_num(pdbe_resid) + 50000
-                                            )
-
-                                            if chainid not in list(uniprot_dict.keys()):
-                                                uniprot_dict[chainid] = dict()
-
-                                            uniprot_dict[chainid][
-                                                uniprot_resid
-                                            ] = pdb_resid
-
-                                        if (
-                                            pdb_resid != "null"
-                                            and uniprot_resid != "null"
-                                        ):
-                                            if pdb_code not in list(sifts_dict.keys()):
-                                                sifts_dict[pdb_code] = dict()
-
-                                            if chainid not in list(
-                                                sifts_dict[pdb_code].keys()
+                                            if (
+                                                pdb_resid != "null"
+                                                and uniprot_resid != "null"
                                             ):
-                                                sifts_dict[pdb_code][chainid] = dict()
+                                                if pdb_code not in list(sifts_dict.keys()):
+                                                    sifts_dict[pdb_code] = dict()
 
-                                            sifts_dict[pdb_code][chainid][
-                                                pdb_resid
-                                            ] = uniprot_resid
+                                                if chainid not in list(
+                                                    sifts_dict[pdb_code].keys()
+                                                ):
+                                                    sifts_dict[pdb_code][chainid] = dict()
 
-    for chainid in pdb_chainid_lst:
-        if chainid not in uniprot_chainid_lst:
-            if chainid in list(uniprot_dict.keys()):
-                for pdb_resid in list(sifts_dict[pdb_code][chainid].keys()):
-                    uniprot_resid = sifts_dict[pdb_code][chainid][pdb_resid]
-                    if int(uniprot_resid) > 50000:
-                        sifts_dict[pdb_code][chainid][pdb_resid] = uniprot_dict[
-                            chainid
-                        ][uniprot_resid]
+                                                sifts_dict[pdb_code][chainid][
+                                                    pdb_resid
+                                                ] = uniprot_resid
+
+        for chainid in pdb_chainid_lst:
+            if chainid not in uniprot_chainid_lst:
+                if chainid in list(uniprot_dict.keys()):
+                    for pdb_resid in list(sifts_dict[pdb_code][chainid].keys()):
+                        uniprot_resid = sifts_dict[pdb_code][chainid][pdb_resid]
+                        if int(uniprot_resid) > 50000:
+                            sifts_dict[pdb_code][chainid][pdb_resid] = uniprot_dict[
+                                chainid
+                            ][uniprot_resid]
+    except:
+        sifts_dict = dict()
 
     return sifts_dict
 
@@ -778,6 +782,17 @@ def prep_coord(
         ]
 
         build_sifts_map(sifts_path_lst, sifts_json_path, num_cpu=num_cpu)
+
+        sifts_dict = load_json(sifts_json_path)
+
+        old_pdb_id_lst = pdb_id_lst.copy()
+        pdb_id_lst = list()
+
+        for pdb_code in list(sifts_dict.keys()):
+            for chainid in list(sifts_dict[pdb_code].keys()):
+                pdb_id = f"{pdb_code}{chainid}"
+                if pdb_id in old_pdb_id_lst:
+                    pdb_id_lst.append(pdb_id)
 
     df = run_pdb_chain(
         pdb_id_lst,
