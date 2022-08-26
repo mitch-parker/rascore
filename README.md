@@ -19,7 +19,7 @@ Details of our work are provided in the [*Cancer Research*](https://aacrjournals
 
 ## Web Database
 
-A continually updated version of the *Rascore* database is hosted at http://dunbrack.fccc.edu/rascore/ or https://share.streamlit.io/mitch-parker/rascore/main/src/rascore/rascore_gui.py.
+A continually updated version of the *Rascore* database is hosted at http://dunbrack.fccc.edu/rascore/ or https://rascore.streamlitapp.com.
 
 ## Local Installation
 

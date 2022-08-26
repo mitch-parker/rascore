@@ -117,15 +117,14 @@ def build_lig_df(
                     lig_dict[pharm_lig_col].append(resname)
                     is_pharm = True
 
+                resid_cont_str = resname
+                resid_cont_str += ':'
+                resid_cont_str += lst_to_str(resid_cont_lst)
+                cont_lst.append(resid_cont_str)
 
                 if is_pharm:
                 
                     if site_dict is not None:
-                        
-                        resid_cont_str = resname
-                        resid_cont_str += ':'
-                        resid_cont_str += lst_to_str(resid_cont_lst)
-                        cont_lst.append(resid_cont_str)
 
                         max_cont = 0
                         pharm_site = other_site
