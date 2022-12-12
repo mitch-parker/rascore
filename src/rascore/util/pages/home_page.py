@@ -136,8 +136,7 @@ def home_page():
         each page in the *Rascore* database:
 
         - **Home Page:** We are here!
-        - **Database Overview:** Overview of the *Rascore* database, molecular annotations, 
-        and RAS conformational classification.
+        - **Database Overview:** Overview of the *Rascore* database, molecular annotations, and RAS conformational classification.
         - **Search PDB:** Search for individual PDB entries containing RAS structures.
         - **Explore Conformations:** Explore RAS SW1 and SW2 conformations found in the PDB by nucleotide state.
         - **Analyze Mutations:** Analyze the structural impact of RAS mutations by comparing WT and mutated structures.
