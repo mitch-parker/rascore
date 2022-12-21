@@ -133,7 +133,7 @@ def conformation_page():
                 get_html_text(
                     {
                         nuc_class: nuc_color_dict[nuc_class],
-                        " Conformations": "#31333F",
+                        f" Conformations ({nuc_name_dict[nuc_class]})": "#31333F",
                     },
                     font_size="x-large",
                     font_weight="bold",
