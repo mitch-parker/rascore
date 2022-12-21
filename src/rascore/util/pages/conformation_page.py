@@ -27,7 +27,7 @@ from ..constants.conf import (
     disorder_name,
     conf_color_dict,
 )
-from ..constants.nuc import nuc_color_dict, nuc_class_lst, gtp_name
+from ..constants.nuc import nuc_color_dict, nuc_class_lst, nf_name, gdp_name, gtp_name
 
 from ..functions.gui import (
     get_neighbor_path,
@@ -125,8 +125,10 @@ def conformation_page():
 
     table_col_lst = [rename_col_dict[prot_class_col], rename_col_dict[match_class_col]]
 
+    nuc_name_dict = {nf_name: "Nucleotide-Free", gdp_name: "GDP-Bound", gtp_name: "GTP-Bound"}
+
     for nuc_class in nuc_class_lst:
-        with st.expander(f"{nuc_class} Conformations", expanded=True):
+        with st.expander(f"{nuc_class} Conformations ({nuc_name_dict[nuc_class]})", expanded=True):
             st.markdown(
                 get_html_text(
                     {
