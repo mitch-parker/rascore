@@ -111,6 +111,8 @@ def mutation_page():
 
         query_df_dict[query_name] = query_df
 
+        query_col.success(f"{query_name} (N={len(query_df)})")
+
     mut_df = pd.concat([query_df_dict[left_name], query_df_dict[right_name]], sort=False)
 
     with st.expander("One-to-One Comparison", expanded=False):

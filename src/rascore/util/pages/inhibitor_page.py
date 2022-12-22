@@ -208,6 +208,8 @@ def inhibitor_page():
 
                     query_df_dict[query_name] = query_df
 
+        query_col.success(f"{query_name} (N={len(query_df)})")
+
     if len(query_df_dict.keys()) == 2:
 
         left_df = query_df_dict[left_name]
