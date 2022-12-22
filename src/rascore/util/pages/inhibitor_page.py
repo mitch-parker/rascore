@@ -156,11 +156,12 @@ def inhibitor_page():
                 query_col.write(f"Searching for Chemistries ({query_name})")
                 chem_bar = query_col.progress(0.0)
                 chem_index_lst = list()
+
                 for i, index in enumerate(list(query_df.index.values)):
                     chem_smiles_dict = str_to_dict(query_df.at[index, pharm_lig_smiles_col], return_str=True)
                     chem_smiles= chem_smiles_dict[query_df.at[index, pharm_lig_col]][0]
                     if match_type == exact_name:
-                        if is_lig_match(pharm_lig=chem_smiles,matches=smiles_lst) >= min_match:
+                        if is_lig_match(lig=chem_smiles,matches=smiles_lst) >= min_match:
                             chem_index_lst.append(index)
                     elif match_type == simi_name:
                         lig_simi_lst = [get_lig_simi(chem_smiles, x) for x in smiles_lst]
@@ -179,7 +180,7 @@ def inhibitor_page():
 
                     chem_bar.progress((i + 1)/len(query_df))
 
-                    query_df = query_df.loc[chem_index_lst, :]
+                query_df = query_df.loc[chem_index_lst, :]
 
             if len(query_df) == 0:
                 query_col.warning("Insufficient Number of Structures Based On Chemistry Search")
