@@ -742,10 +742,7 @@ def build_rascore(out_path=None, pdbaa_fasta_path=None, num_cpu=1):
         interf_table_path,
         dih_json_path,
     ]:
-        print(get_file_path(
-                get_file_name(file_path),
-                dir_path=get_neighbor_path(__file__, pipelines_str, data_str),
-            ))
+    
         copy_path(
             file_path,
             get_file_path(
