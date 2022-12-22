@@ -104,6 +104,8 @@ def query_page():
         interf_class_col,
     ]
 
+    pdb_col_lst = [pdb_code_col, pdb_id_col]
+
     mask_dict = dict()
 
     mask_df = df.copy(deep=True)
@@ -126,6 +128,17 @@ def query_page():
     st.sidebar.markdown("## Annotation Selection")
 
     for col in annot_col_lst:
+
+        mask_dict[col] = st.sidebar.multiselect(
+            rename_col_dict[col],
+            lst_col(mask_df, col, unique=True),
+        )
+
+        mask_df = mask_st_table(mask_df, mask_dict)
+
+    st.sidebar.markdown("## PDB Selection")
+
+    for col in pdb_col_lst:
 
         mask_dict[col] = st.sidebar.multiselect(
             rename_col_dict[col],
