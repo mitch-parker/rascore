@@ -28,5 +28,6 @@ uniprot_acc_lst = ["P01116", "P01116-2", "P01112", "P01111"]
 gene_class_dict = {
     "GTPase HRas": hras_name,
     "GTPase KRas": kras_name,
+    "Isoform 2B of GTPase KRas": kras_name,
     "GTPase NRas": nras_name,
 }
