@@ -451,6 +451,7 @@ rename_col_dict = {
     interf_class_col: "Homodimer Status",
     bound_prot_col: "Bound Protein Name",
     bound_prot_swiss_id_col: "Bound Protein SwissProt ID",
+    bound_prot_pfam_col: "Bound Protein Pfam",
     bound_prot_chainid_col: "Bound Protein Chain",
     bio_lig_col: "Nucleotide",
     ion_lig_col: "Ion",
@@ -464,8 +465,11 @@ rename_col_dict = {
     resolution_col: "Resolution",
     r_factor_col: "R-Factor",
     date_col: "Deposit Date",
+    bound_lig_cont_col: "Bound Ligand Contacts",
+    bound_prot_cont_col: "Bound Protein Contacts",
+    pharm_lig_smiles_col: "SMILES String",
     pocket_score_col: "Druggability Score",
-    pocket_volume_col: "Pocket Volume"
+    pocket_volume_col: "Pocket Volume",
 }
 
 

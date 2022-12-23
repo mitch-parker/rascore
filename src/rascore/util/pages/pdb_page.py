@@ -67,6 +67,7 @@ from ..functions.col import (
     interf_class_col,
     bound_prot_col,
     bound_prot_swiss_id_col,
+    bound_prot_pfam_col,
     bound_prot_chainid_col,
     bound_lig_cont_col,
     bound_prot_cont_col,
@@ -129,7 +130,7 @@ def pdb_page():
     show_st_table(annot_df, st_col=right_col)
 
     if chainid_df.at[0,bound_prot_col] != "None":
-        for col in [bound_prot_col, bound_prot_swiss_id_col]:
+        for col in [bound_prot_col, bound_prot_swiss_id_col, bound_prot_pfam_col]:
             left_col.markdown(f"**{rename_col_dict[col]}:** {chainid_df.at[0,col]}")
 
     st_col_lst = st.columns(4)
