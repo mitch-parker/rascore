@@ -123,7 +123,7 @@ from ..functions.col import (
     match_class_col,
     gene_class_col,
     prot_class_col,
-    prot_col,
+    swiss_id_col,
     bio_lig_col,
     nuc_class_col,
     rcsb_path_col,
@@ -297,7 +297,7 @@ def update_annot(pdbaa_fasta_path, out_path=None, past_df=None, num_cpu=1):
                 match_class = pharm_match
             df.at[index, match_class_col] = match_class
 
-        df[gene_class_col] = df[prot_col].map(gene_class_dict)
+        df[gene_class_col] = df[swiss_id_col].map(gene_class_dict)
         df[nuc_class_col] = df[bio_lig_col].map(nuc_class_dict).fillna(gtp_name)
 
         df = annot_prot(
@@ -684,6 +684,7 @@ def build_rascore(out_path=None, pdbaa_fasta_path=None, num_cpu=1):
         search_pdbaa(
             pdbaa_fasta_path=pdbaa_fasta_path,
             search_lst=swiss_id_lst,
+            fix_dict={"7u8hA":"RASK_HUMAN","7u8hB":"RASK_HUMAN","7u8hC":"RASK_HUMAN","7u8hD":"RASK_HUMAN"},
             entry_table_path=entry_table_path,
             min_length=25,
         )

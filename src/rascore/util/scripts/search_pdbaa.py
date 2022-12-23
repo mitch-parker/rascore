@@ -50,6 +50,7 @@ from ..functions.path import save_table
 def search_pdbaa(
     pdbaa_fasta_path,
     search_lst,
+    fix_dict=None,
     entry_table_path=None,
     min_length=None,
     min_resolution=None,
@@ -83,6 +84,10 @@ def search_pdbaa(
     for col in col_lst:
         record_dict[col] = list()
 
+    fix_lst = list()
+    if fix_dict is not None:
+        fix_lst = list(fix_dict.keys())
+
     for record in tqdm(
         list(pdbaa_dict.keys()), desc="Searching pdbaa", position=0, leave=True
     ):
@@ -106,6 +111,13 @@ def search_pdbaa(
         elif search_col == pdb_id_col:
             if pdb_id in search_lst:
                 get_seq = True
+
+        if len(fix_lst) > 0:
+            if not get_seq:
+                if pdb_id in fix_lst:
+                    fix_lst.remove(pdb_id)
+                    swiss_id = fix_dict[pdb_id]
+                    get_seq = True
 
         if get_seq:
 

@@ -142,8 +142,13 @@ def query_page():
 
         mask_dict[col] = st.sidebar.multiselect(
             rename_col_dict[col],
-            lst_col(mask_df, col, unique=True),
+            [x.upper() for x in lst_col(mask_df, col, unique=True)],
         )
+
+        if col == pdb_id_col:
+            mask_dict[col] = [f"{x[:4].lower()}{x[4:5]}" for x in mask_dict[col]]
+        elif col == pdb_code_col:
+            mask_dict[col] = [x.lower() for x in mask_dict[col]]
 
         mask_df = mask_st_table(mask_df, mask_dict)
 

@@ -26,8 +26,7 @@ swiss_id_lst = ["RASK_HUMAN", "RASN_HUMAN", "RASH_HUMAN"]
 uniprot_acc_lst = ["P01116", "P01116-2", "P01112", "P01111"]
 
 gene_class_dict = {
-    "GTPase HRas": hras_name,
-    "GTPase KRas": kras_name,
-    "Isoform 2B of GTPase KRas": kras_name,
-    "GTPase NRas": nras_name,
+    "RASK_HUMAN":kras_name,
+    "RASN_HUMAN":nras_name, 
+    "RASH_HUMAN":hras_name,
 }
