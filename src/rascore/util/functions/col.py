@@ -464,7 +464,7 @@ rename_col_dict = {
     resolution_col: "Resolution",
     r_factor_col: "R-Factor",
     date_col: "Deposit Date",
-    pocket_score_col: "Druggability Scores",
+    pocket_score_col: "Druggability Score",
     pocket_volume_col: "Pocket Volume"
 }
 

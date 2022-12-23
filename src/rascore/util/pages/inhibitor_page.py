@@ -22,7 +22,7 @@ import numpy as np
 from ..scripts.make_facet_plot import make_facet_plot
 from ..functions.color import change_hex_alpha, get_hex, gray_hex
 from ..functions.chem import draw_lig_plot, get_lig_mcs, get_lig_smiles, get_lig_simi, is_lig_match
-from ..functions.table import build_col_count_dict, mask_equal, lst_col, mask_unequal, str_to_dict, fix_col, make_dict
+from ..functions.table import build_col_count_dict, mask_equal, mask_between, lst_col, mask_unequal, str_to_dict, fix_col, make_dict
 from ..functions.col import (pocket_class_col, pdb_id_col, pdb_code_col, id_col,
                             bound_lig_cont_col, chainid_col, pharm_lig_smiles_col, pharm_class_col,
                             nuc_class_col, mut_status_col, prot_class_col, interf_class_col,
@@ -128,7 +128,12 @@ def inhibitor_page():
 
                 site_bar.progress((i + 1)/len(query_df))
 
-            query_df = query_df.loc[site_index_lst, :]
+            op_site = query_col.checkbox(f"Make Opposite of Site Match ({query_name})", value=False)
+
+            if not op_site:
+                query_df = query_df.loc[site_index_lst, :]
+            elif op_site:
+                query_df = query_df.loc[[x for x in list(query_df.index.values) if x not in site_index_lst], :]
 
         if len(query_df) == 0:
             query_col.warning("Insufficient Number of Structures Based On Site Query")
@@ -180,33 +185,49 @@ def inhibitor_page():
 
                     chem_bar.progress((i + 1)/len(query_df))
 
-                query_df = query_df.loc[chem_index_lst, :]
+                op_chem = query_col.checkbox(f"Make Opposite of Chemistry Match ({query_name})", value=False)
+
+                if not op_chem:
+                    query_df = query_df.loc[chem_index_lst, :]
+                elif op_chem:
+                    query_df = query_df.loc[[x for x in list(query_df.index.values) if x not in chem_index_lst], :]
 
             if len(query_df) == 0:
                 query_col.warning("Insufficient Number of Structures Based On Chemistry Search")
             else:
-                query_df_dict[query_name] = query_df
-                if query_col.checkbox(f"Display Selection Options ({query_name})", value=False):
+                query_col.markdown(f"#### Descriptor Search ({query_name})")
 
-                    query_col.markdown(f"#### Conformation Selection ({query_name})")
+                score_range = query_col.slider(f"{rename_col_dict[pocket_score_col]} ({query_name})", min_value=0.0, max_value=1.0, value=(0.0,1.0))
+                volume_range = query_col.slider(f"{rename_col_dict[pocket_volume_col]} ({query_name})", min_value=0, max_value=2000, value=(0,2000))
 
-                    for col in [sw1_name, sw2_name, y32_name, y71_name]:
+                query_df = mask_between(query_df, col=pocket_score_col, bottom=score_range[0], top=score_range[1])
+                query_df = mask_between(query_df, col=pocket_volume_col, bottom=volume_range[0], top=volume_range[1])
 
-                        mask_lst = query_col.multiselect(f"{rename_col_dict[col]} ({query_name})", lst_col(query_df, col, unique=True))
-
-                        if len(mask_lst) > 0:
-                            query_df = mask_equal(query_df, col, mask_lst)
-
-                    query_col.markdown(f"#### Annotation Selection ({query_name})")
-
-                    for col in [gene_class_col, nuc_class_col, mut_status_col, prot_class_col, match_class_col, interf_class_col]:
-
-                        mask_lst = query_col.multiselect(f"{rename_col_dict[col]} ({query_name})", lst_col(query_df, col, unique=True))
-
-                        if len(mask_lst) > 0:
-                            query_df = mask_equal(query_df, col, mask_lst)
-
+                if len(query_df) == 0:
+                    query_col.warning("Insufficient Number of Structures Based On Descriptor Search")
+                else:
                     query_df_dict[query_name] = query_df
+                    if query_col.checkbox(f"Display Selection Options ({query_name})", value=False):
+
+                        query_col.markdown(f"#### Conformation Selection ({query_name})")
+
+                        for col in [sw1_name, sw2_name, y32_name, y71_name]:
+
+                            mask_lst = query_col.multiselect(f"{rename_col_dict[col]} ({query_name})", lst_col(query_df, col, unique=True))
+
+                            if len(mask_lst) > 0:
+                                query_df = mask_equal(query_df, col, mask_lst)
+
+                        query_col.markdown(f"#### Annotation Selection ({query_name})")
+
+                        for col in [gene_class_col, nuc_class_col, mut_status_col, prot_class_col, match_class_col, interf_class_col]:
+
+                            mask_lst = query_col.multiselect(f"{rename_col_dict[col]} ({query_name})", lst_col(query_df, col, unique=True))
+
+                            if len(mask_lst) > 0:
+                                query_df = mask_equal(query_df, col, mask_lst)
+
+                        query_df_dict[query_name] = query_df
 
         if len(query_df) > 0:
             query_col.success(f"{query_name} (N={len(query_df)})")
