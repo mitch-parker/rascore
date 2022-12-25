@@ -32,10 +32,10 @@ def home_page():
     df = load_st_table(__file__)
 
     show_st_structure(mask_equal(df, pdb_code_col, "6oim"),
-            cartoon_trans=0,
             zoom=1.2,
             width=400,
             height=300,
+            cartoon_trans=0,
             surface_trans=1,
             spin_on=True,
             st_col=left_col)
