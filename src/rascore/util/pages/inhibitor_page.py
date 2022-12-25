@@ -486,7 +486,7 @@ def inhibitor_page():
             marker_size = middle_plot_col.number_input("Marker Size", min_value=1, max_value=50, value=5)
             
             if plot_type == scatter_name:
-                plot_reg = middle_plot_col.checkbox("Display Regression",value=True)
+                plot_reg = middle_plot_col.checkbox("Display Regression",value=False)
 
                 fig = make_facet_plot(many_df, 
                     x_col=pocket_volume_col,
