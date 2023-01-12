@@ -148,7 +148,8 @@ def classify_page():
 
                     download_st_df(df, out_file, "Download Classification Table")
                 except:
-                    st.error("Error Analyzing Uploaded Structures")
+                    st.error("Error Analyzing Uploaded Structures.") 
+                    st.error("Please Report Issue On GitHub Page (https://github.com/mitch-parker/rascore) Or Email Mitchell Parker (mip34@drexel.edu).") 
 
                 delete_path(classify_path)
                 for coord_path in coord_path_lst:
