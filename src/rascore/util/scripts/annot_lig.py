@@ -195,6 +195,7 @@ def annot_lig(
     max_site_dist=4,
     coord_path_col=None,
     num_cpu=1,
+    st_col=None
 ):
 
     df = df.reset_index(drop=True)
@@ -209,6 +210,10 @@ def annot_lig(
                 match_dict[site_name][match_name] = type_lst(query_lst)
 
     lig_df = pd.DataFrame()
+
+    if st_col is not None:
+        s = 0
+        st_bar = st_col.progress(s)
 
     if num_cpu == 1:
         for index in tqdm(
@@ -234,6 +239,9 @@ def annot_lig(
                 ],
                 sort=False,
             )
+            if st_col is not None:
+                s += 1
+                st_bar.progress(s/len(list(df.index.values)))
     else:
         with concurrent.futures.ProcessPoolExecutor(max_workers=num_cpu) as executor:
             job_lst = [
@@ -263,6 +271,10 @@ def annot_lig(
             ):
 
                 lig_df = pd.concat([lig_df, job.result()], sort=False)
+
+                if st_col is not None:
+                    s += 1
+                    st_bar.progress(s/len(list(df.index.values)))
 
     lig_df = lig_df.reset_index(drop=True)
 

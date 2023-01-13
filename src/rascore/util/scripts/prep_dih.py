@@ -108,11 +108,15 @@ def build_dih_dict(coord_path):
     return dih_dict
 
 
-def prep_dih(coord_paths, dih_json_path=None, num_cpu=1):
+def prep_dih(coord_paths, dih_json_path=None, num_cpu=1, st_col=None):
 
     coord_path_lst = type_lst(coord_paths)
 
     dih_dict = dict()
+
+    if st_col is not None:
+        s = 0
+        st_bar = st_col.progress(s)
 
     if num_cpu == 1:
         for coord_path in tqdm(
@@ -122,6 +126,10 @@ def prep_dih(coord_paths, dih_json_path=None, num_cpu=1):
             leave=True,
         ):
             dih_dict = merge_dicts([dih_dict, build_dih_dict(coord_path)])
+
+            if st_col is not None:
+                s += 1
+                st_bar.progress(s/len(list(coord_path_lst)))
 
     else:
         with concurrent.futures.ProcessPoolExecutor(max_workers=num_cpu) as executor:
@@ -139,6 +147,10 @@ def prep_dih(coord_paths, dih_json_path=None, num_cpu=1):
                 leave=True,
             ):
                 dih_dict = merge_dicts([dih_dict, job.result()])
+
+                if st_col is not None:
+                    s += 1
+                    st_bar.progress(s/len(list(coord_path_lst)))
 
     print("Prepared dihedrals!")
 

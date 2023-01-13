@@ -66,10 +66,10 @@ def classify_page():
         sw2_len = len(res_to_lst('57-76'))
 
         if len(res_to_lst(sw1_resids)) != sw1_len:
-            left_col.warning(f'SW1 Must Be {sw1_len} Residue Long')
+            left_col.warning(f'SW1 Must Be {sw1_len} Residues Long')
 
         if len(res_to_lst(sw2_resids)) != len(res_to_lst('56-76')):
-            right_col.warning(f'SW2 Must Be {sw2_len} Residue Long')
+            right_col.warning(f'SW2 Must Be {sw2_len} Residues Long')
 
         y32_resid = int(left_col.text_input('Y32 Residue',value=32))
         y71_resid = int(right_col.text_input('Y71 Residue',value=71))
@@ -128,7 +128,7 @@ def classify_page():
                     classify_rascore(classify_input, y32_resid=y32_resid, y71_resid=y71_resid, 
                     g12_resid=g12_resid,v9_resid=v9_resid,
                     sw1_resids=sw1_resids, sw2_resids=sw2_resids, 
-                    out_path=classify_path)
+                    out_path=classify_path, st_col=st)
 
                     st.success("Classified Structures")
 
@@ -148,8 +148,8 @@ def classify_page():
 
                     download_st_df(df, out_file, "Download Classification Table")
                 except:
-                    st.error("Error Analyzing Uploaded Structures.") 
-                    st.error("Please Report Issue to Mitchell Parker (mip34@drexel.edu or mitchell.parker@fccc.edu).")  
+                    st.error("Error Analyzing Uploaded Structures") 
+                    st.error("Please Report Issue to Mitchell Parker (mip34@drexel.edu or mitchell.parker@fccc.edu)")  
 
                 delete_path(classify_path)
                 for coord_path in coord_path_lst:

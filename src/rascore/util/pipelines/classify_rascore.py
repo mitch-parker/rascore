@@ -104,7 +104,7 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None,
                     y32_resid=32, y71_resid=71, 
                     g12_resid=12, v9_resid=9,
                     y32_dist=10.5, y71_dist=8.75,
-                    num_cpu=1):
+                    num_cpu=1, st_col=None):
 
     if out_path is None:
         out_path = f"{os.getcwd()}/{rascore_str}_{classify_str}"
@@ -114,6 +114,12 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None,
     file_path_lst = type_lst(file_paths)
 
     df = pd.DataFrame()
+
+    if st_col is not None:
+        s = 0
+        st_col.info("Loading Files")
+        st_bar = st_col.progress(s)
+
     for file_path in tqdm(
         file_path_lst,
         desc="Loading Files",
@@ -142,6 +148,7 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None,
                 load_path_lst = list([file_path])
 
             if len(temp_df) == 0 and len(load_path_lst) > 0:
+
                 i = 0
                 for load_path in tqdm(
                     load_path_lst,
@@ -159,10 +166,16 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None,
                             temp_df.at[i, chainid_col] = chainid
                             i += 1
 
+        if st_col is not None:
+            s += 1
+            st_bar.progress(s/len(file_path_lst))
+
         df = pd.concat([df, temp_df], sort=False)
 
     if len(df) == 0:
-        print('No structures to classify.')
+        print("No structures to classify.")
+        if st_col is not None:
+            st_col.error("No Structures to Classify")
     else:
         df = df.reset_index(drop=True)
 
@@ -176,8 +189,9 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None,
             x for x in [core_path_col, modelid_col, chainid_col] if x not in df_col_lst
         ]
         if len(missing_col_lst) > 0:
-            print(f"Input table missing columns: {lst_to_str(missing_col_lst)}")
-
+            print(f"Input table missing columns - {lst_to_str(missing_col_lst)}")
+            if st_col is not None:
+                st_col.error(f"Input Table Missing Columns - {lst_to_str(missing_col_lst)}")
         else:
             coord_path_lst = lst_col(df, core_path_col)
 
@@ -185,18 +199,28 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None,
                 for index in list(df.index.values):
                     df.at[index, id_col] = get_file_name(df.at[index, core_path_col])
 
+            if st_col is not None:
+                st_col.info("Annotating Ligands")
+
             if len([x for x in lig_col_lst if x not in df_col_lst]) > 0:
                 df = annot_lig(
                     df=df,
                     site_dict=pharm_site_dict,
                     num_cpu=num_cpu,
+                    st_col=st_col
                 )
 
             if nuc_class_col not in df_col_lst:
                 df[nuc_class_col] = df[bio_lig_col].map(nuc_class_dict).fillna(gtp_name)
 
+            if st_col is not None:
+                st_col.info("Preparing Dihedrals")
+
             if dih_dict is None:
-                dih_dict = prep_dih(coord_path_lst, num_cpu=num_cpu)
+                dih_dict = prep_dih(coord_path_lst, num_cpu=num_cpu, st_col=st_col)
+
+            if st_col is not None:
+                st_col.info("Building Distance Table - Y32(OH):G12(CA) & Y71(OH):V9(CA)")
 
             dist_df = build_dist_table(
                 df,
@@ -204,7 +228,8 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None,
                 y_resids=[g12_resid, v9_resid],
                 x_atomids=['OH','OH'],
                 y_atomids=['CA','CA'],
-                atom_dist_col_lst=[y32_name, y71_name]
+                atom_dist_col_lst=[y32_name, y71_name],
+                st_col=st_col
             )
 
             dist_dict = {y32_name: y32_dist, y71_name: y71_dist}
@@ -264,10 +289,6 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None,
 
                         group_nuc_name = f"{group_name}.{nuc_class}"
 
-                        print(
-                                f"Classifying {loop_name} conformations in {group_name}.{nuc_class} structures."
-                            )
-
                         cluster_table_path = get_file_path(
                             cluster_table_file,
                             dir_str=group_nuc_name,
@@ -294,10 +315,18 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None,
 
                         if len(group_nuc_df) > 0:
 
+                            print(
+                                f"Classifying {loop_name} conformations - {group_name}.{nuc_class} structures."
+                            )
+
+                            if st_col is not None:
+                                st_col.info(f"Classifying {loop_name} Conformations - {group_name}.{nuc_class} Structures")
+
                             dih_df = build_dih_table(
                                     df=group_nuc_df,
                                     dih_dict=dih_dict,
                                     bb_resids=loop_resids,
+                                    st_col=st_col
                                 )
 
                             if disorder_name not in group_nuc_name:
@@ -393,6 +422,10 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None,
                 df = merge_tables(df, loop_result_df)
 
             if gtp_name in lst_col(df, nuc_class_col, unique=True):
+
+                if st_col is not None:
+                    st_col.info("Building Distance Table - Y32(OH):3P(O1G)")
+
                 dist_df = build_dist_table(
                     mask_equal(df, nuc_class_col, gtp_name),
                     x_resids=[y32_resid],
@@ -401,6 +434,7 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None,
                     y_atomids=[gtp_atomids],
                     hb_status_col_lst=[hb_status_col],
                     check_hb=True,
+                    st_col=st_col
                 )
 
                 merge_df = dist_df.loc[

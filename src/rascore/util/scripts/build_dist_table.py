@@ -381,11 +381,16 @@ def build_dist_table(
     min_wmhb_angle=80,
     max_wmhb_angle=140,
     coord_path_col=None,
+    st_col=None
 ):
 
     df = df.reset_index(drop=True)
 
     dist_df = pd.DataFrame()
+
+    if st_col is not None:
+        s = 0
+        st_bar = st_col.progress(s)
 
     for index in tqdm(
         list(df.index.values), desc="Building distance table", position=0, leave=True
@@ -425,6 +430,10 @@ def build_dist_table(
             ],
             sort=False,
         )
+
+        if st_col is not None:
+            s += 1
+            st_bar.progress(s/len(list(df.index.values)))
 
     dist_df = dist_df.reset_index(drop=True)
 

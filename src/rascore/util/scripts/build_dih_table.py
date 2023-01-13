@@ -277,6 +277,7 @@ def build_dih_table(
     ext_mult=1,
     coord_path_col=None,
     num_cpu=1,
+    st_col=None
 ):
     df = df.reset_index(drop=True)
 
@@ -322,6 +323,10 @@ def build_dih_table(
 
     dih_df = pd.DataFrame()
 
+    if st_col is not None:
+        s = 0
+        st_bar = st_col.progress(s)
+
     if num_cpu == 1:
         for index in tqdm(
             list(df.index.values),
@@ -343,6 +348,10 @@ def build_dih_table(
                     dih_df[col] = 999.00
 
             dih_df = pd.concat([dih_df, index_df], sort=False)
+
+            if st_col is not None:
+                s += 1
+                st_bar.progress(s/len(list(df.index.values)))
     else:
         with concurrent.futures.ProcessPoolExecutor(max_workers=num_cpu) as executor:
             job_lst = [
@@ -374,6 +383,10 @@ def build_dih_table(
                         dih_df[col] = 999.00
 
                 dih_df = pd.concat([dih_df, index_df], sort=False)
+
+                if st_col is not None:
+                    s += 1
+                    st_bar.progress(s/len(list(df.index.values)))
 
     dih_df = dih_df.reset_index(drop=True)
 
