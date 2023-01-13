@@ -227,10 +227,9 @@ def inhibitor_page():
                             if len(mask_lst) > 0:
                                 query_df = mask_equal(query_df, col, mask_lst)
 
-                        query_df_dict[query_name] = query_df
-
         if len(query_df) > 0:
             query_col.success(f"{query_name} (N={len(query_df)})")
+            query_df_dict[query_name] = query_df
 
     if len(query_df_dict.keys()) == 2:
 
