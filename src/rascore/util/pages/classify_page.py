@@ -94,6 +94,11 @@ def classify_page():
             "Upload Table File", accept_multiple_files=False
         )
 
+    auto_name = "Automatic"
+    over_nuc = st.multiselect("Nucleotide State",[auto_name,gtp_name,gdp_name,nf_name])
+    if over_nuc == auto_name:
+        over_nuc = None
+
     with st.form(key="Classify Form"):
         out_file = st.text_input(
             label="Classify File Name", value="rascore_classify.tsv"
@@ -128,11 +133,6 @@ def classify_page():
                             core_path_col
                         ].map(path_dict)
                         delete_path(table_path)
-
-                    auto_name = "Automatic"
-                    over_nuc = st.multiselect("Nucleotide State",[auto_name,gtp_name,gdp_name,nf_name])
-                    if over_nuc == auto_name:
-                        over_nuc = None
 
                     classify_rascore(classify_input, y32_resid=y32_resid, y71_resid=y71_resid, 
                     g12_resid=g12_resid,v9_resid=v9_resid,
