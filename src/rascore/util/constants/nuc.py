@@ -22,6 +22,8 @@ nf_name = "0P"
 gdp_name = "2P"
 gtp_name = "3P"
 
+nuc_name_dict = {nf_name: "Nucleotide-Free", gdp_name: "GDP-Bound", gtp_name: "GTP-Bound"}
+
 rep_dict = {
     "4q21A": gdp_name,
     "1bkdR": nf_name,

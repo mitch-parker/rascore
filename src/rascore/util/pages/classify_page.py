@@ -15,12 +15,10 @@
    limitations under the License.
 
 """
-
-import pandas as pd
 import streamlit as st
 from random import randint
 
-from ..constants.nuc import gtp_name, gdp_name, nf_name
+from ..constants.nuc import gtp_name, gdp_name, nf_name, nuc_name_dict
 from ..functions.col import id_col, core_path_col, pharm_lig_site_col, pocket_class_col
 from ..functions.path import (
     delete_path,
@@ -95,9 +93,14 @@ def classify_page():
         )
 
     auto_name = "Automatic"
-    over_nuc = st.radio("Nucleotide State",[auto_name, gtp_name, gdp_name, nf_name])
+    over_nuc_lst = [auto_name]
+    for nuc_class, nuc_name in nuc_name_dict.items():
+        over_nuc_lst.append(f"{nuc_class} ({nuc_name})")
+    over_nuc = st.radio("Nucleotide State", over_nuc_lst)
     if over_nuc == auto_name:
         over_nuc = None
+    else:
+        over_nuc = over_nuc.split(" (")[0]
 
     with st.form(key="Classify Form"):
         out_file = st.text_input(
