@@ -52,7 +52,7 @@ def classify_page():
 
     st.markdown("---")
 
-    st.sidebar.markdown("""**Note.** See optional input section to change default residue numbering scheme, specify chains to classify, or override automatically designated nucleotide state (0P, 2P, or 3P).""")
+    st.sidebar.markdown("""**Note.** See optional input section to change default residue numbering scheme or to specify models or chains to classify and their nucleotide states (0P, 2P, or 3P).""")
 
     st_file_lst = st.file_uploader(
         "Upload Coordinate Files (PDB or mmCIF Format)", accept_multiple_files=True
