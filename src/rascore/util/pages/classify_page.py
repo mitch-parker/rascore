@@ -95,7 +95,7 @@ def classify_page():
         )
 
     auto_name = "Automatic"
-    over_nuc = st.multiselect("Nucleotide State",[auto_name,gtp_name,gdp_name,nf_name])
+    over_nuc = st.radio("Nucleotide State",[auto_name, gtp_name, gdp_name, nf_name])
     if over_nuc == auto_name:
         over_nuc = None
 

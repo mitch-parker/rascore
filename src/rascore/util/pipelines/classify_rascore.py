@@ -211,11 +211,11 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None,
                     st_col=st_col
                 )
 
-            if over_nuc is not None:
-                df[nuc_class_col] = over_nuc
-
             if nuc_class_col not in df_col_lst:
                 df[nuc_class_col] = df[bio_lig_col].map(nuc_class_dict).fillna(gtp_name)
+
+            if over_nuc is not None:
+                df[nuc_class_col] = over_nuc
 
             if st_col is not None:
                 st_col.info("Preparing Dihedrals")
