@@ -16,9 +16,11 @@
 
 """
 
+import pandas as pd
 import streamlit as st
 from random import randint
 
+from ..constants.nuc import gtp_name, gdp_name, nf_name
 from ..functions.col import id_col, core_path_col, pharm_lig_site_col, pocket_class_col
 from ..functions.path import (
     delete_path,
@@ -50,8 +52,10 @@ def classify_page():
 
     st.markdown("---")
 
+    st.sidebar.markdown("""**Note.** See optional input section to change default residue numbering scheme, specify chains to classify, or override automatically designated nucleotide state (0P, 2P, or 3P).""")
+
     st_file_lst = st.file_uploader(
-        "Upload Coordinate Files", accept_multiple_files=True
+        "Upload Coordinate Files (PDB or mmCIF Format)", accept_multiple_files=True
     )
 
     table_st_file = None
@@ -125,10 +129,15 @@ def classify_page():
                         ].map(path_dict)
                         delete_path(table_path)
 
+                    auto_name = "Automatic"
+                    over_nuc = st.multiselect("Nucleotide State",[auto_name,gtp_name,gdp_name,nf_name])
+                    if over_nuc == auto_name:
+                        over_nuc = None
+
                     classify_rascore(classify_input, y32_resid=y32_resid, y71_resid=y71_resid, 
                     g12_resid=g12_resid,v9_resid=v9_resid,
                     sw1_resids=sw1_resids, sw2_resids=sw2_resids, 
-                    out_path=classify_path, st_col=st)
+                    out_path=classify_path, over_nuc=over_nuc, st_col=st)
 
                     st.success("Classified Structures")
 

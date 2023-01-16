@@ -104,6 +104,7 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None,
                     y32_resid=32, y71_resid=71, 
                     g12_resid=12, v9_resid=9,
                     y32_dist=10.5, y71_dist=8.75,
+                    over_nuc=None,
                     num_cpu=1, st_col=None):
 
     if out_path is None:
@@ -209,6 +210,9 @@ def classify_rascore(file_paths, out_path=None, dih_dict=None,
                     num_cpu=num_cpu,
                     st_col=st_col
                 )
+
+            if over_nuc is not None:
+                df[nuc_class_col] = over_nuc
 
             if nuc_class_col not in df_col_lst:
                 df[nuc_class_col] = df[bio_lig_col].map(nuc_class_dict).fillna(gtp_name)
