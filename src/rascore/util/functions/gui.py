@@ -368,6 +368,8 @@ def show_st_structure(df,
                     show_legend=True,
                     legend_font_size="medium",
                     st_col=None):
+    
+    df = df.fillna("None")
 
     if sw1_color is None:
         sw1_color = loop_color_dict[sw1_name]
