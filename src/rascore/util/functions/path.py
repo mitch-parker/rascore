@@ -130,7 +130,7 @@ def save_table(path, df, sep="\t", header=True, index=False, fillna="None"):
 def load_table(path, sep="\t"):
 
     if path_exists(path):
-        df = pd.read_csv(path, sep=sep, dtype=str).fillna("None")
+        df = pd.read_csv(path, sep=sep, dtype=str)
         df = order_rows(df)
     else:
         df = None
