@@ -16,9 +16,9 @@
 
 """
 
-from Bio import SeqIO, pairwise2
+from Bio import SeqIO
 from Bio.Seq import Seq
-from Bio.Align import substitution_matrices
+from Bio.Align import substitution_matrices, PairwiseAligner
 from Bio.SeqRecord import SeqRecord
 from Bio.Align.Applications import ClustalOmegaCommandline
 
@@ -73,7 +73,7 @@ def pair_seq_aln(
     gap_open = kwargs.get("gap_open", -10.0)
     gap_extend = kwargs.get("gap_extend", -0.5)
 
-    return pairwise2.align.globalds(
+    return PairwiseAligner.align.globalds(
         ref_seq, mob_seq, matrix, gap_open, gap_extend, penalize_end_gaps=(False, False)
     )
 
