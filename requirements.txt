@@ -16,3 +16,4 @@ statsmodels==0.13.1
 stmol==0.0.9
 streamlit==1.8.1
 tqdm==4.59.0
+protobuf==3.20.0
