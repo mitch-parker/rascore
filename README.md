@@ -25,15 +25,15 @@ A continually updated version of the *Rascore* database is hosted at http://dunb
 
 **Quickstart commands for environment setup with [Anaconda](https://www.anaconda.com/products/individual):**
 
-conda create -n rascore_env python=3.8
+```conda create -n rascore_env python=3.8```
 
-conda activate rascore_env
+```conda activate rascore_env```
 
-pip install rascore 
+```pip install rascore```
 
-conda install -c conda-forge -c schrodinger pymol-bundle=2.5.2
+```conda install -c conda-forge -c schrodinger pymol-bundle=2.5.2```
 
-conda install -c conda-forge fpocket=4.0.0
+```conda install -c conda-forge fpocket=4.0.0```
 
 (Additional for macOS: pip install PyQt5)
 
@@ -41,24 +41,24 @@ conda install -c conda-forge fpocket=4.0.0
 
 *Note.* Must activate Anaconda enironment with command "conda activate rascore_env" before running.
 
-#### 1) Conformationally classify RAS structures:
+#### 1. Conformationally classify RAS structures:
 
-**rascore -classify [path to coordinate files] -out [output directory path]**
+```rascore -classify [path to coordinate files] -out [output directory path]```
 
 - Coordinate files must be provided in mmCIF or PDB formats and numbered according to UniProt scheme. The following inputs are possible: 
     - Space-separated list
     - Line-separated list file
     - Tab-separated table file with columns core_path (coordinate path), modelid (optional, model number), chainid (chain identifier), nucleotide_class (optional, nucleotide state)
 
-#### 2) Build the Rascore database from the PDB:
+#### 2. Build the Rascore database from the PDB:
 
-**rascore -build [optional, path to pdbaa file] -out [output directory path]**
+```rascore -build [optional, path to pdbaa file] -out [output directory path]```
 
 - Takes 1 hour to build from scratch and requires 3 GB of storage.
 
-#### 3) Run the Rascore database application locally:
+#### 3. Run the Rascore database application locally:
 
-**rascore -gui [optional, path to the Rascore database directory] -out [output directory path]**
+```rascore -gui [optional, path to the Rascore database directory] -out [output directory path]```
 
 ## Authors
 
