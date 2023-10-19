@@ -130,8 +130,8 @@ def load_table(path, sep="\t", fillna="None"):
     if path_exists(path):
         df = pd.read_csv(path, sep=sep, dtype=str)
 
-        # df = df.fillna(fillna)
-        # df = order_cols(df, get_col_order(df))
+        df = df.fillna(fillna)
+        df = order_cols(df, get_col_order(df))
         df = order_rows(df)
     else:
         df = None
