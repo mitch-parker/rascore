@@ -119,18 +119,19 @@ def save_table(path, df, sep="\t", header=True, index=False, fillna="None"):
     append_file_path(path)
 
     df = df.fillna(fillna)
-
     df = order_cols(df, get_col_order(df))
-
     df = order_rows(df)
 
     df.to_csv(path, sep=sep, header=header, index=index)
 
 
-def load_table(path, sep="\t"):
+def load_table(path, sep="\t", fillna="None"):
 
     if path_exists(path):
         df = pd.read_csv(path, sep=sep, dtype=str)
+
+        df = df.fillna(fillna)
+        df = order_cols(df, get_col_order(df))
         df = order_rows(df)
     else:
         df = None
