@@ -32,7 +32,7 @@ from Bio.PDB import (
     calc_angle,
 )
 
-from Bio.Data.SCOPData import protein_letters_3to1 as aa3to1
+from Bio.Data.IUPACData import protein_letters_3to1 as aa3to1
 
 import math
 
