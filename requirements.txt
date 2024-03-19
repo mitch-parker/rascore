@@ -1,4 +1,5 @@
 Bio==1.6.2
+biopython==1.83
 lxml==4.6.5
 matplotlib==3.3.4
 matplotlib_venn==0.11.6
